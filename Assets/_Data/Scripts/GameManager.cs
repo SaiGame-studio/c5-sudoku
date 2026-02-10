@@ -45,6 +45,8 @@ public class GameManager : SaiSingleton<GameManager>
     /// <summary>
     /// Quit Game
     /// </summary>
+
+    [ProButton]
     public void QuitGame()
     {
         Debug.Log("Quitting Game...");
