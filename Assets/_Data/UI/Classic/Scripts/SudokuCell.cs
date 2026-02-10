@@ -32,6 +32,51 @@ public class SudokuCell
     public VisualElement Element => this.container;
     public HashSet<int> Notes => this.notes;
 
+    public SudokuCell(int row, int col, VisualElement existingElement)
+    {
+        this.row = row;
+        this.col = col;
+        this.value = 0;
+        this.isClue = false;
+        this.notes = new HashSet<int>();
+
+        this.container = existingElement;
+
+        // Find or create main label
+        this.mainLabel = this.container.Q<Label>(className: "sudoku-cell-label");
+        if (this.mainLabel == null)
+        {
+            this.mainLabel = new Label();
+            this.mainLabel.AddToClassList(CLASS_LABEL);
+            this.container.Add(this.mainLabel);
+        }
+
+        // Build notes 3x3 grid (always added at runtime)
+        this.notesGrid = new VisualElement();
+        this.notesGrid.AddToClassList("sudoku-notes-grid");
+        this.notesGrid.style.display = DisplayStyle.None;
+        this.noteLabels = new Label[GRID_SIZE + 1];
+
+        for (int r = 0; r < BOX_SIZE; r++)
+        {
+            VisualElement noteRow = new VisualElement();
+            noteRow.AddToClassList("sudoku-notes-row");
+
+            for (int c = 0; c < BOX_SIZE; c++)
+            {
+                int num = r * BOX_SIZE + c + 1;
+                Label noteLabel = new Label();
+                noteLabel.AddToClassList("sudoku-note-label");
+                this.noteLabels[num] = noteLabel;
+                noteRow.Add(noteLabel);
+            }
+
+            this.notesGrid.Add(noteRow);
+        }
+
+        this.container.Add(this.notesGrid);
+    }
+
     public SudokuCell(int row, int col)
     {
         this.row = row;

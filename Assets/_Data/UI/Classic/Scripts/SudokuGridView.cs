@@ -85,49 +85,24 @@ public class SudokuGridView : SaiBehaviour
 
     private void BuildGrid()
     {
-        this.gridContainer.Clear();
-
-        for (int bandIndex = 0; bandIndex < BOX_SIZE; bandIndex++)
+        for (int row = 0; row < GRID_SIZE; row++)
         {
-            VisualElement band = new VisualElement();
-            band.AddToClassList("sudoku-band");
-
-            for (int boxCol = 0; boxCol < BOX_SIZE; boxCol++)
+            for (int col = 0; col < GRID_SIZE; col++)
             {
-                VisualElement box = new VisualElement();
-                box.AddToClassList("sudoku-box");
+                VisualElement existingElement = this.root.Q<VisualElement>("cell-" + row + "-" + col);
+                if (existingElement == null) continue;
 
-                for (int localRow = 0; localRow < BOX_SIZE; localRow++)
+                SudokuCell cell = new SudokuCell(row, col, existingElement);
+                this.cells[row, col] = cell;
+
+                int capturedRow = row;
+                int capturedCol = col;
+                cell.Element.RegisterCallback<ClickEvent>(evt =>
                 {
-                    VisualElement boxRow = new VisualElement();
-                    boxRow.AddToClassList("sudoku-box-row");
-
-                    for (int localCol = 0; localCol < BOX_SIZE; localCol++)
-                    {
-                        int row = bandIndex * BOX_SIZE + localRow;
-                        int col = boxCol * BOX_SIZE + localCol;
-
-                        SudokuCell cell = new SudokuCell(row, col);
-                        this.cells[row, col] = cell;
-
-                        int capturedRow = row;
-                        int capturedCol = col;
-                        cell.Element.RegisterCallback<ClickEvent>(evt =>
-                        {
-                            evt.StopPropagation();
-                            this.OnCellClicked(capturedRow, capturedCol);
-                        });
-
-                        boxRow.Add(cell.Element);
-                    }
-
-                    box.Add(boxRow);
-                }
-
-                band.Add(box);
+                    evt.StopPropagation();
+                    this.OnCellClicked(capturedRow, capturedCol);
+                });
             }
-
-            this.gridContainer.Add(band);
         }
     }
 
