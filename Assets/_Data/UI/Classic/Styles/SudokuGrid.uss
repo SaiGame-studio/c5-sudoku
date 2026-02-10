@@ -102,7 +102,7 @@
 }
 
 .sudoku-cell--highlighted {
-    background-color: rgb(55, 55, 70);
+    background-color: rgb(40, 55, 80);
 }
 
 .sudoku-cell--same-number {
@@ -216,8 +216,8 @@
 }
 
 .popup-erase-button {
-    width: 80px;
-    height: 28px;
+    width: 44px;
+    height: 36px;
     margin-top: 4px;
     align-items: center;
     justify-content: center;
@@ -233,13 +233,36 @@
 }
 
 .popup-erase-label {
-    font-size: 12px;
+    font-size: 22px;
     color: rgb(255, 150, 150);
     -unity-text-align: middle-center;
     -unity-font-style: bold;
+    -unity-font-definition: url("project://database/Assets/_Data/Fonts/fa-solid-900.ttf");
 }
 
 /* ===== Theme Toggle Button ===== */
+.difficulty-stars {
+    align-self: center;
+    flex-direction: row;
+    margin-top: 8px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    background-color: rgb(55, 58, 70);
+    border-width: 1px;
+    border-color: rgb(100, 100, 120);
+}
+
+.difficulty-star {
+    font-size: 18px;
+    color: rgb(70, 70, 80);
+    -unity-text-align: middle-center;
+    margin: 0 1px;
+}
+
+.difficulty-star--active {
+    color: rgb(255, 210, 50);
+}
+
 .theme-toggle {
     position: absolute;
     top: 10px;
@@ -312,7 +335,7 @@
 }
 
 .light-mode .sudoku-cell--highlighted {
-    background-color: rgb(225, 230, 245);
+    background-color: rgb(198, 214, 240);
 }
 
 .light-mode .sudoku-cell--same-number {
@@ -386,6 +409,19 @@
 
 .light-mode .popup-erase-label {
     color: rgb(180, 40, 40);
+}
+
+.light-mode .difficulty-stars {
+    background-color: rgb(240, 240, 245);
+    border-color: rgb(180, 180, 200);
+}
+
+.light-mode .difficulty-star {
+    color: rgb(200, 200, 210);
+}
+
+.light-mode .difficulty-star--active {
+    color: rgb(220, 170, 0);
 }
 
 .light-mode .theme-toggle {

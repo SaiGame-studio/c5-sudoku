@@ -23,12 +23,14 @@ public class SudokuCell
     private int col;
     private int value;
     private bool isClue;
+    private bool isError;
     private HashSet<int> notes;
 
     public int Row => this.row;
     public int Col => this.col;
     public int Value => this.value;
     public bool IsClue => this.isClue;
+    public bool IsError => this.isError;
     public VisualElement Element => this.container;
     public HashSet<int> Notes => this.notes;
 
@@ -234,6 +236,7 @@ public class SudokuCell
 
     public void SetError(bool error)
     {
+        this.isError = error;
         if (error)
         {
             this.container.AddToClassList(CLASS_ERROR);
@@ -249,6 +252,5 @@ public class SudokuCell
         this.container.RemoveFromClassList(CLASS_SELECTED);
         this.container.RemoveFromClassList(CLASS_HIGHLIGHTED);
         this.container.RemoveFromClassList(CLASS_SAME_NUMBER);
-        this.container.RemoveFromClassList(CLASS_ERROR);
     }
 }

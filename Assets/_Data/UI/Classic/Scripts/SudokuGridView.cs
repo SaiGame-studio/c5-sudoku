@@ -22,6 +22,7 @@ public class SudokuGridView : SaiBehaviour
     private VisualElement popupContainer;
     private VisualElement themeToggle;
     private Label themeToggleLabel;
+    private VisualElement difficultyStarsContainer;
     private SudokuCell[,] cells;
     private SudokuCell selectedCell;
     private bool isLightMode;
@@ -62,6 +63,7 @@ public class SudokuGridView : SaiBehaviour
         this.popupContainer = this.root.Q<VisualElement>("popup-container");
         this.themeToggle = this.root.Q<VisualElement>("theme-toggle");
         this.themeToggleLabel = this.root.Q<Label>("theme-toggle-label");
+        this.difficultyStarsContainer = this.root.Q<VisualElement>("difficulty-stars");
 
         this.cells = new SudokuCell[GRID_SIZE, GRID_SIZE];
 
@@ -86,6 +88,7 @@ public class SudokuGridView : SaiBehaviour
 
         this.BuildGrid();
         this.LoadPuzzle();
+        this.RefreshDifficultyStars();
     }
 
     private void BuildGrid()
@@ -152,6 +155,14 @@ public class SudokuGridView : SaiBehaviour
         if (this.selectedCell == null) return;
         if (this.selectedCell.IsClue) return;
 
+        if (evt.keyCode == KeyCode.Delete || evt.keyCode == KeyCode.Backspace)
+        {
+            this.OnErase();
+            evt.StopPropagation();
+            evt.PreventDefault();
+            return;
+        }
+
         int number = this.KeyCodeToNumber(evt.keyCode);
         if (number < 1 || number > GRID_SIZE) return;
 
@@ -189,10 +200,6 @@ public class SudokuGridView : SaiBehaviour
             this.PositionPopup(cell));
 
         // === Fill row (large numbers) ===
-        Label fillLabel = new Label("Fill");
-        fillLabel.AddToClassList("popup-section-label");
-        this.popupContainer.Add(fillLabel);
-
         VisualElement fillRow = new VisualElement();
         fillRow.AddToClassList("popup-row");
 
@@ -223,10 +230,6 @@ public class SudokuGridView : SaiBehaviour
         this.popupContainer.Add(separator);
 
         // === Note row (small numbers) ===
-        Label noteLabel = new Label("Notes");
-        noteLabel.AddToClassList("popup-section-label");
-        this.popupContainer.Add(noteLabel);
-
         VisualElement noteRow = new VisualElement();
         noteRow.AddToClassList("popup-row");
 
@@ -259,7 +262,7 @@ public class SudokuGridView : SaiBehaviour
         VisualElement eraseButton = new VisualElement();
         eraseButton.AddToClassList("popup-erase-button");
 
-        Label eraseLabel = new Label("Erase");
+        Label eraseLabel = new Label("\uf12d");
         eraseLabel.AddToClassList("popup-erase-label");
         eraseButton.Add(eraseLabel);
 
@@ -427,6 +430,27 @@ public class SudokuGridView : SaiBehaviour
     {
         this.sudokuGenerator.SetDifficulty(difficulty);
         this.NewGame();
+        this.RefreshDifficultyStars();
+    }
+
+    private const int TOTAL_STARS = 7;
+
+    private void RefreshDifficultyStars()
+    {
+        if (this.sudokuGenerator == null || this.difficultyStarsContainer == null) return;
+
+        int activeCount = (int)this.sudokuGenerator.GetDifficulty() + 1;
+
+        for (int i = 1; i <= TOTAL_STARS; i++)
+        {
+            Label star = this.difficultyStarsContainer.Q<Label>("star-" + i);
+            if (star == null) continue;
+
+            if (i <= activeCount)
+                star.AddToClassList("difficulty-star--active");
+            else
+                star.RemoveFromClassList("difficulty-star--active");
+        }
     }
 
     public void ToggleTheme()

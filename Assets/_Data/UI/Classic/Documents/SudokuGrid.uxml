@@ -165,6 +165,15 @@
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
+        <ui:VisualElement name="difficulty-stars" class="difficulty-stars">
+            <ui:Label name="star-1" text="&#x2605;" class="difficulty-star"/>
+            <ui:Label name="star-2" text="&#x2605;" class="difficulty-star"/>
+            <ui:Label name="star-3" text="&#x2605;" class="difficulty-star"/>
+            <ui:Label name="star-4" text="&#x2605;" class="difficulty-star"/>
+            <ui:Label name="star-5" text="&#x2605;" class="difficulty-star"/>
+            <ui:Label name="star-6" text="&#x2605;" class="difficulty-star"/>
+            <ui:Label name="star-7" text="&#x2605;" class="difficulty-star"/>
+        </ui:VisualElement>
     </ui:VisualElement>
     <ui:VisualElement name="theme-toggle" class="theme-toggle">
         <ui:Label name="theme-toggle-label" text="&#x263E;" class="theme-toggle-label"/>
