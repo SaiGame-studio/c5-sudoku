@@ -1,9 +1,9 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="../Styles/SudokuGrid.uss" />
+    <Style src="project://database/Assets/_Data/UI/Classic/Styles/SudokuGrid.uss?fileID=7433441132597879392&amp;guid=984abce156cf73243808b82667dcfa8b&amp;type=3#SudokuGrid"/>
     <ui:VisualElement class="sudoku-grid-root">
-        <!-- The 9x9 grid is built from C# for flexibility -->
-        <ui:VisualElement name="sudoku-grid" class="sudoku-grid" />
-        <!-- Number input buttons -->
-        <ui:VisualElement name="number-panel" class="number-panel" />
+        <ui:VisualElement name="sudoku-grid" class="sudoku-grid"/>
+    </ui:VisualElement>
+    <ui:VisualElement name="popup-overlay" class="popup-overlay popup-overlay--hidden">
+        <ui:VisualElement name="popup-container" class="popup-container"/>
     </ui:VisualElement>
 </ui:UXML>

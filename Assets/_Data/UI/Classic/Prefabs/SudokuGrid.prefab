@@ -70,3 +70,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SudokuGridView
   uiDocument: {fileID: 4861749549086870950}
   sudokuGenerator: {fileID: 0}
+  popupOffset: {x: 0, y: -10}

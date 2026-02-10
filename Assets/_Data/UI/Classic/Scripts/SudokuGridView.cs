@@ -1,3 +1,4 @@
+using com.cyborgAssets.inspectorButtonPro;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -12,18 +13,35 @@ public class SudokuGridView : SaiBehaviour
     [Header("Dependencies")]
     [SerializeField] private SudokuGenerator sudokuGenerator;
 
+    [Header("Popup Settings")]
+    [SerializeField] private Vector2 popupOffset = new Vector2(0f, -10f);
+
+    private VisualElement root;
     private VisualElement gridContainer;
-    private VisualElement numberPanel;
+    private VisualElement popupOverlay;
+    private VisualElement popupContainer;
     private SudokuCell[,] cells;
     private SudokuCell selectedCell;
 
     protected override void LoadComponents()
     {
         base.LoadComponents();
-        if (this.uiDocument == null)
-            this.uiDocument = GetComponent<UIDocument>();
-        if (this.sudokuGenerator == null)
-            this.sudokuGenerator = GetComponent<SudokuGenerator>();
+        this.LoadUIDocument();
+        this.LoadSudokuGenerator();
+    }
+
+    private void LoadUIDocument()
+    {
+        if (this.uiDocument != null) return;
+        this.uiDocument = GetComponent<UIDocument>();
+        Debug.Log(transform.name + ": LoadUIDocument", gameObject);
+    }
+
+    private void LoadSudokuGenerator()
+    {
+        if (this.sudokuGenerator != null) return;
+        this.sudokuGenerator = FindFirstObjectByType<SudokuGenerator>();
+        Debug.Log(transform.name + ": LoadSudokuGenerator", gameObject);
     }
 
     protected override void Start()
@@ -31,17 +49,25 @@ public class SudokuGridView : SaiBehaviour
         base.Start();
         this.InitializeGrid();
     }
-
-    private void InitializeGrid()
+    
+    [ProButton]
+    public void InitializeGrid()
     {
-        VisualElement root = this.uiDocument.rootVisualElement;
-        this.gridContainer = root.Q<VisualElement>("sudoku-grid");
-        this.numberPanel = root.Q<VisualElement>("number-panel");
+        this.root = this.uiDocument.rootVisualElement;
+        this.gridContainer = this.root.Q<VisualElement>("sudoku-grid");
+        this.popupOverlay = this.root.Q<VisualElement>("popup-overlay");
+        this.popupContainer = this.root.Q<VisualElement>("popup-container");
 
         this.cells = new SudokuCell[GRID_SIZE, GRID_SIZE];
 
+        // Click overlay background to close popup
+        this.popupOverlay.RegisterCallback<ClickEvent>(evt =>
+        {
+            if (evt.target == this.popupOverlay)
+                this.HidePopup();
+        });
+
         this.BuildGrid();
-        this.BuildNumberPanel();
         this.LoadPuzzle();
     }
 
@@ -49,25 +75,21 @@ public class SudokuGridView : SaiBehaviour
     {
         this.gridContainer.Clear();
 
-        // Build 3 bands (rows of boxes)
         for (int bandIndex = 0; bandIndex < BOX_SIZE; bandIndex++)
         {
             VisualElement band = new VisualElement();
             band.AddToClassList("sudoku-band");
 
-            // Build 3 boxes per band
             for (int boxCol = 0; boxCol < BOX_SIZE; boxCol++)
             {
                 VisualElement box = new VisualElement();
                 box.AddToClassList("sudoku-box");
 
-                // Build 3 rows per box
                 for (int localRow = 0; localRow < BOX_SIZE; localRow++)
                 {
                     VisualElement boxRow = new VisualElement();
                     boxRow.AddToClassList("sudoku-box-row");
 
-                    // Build 3 cells per row
                     for (int localCol = 0; localCol < BOX_SIZE; localCol++)
                     {
                         int row = bandIndex * BOX_SIZE + localRow;
@@ -76,11 +98,13 @@ public class SudokuGridView : SaiBehaviour
                         SudokuCell cell = new SudokuCell(row, col);
                         this.cells[row, col] = cell;
 
-                        // Register click
                         int capturedRow = row;
                         int capturedCol = col;
                         cell.Element.RegisterCallback<ClickEvent>(evt =>
-                            this.OnCellClicked(capturedRow, capturedCol));
+                        {
+                            evt.StopPropagation();
+                            this.OnCellClicked(capturedRow, capturedCol);
+                        });
 
                         boxRow.Add(cell.Element);
                     }
@@ -95,44 +119,12 @@ public class SudokuGridView : SaiBehaviour
         }
     }
 
-    private void BuildNumberPanel()
-    {
-        this.numberPanel.Clear();
-
-        // Buttons 1-9
-        for (int i = 1; i <= GRID_SIZE; i++)
-        {
-            int number = i;
-            VisualElement button = new VisualElement();
-            button.AddToClassList("number-button");
-
-            Label label = new Label(number.ToString());
-            label.AddToClassList("number-button-label");
-            button.Add(label);
-
-            button.RegisterCallback<ClickEvent>(evt => this.OnNumberSelected(number));
-            this.numberPanel.Add(button);
-        }
-
-        // Erase button
-        VisualElement eraseButton = new VisualElement();
-        eraseButton.AddToClassList("erase-button");
-
-        Label eraseLabel = new Label("X");
-        eraseLabel.AddToClassList("erase-button-label");
-        eraseButton.Add(eraseLabel);
-
-        eraseButton.RegisterCallback<ClickEvent>(evt => this.OnNumberSelected(0));
-        this.numberPanel.Add(eraseButton);
-    }
-
     private void LoadPuzzle()
     {
         if (this.sudokuGenerator == null) return;
 
         this.sudokuGenerator.GeneratePuzzle();
         int[,] puzzle = this.sudokuGenerator.GetPuzzle();
-        int[,] solution = this.sudokuGenerator.GetSolution();
 
         for (int row = 0; row < GRID_SIZE; row++)
         {
@@ -155,44 +147,203 @@ public class SudokuGridView : SaiBehaviour
 
         this.HighlightRelatedCells(row, col);
         this.HighlightSameNumber(cell.Value);
+
+        // Show popup for non-clue cells
+        if (!cell.IsClue)
+        {
+            this.ShowPopup(cell);
+        }
     }
 
-    private void OnNumberSelected(int number)
+    #region Popup
+    private void ShowPopup(SudokuCell cell)
+    {
+        this.popupContainer.Clear();
+        this.popupOverlay.RemoveFromClassList("popup-overlay--hidden");
+
+        // Position popup near the clicked cell
+        this.popupContainer.RegisterCallbackOnce<GeometryChangedEvent>(evt =>
+            this.PositionPopup(cell));
+
+        // === Fill row (large numbers) ===
+        Label fillLabel = new Label("Fill");
+        fillLabel.AddToClassList("popup-section-label");
+        this.popupContainer.Add(fillLabel);
+
+        VisualElement fillRow = new VisualElement();
+        fillRow.AddToClassList("popup-row");
+
+        for (int i = 1; i <= GRID_SIZE; i++)
+        {
+            int number = i;
+            VisualElement button = new VisualElement();
+            button.AddToClassList("popup-fill-button");
+
+            Label label = new Label(number.ToString());
+            label.AddToClassList("popup-fill-label");
+            button.Add(label);
+
+            button.RegisterCallback<ClickEvent>(evt =>
+            {
+                evt.StopPropagation();
+                this.OnFillNumber(number);
+            });
+
+            fillRow.Add(button);
+        }
+
+        this.popupContainer.Add(fillRow);
+
+        // === Separator ===
+        VisualElement separator = new VisualElement();
+        separator.AddToClassList("popup-separator");
+        this.popupContainer.Add(separator);
+
+        // === Note row (small numbers) ===
+        Label noteLabel = new Label("Notes");
+        noteLabel.AddToClassList("popup-section-label");
+        this.popupContainer.Add(noteLabel);
+
+        VisualElement noteRow = new VisualElement();
+        noteRow.AddToClassList("popup-row");
+
+        for (int i = 1; i <= GRID_SIZE; i++)
+        {
+            int number = i;
+            VisualElement button = new VisualElement();
+            button.AddToClassList("popup-note-button");
+
+            // Mark active if note already exists
+            if (cell.HasNote(number))
+                button.AddToClassList("popup-note-button--active");
+
+            Label label = new Label(number.ToString());
+            label.AddToClassList("popup-note-label");
+            button.Add(label);
+
+            button.RegisterCallback<ClickEvent>(evt =>
+            {
+                evt.StopPropagation();
+                this.OnToggleNote(number, button);
+            });
+
+            noteRow.Add(button);
+        }
+
+        this.popupContainer.Add(noteRow);
+
+        // === Erase button ===
+        VisualElement eraseButton = new VisualElement();
+        eraseButton.AddToClassList("popup-erase-button");
+
+        Label eraseLabel = new Label("Erase");
+        eraseLabel.AddToClassList("popup-erase-label");
+        eraseButton.Add(eraseLabel);
+
+        eraseButton.RegisterCallback<ClickEvent>(evt =>
+        {
+            evt.StopPropagation();
+            this.OnErase();
+        });
+
+        this.popupContainer.Add(eraseButton);
+    }
+
+    private void PositionPopup(SudokuCell cell)
+    {
+        Rect cellBound = cell.Element.worldBound;
+        float popupWidth = this.popupContainer.resolvedStyle.width;
+        float popupHeight = this.popupContainer.resolvedStyle.height;
+        float rootWidth = this.root.resolvedStyle.width;
+        float rootHeight = this.root.resolvedStyle.height;
+
+        // Center horizontally on cell, apply X offset
+        float x = cellBound.center.x - popupWidth / 2f + this.popupOffset.x;
+
+        // Place popup above the cell top edge with Y offset as gap
+        float y = cellBound.yMin - popupHeight + this.popupOffset.y;
+
+        // If popup goes above screen, flip to below cell
+        if (y < 0)
+            y = cellBound.yMax - this.popupOffset.y;
+
+        // Clamp horizontal
+        if (x < 4f) x = 4f;
+        if (x + popupWidth > rootWidth - 4f) x = rootWidth - popupWidth - 4f;
+
+        // Clamp vertical
+        if (y + popupHeight > rootHeight - 4f) y = rootHeight - popupHeight - 4f;
+
+        this.popupContainer.style.left = x;
+        this.popupContainer.style.top = y;
+    }
+
+    private void HidePopup()
+    {
+        this.popupOverlay.AddToClassList("popup-overlay--hidden");
+        this.popupContainer.Clear();
+    }
+
+    private void OnFillNumber(int number)
     {
         if (this.selectedCell == null) return;
-        if (this.selectedCell.IsClue) return;
 
         this.selectedCell.SetPlayerValue(number);
 
-        // Validate move
-        if (number > 0)
-        {
-            int[,] solution = this.sudokuGenerator.GetSolution();
-            bool isCorrect = solution[this.selectedCell.Row, this.selectedCell.Col] == number;
-            this.selectedCell.SetError(!isCorrect);
-        }
-        else
-        {
-            this.selectedCell.SetError(false);
-        }
+        // Validate
+        int[,] solution = this.sudokuGenerator.GetSolution();
+        bool isCorrect = solution[this.selectedCell.Row, this.selectedCell.Col] == number;
+        this.selectedCell.SetError(!isCorrect);
 
-        // Refresh highlights for new number
+        this.HidePopup();
+        this.RefreshHighlights();
+    }
+
+    private void OnToggleNote(int number, VisualElement button)
+    {
+        if (this.selectedCell == null) return;
+
+        this.selectedCell.ToggleNote(number);
+        this.selectedCell.SetError(false);
+
+        // Toggle active style on the button
+        if (this.selectedCell.HasNote(number))
+            button.AddToClassList("popup-note-button--active");
+        else
+            button.RemoveFromClassList("popup-note-button--active");
+    }
+
+    private void OnErase()
+    {
+        if (this.selectedCell == null) return;
+
+        this.selectedCell.SetPlayerValue(0);
+        this.selectedCell.SetError(false);
+        this.HidePopup();
+        this.RefreshHighlights();
+    }
+    #endregion
+
+    #region Highlights
+    private void RefreshHighlights()
+    {
         this.ClearAllHighlights();
-        this.selectedCell.SetSelected(true);
-        this.HighlightRelatedCells(this.selectedCell.Row, this.selectedCell.Col);
-        this.HighlightSameNumber(this.selectedCell.Value);
+        if (this.selectedCell != null)
+        {
+            this.selectedCell.SetSelected(true);
+            this.HighlightRelatedCells(this.selectedCell.Row, this.selectedCell.Col);
+            this.HighlightSameNumber(this.selectedCell.Value);
+        }
     }
 
     private void HighlightRelatedCells(int row, int col)
     {
-        // Highlight same row and column
         for (int i = 0; i < GRID_SIZE; i++)
         {
             if (i != col) this.cells[row, i].SetHighlighted(true);
             if (i != row) this.cells[i, col].SetHighlighted(true);
         }
 
-        // Highlight same 3x3 box
         int startRow = (row / BOX_SIZE) * BOX_SIZE;
         int startCol = (col / BOX_SIZE) * BOX_SIZE;
 
@@ -232,13 +383,16 @@ public class SudokuGridView : SaiBehaviour
             }
         }
     }
+    #endregion
 
+    #region Public Methods
     /// <summary>
     /// Reload puzzle with a new generated board
     /// </summary>
     public void NewGame()
     {
         this.selectedCell = null;
+        this.HidePopup();
         this.ClearAllHighlights();
         this.LoadPuzzle();
     }
@@ -251,4 +405,5 @@ public class SudokuGridView : SaiBehaviour
         this.sudokuGenerator.SetDifficulty(difficulty);
         this.NewGame();
     }
+    #endregion
 }

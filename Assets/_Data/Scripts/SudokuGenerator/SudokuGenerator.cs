@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using com.cyborgAssets.inspectorButtonPro;
 
-public class SudokuGenerator : MonoBehaviour
+public class SudokuGenerator : SaiSingleton<SudokuGenerator>
 {
     public enum DifficultyLevel
     {
@@ -33,8 +33,9 @@ public class SudokuGenerator : MonoBehaviour
     private const int GRID_SIZE = 9;
     private const int BOX_SIZE = 3;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         this.InitializeDifficultySettings();
     }
 
