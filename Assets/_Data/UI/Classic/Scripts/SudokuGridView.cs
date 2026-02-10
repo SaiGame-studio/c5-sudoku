@@ -79,6 +79,11 @@ public class SudokuGridView : SaiBehaviour
                 this.HidePopup();
         });
 
+        // Keyboard input for fill and notes
+        this.root.RegisterCallback<KeyDownEvent>(this.OnKeyDown);
+        this.root.focusable = true;
+        this.root.Focus();
+
         this.BuildGrid();
         this.LoadPuzzle();
     }
@@ -140,6 +145,37 @@ public class SudokuGridView : SaiBehaviour
         {
             this.ShowPopup(cell);
         }
+    }
+
+    private void OnKeyDown(KeyDownEvent evt)
+    {
+        if (this.selectedCell == null) return;
+        if (this.selectedCell.IsClue) return;
+
+        int number = this.KeyCodeToNumber(evt.keyCode);
+        if (number < 1 || number > GRID_SIZE) return;
+
+        if (evt.shiftKey)
+        {
+            this.selectedCell.ToggleNote(number);
+            this.selectedCell.SetError(false);
+        }
+        else
+        {
+            this.OnFillNumber(number);
+        }
+
+        evt.StopPropagation();
+        evt.PreventDefault();
+    }
+
+    private int KeyCodeToNumber(KeyCode keyCode)
+    {
+        if (keyCode >= KeyCode.Alpha1 && keyCode <= KeyCode.Alpha9)
+            return keyCode - KeyCode.Alpha0;
+        if (keyCode >= KeyCode.Keypad1 && keyCode <= KeyCode.Keypad9)
+            return keyCode - KeyCode.Keypad0;
+        return -1;
     }
 
     #region Popup
