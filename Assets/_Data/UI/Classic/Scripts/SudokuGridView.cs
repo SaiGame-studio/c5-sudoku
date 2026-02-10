@@ -20,8 +20,11 @@ public class SudokuGridView : SaiBehaviour
     private VisualElement gridContainer;
     private VisualElement popupOverlay;
     private VisualElement popupContainer;
+    private VisualElement themeToggle;
+    private Label themeToggleLabel;
     private SudokuCell[,] cells;
     private SudokuCell selectedCell;
+    private bool isLightMode;
 
     protected override void LoadComponents()
     {
@@ -49,7 +52,7 @@ public class SudokuGridView : SaiBehaviour
         base.Start();
         this.InitializeGrid();
     }
-    
+
     [ProButton]
     public void InitializeGrid()
     {
@@ -57,8 +60,17 @@ public class SudokuGridView : SaiBehaviour
         this.gridContainer = this.root.Q<VisualElement>("sudoku-grid");
         this.popupOverlay = this.root.Q<VisualElement>("popup-overlay");
         this.popupContainer = this.root.Q<VisualElement>("popup-container");
+        this.themeToggle = this.root.Q<VisualElement>("theme-toggle");
+        this.themeToggleLabel = this.root.Q<Label>("theme-toggle-label");
 
         this.cells = new SudokuCell[GRID_SIZE, GRID_SIZE];
+
+        // Theme toggle click
+        this.themeToggle.RegisterCallback<ClickEvent>(evt =>
+        {
+            evt.StopPropagation();
+            this.ToggleTheme();
+        });
 
         // Click overlay background to close popup
         this.popupOverlay.RegisterCallback<ClickEvent>(evt =>
@@ -404,6 +416,22 @@ public class SudokuGridView : SaiBehaviour
     {
         this.sudokuGenerator.SetDifficulty(difficulty);
         this.NewGame();
+    }
+
+    public void ToggleTheme()
+    {
+        this.isLightMode = !this.isLightMode;
+
+        if (this.isLightMode)
+        {
+            this.root.AddToClassList("light-mode");
+            this.themeToggleLabel.text = "\u2600"; // Sun
+        }
+        else
+        {
+            this.root.RemoveFromClassList("light-mode");
+            this.themeToggleLabel.text = "\u263E"; // Moon
+        }
     }
     #endregion
 }

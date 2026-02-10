@@ -3,6 +3,9 @@
     <ui:VisualElement class="sudoku-grid-root">
         <ui:VisualElement name="sudoku-grid" class="sudoku-grid"/>
     </ui:VisualElement>
+    <ui:VisualElement name="theme-toggle" class="theme-toggle">
+        <ui:Label name="theme-toggle-label" text="&#x263E;" class="theme-toggle-label"/>
+    </ui:VisualElement>
     <ui:VisualElement name="popup-overlay" class="popup-overlay popup-overlay--hidden">
         <ui:VisualElement name="popup-container" class="popup-container"/>
     </ui:VisualElement>
