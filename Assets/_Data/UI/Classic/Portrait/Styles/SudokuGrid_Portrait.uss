@@ -31,8 +31,8 @@
 }
 
 .sudoku-cell {
-    width: 40px;
-    height: 40px;
+    width: 120px;
+    height: 120px;
     align-items: center;
     justify-content: center;
     border-width: 1px;
@@ -50,7 +50,7 @@
 }
 
 .sudoku-cell-label {
-    font-size: 18px;
+    font-size: 54px;
     color: rgb(220, 220, 220);
     -unity-text-align: middle-center;
     -unity-font-style: bold;
@@ -61,8 +61,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 38px;
-    height: 38px;
+    width: 114px;
+    height: 114px;
     position: absolute;
 }
 
@@ -73,9 +73,9 @@
 }
 
 .sudoku-note-label {
-    width: 6px;
-    height: 6px;
-    font-size: 13px;
+    width: 18px;
+    height: 18px;
+    font-size: 39px;
     color: rgb(150, 180, 220);
     -unity-text-align: middle-center;
     -unity-font-style: normal;
@@ -165,8 +165,8 @@
 }
 
 .popup-fill-button {
-    width: 32px;
-    height: 32px;
+    width: 96px;
+    height: 96px;
     margin: 2px;
     align-items: center;
     justify-content: center;
@@ -183,15 +183,15 @@
 }
 
 .popup-fill-label {
-    font-size: 18px;
+    font-size: 54px;
     color: rgb(210, 215, 230);
     -unity-text-align: middle-center;
     -unity-font-style: bold;
 }
 
 .popup-note-button {
-    width: 32px;
-    height: 26px;
+    width: 96px;
+    height: 78px;
     margin: 2px;
     align-items: center;
     justify-content: center;
@@ -208,7 +208,7 @@
 }
 
 .popup-note-label {
-    font-size: 12px;
+    font-size: 36px;
     color: rgb(150, 180, 220);
     -unity-text-align: middle-center;
 }
@@ -219,8 +219,8 @@
 }
 
 .popup-erase-button {
-    width: 40px;
-    height: 32px;
+    width: 120px;
+    height: 96px;
     margin-top: 4px;
     align-items: center;
     justify-content: center;
@@ -236,7 +236,7 @@
 }
 
 .popup-erase-label {
-    font-size: 20px;
+    font-size: 60px;
     color: rgb(255, 150, 150);
     -unity-text-align: middle-center;
     -unity-font-style: bold;
@@ -256,7 +256,7 @@
 }
 
 .difficulty-star {
-    font-size: 16px;
+    font-size: 48px;
     color: rgb(70, 70, 80);
     -unity-text-align: middle-center;
     margin: 0 1px;
@@ -271,9 +271,9 @@
     position: absolute;
     top: 8px;
     right: 8px;
-    width: 32px;
-    height: 32px;
-    border-radius: 18px;
+    width: 96px;
+    height: 96px;
+    border-radius: 54px;
     padding: 0 0 3px 3px;
     align-items: center;
     justify-content: center;
@@ -289,7 +289,7 @@
 }
 
 .theme-toggle-label {
-    font-size: 20px;
+    font-size: 60px;
     color: rgb(220, 220, 220);
     -unity-text-align: middle-center;
 }
