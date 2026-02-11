@@ -23,6 +23,8 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private int correctCells = 0;
     [SerializeField] private int incorrectCells = 0;
     [SerializeField] private SudokuResultAnalyzer.GameResult currentResult = SudokuResultAnalyzer.GameResult.NotCompleted;
+    [TextArea(11, 11)]
+    [SerializeField] private string userPuzzlePreview = "";
 
     private VisualElement root;
     private VisualElement gridContainer;
@@ -145,6 +147,12 @@ public class SudokuGridView : SaiBehaviour
                 bool isClue = value != 0;
                 this.cells[row, col].SetValue(value, isClue);
             }
+        }
+
+        // Initialize preview
+        if (this.autoAnalyze)
+        {
+            this.AnalyzeCurrentState();
         }
     }
 
@@ -449,6 +457,12 @@ public class SudokuGridView : SaiBehaviour
         this.HidePopup();
         this.ClearAllHighlights();
         this.LoadPuzzle();
+        
+        // Reset analysis stats
+        this.completionPercentage = 0f;
+        this.correctCells = 0;
+        this.incorrectCells = 0;
+        this.currentResult = SudokuResultAnalyzer.GameResult.NotCompleted;
     }
 
     /// <summary>
@@ -567,6 +581,46 @@ public class SudokuGridView : SaiBehaviour
         {
             Debug.Log($"<color=yellow>Errors detected:</color> {this.incorrectCells} incorrect cells");
         }
+
+        // Update preview for inspector
+        this.userPuzzlePreview = this.GetUserPuzzlePreview(userPuzzle, solution);
+    }
+
+    /// <summary>
+    /// Generate visual preview of user's puzzle with error indicators
+    /// </summary>
+    private string GetUserPuzzlePreview(int[,] userPuzzle, int[,] solution)
+    {
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        
+        for (int i = 0; i < GRID_SIZE; i++)
+        {
+            if (i % BOX_SIZE == 0 && i != 0)
+                sb.AppendLine("------+-------+------");
+
+            for (int j = 0; j < GRID_SIZE; j++)
+            {
+                if (j % BOX_SIZE == 0 && j != 0)
+                    sb.Append("| ");
+
+                int userValue = userPuzzle[i, j];
+                if (userValue == 0)
+                {
+                    sb.Append("· ");
+                }
+                else if (userValue == solution[i, j])
+                {
+                    sb.Append(userValue + " ");
+                }
+                else
+                {
+                    sb.Append("X ");  // Mark errors with X
+                }
+            }
+            sb.AppendLine();
+        }
+
+        return sb.ToString();
     }
 
     /// <summary>
