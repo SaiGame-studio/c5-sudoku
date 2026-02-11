@@ -68,6 +68,12 @@ public class SudokuGenerator : SaiSingleton<SudokuGenerator>
     /// </summary>
     public void GeneratePuzzle(DifficultyLevel difficulty)
     {
+        // Ensure difficulty settings are initialized
+        if (this.difficultyMap == null)
+        {
+            this.InitializeDifficultySettings();
+        }
+
         this.currentDifficulty = difficulty;
         this.solution = new int[GRID_SIZE, GRID_SIZE];
         this.puzzle = new int[GRID_SIZE, GRID_SIZE];
