@@ -461,14 +461,7 @@ MonoBehaviour:
   showDetailedLog: 0
   patternsFoundCount: 0
   patternsReport: 
-  fullHouseCount: 0
-  nakedSingleCount: 0
-  hiddenSingleCount: 0
-  nakedPairCount: 0
-  hiddenPairCount: 0
-  pointingPairCount: 0
-  xWingCount: 0
-  advancedPatternCount: 0
+  patternStatistics: []
 --- !u!114 &393123384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1281,6 +1274,7 @@ GameObject:
   - component: {fileID: 5723614773211522038}
   - component: {fileID: 4861749548441042308}
   - component: {fileID: 8143833361491433006}
+  - component: {fileID: 8143833361491433007}
   m_Layer: 5
   m_Name: SudokuGridLanscape
   m_TagString: Untagged
@@ -1407,6 +1401,21 @@ MonoBehaviour:
   incorrectCells: 0
   currentResult: 0
   userPuzzlePreview: 
+--- !u!114 &8143833361491433007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5663561288124293287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97a63a1181d96f049b04e25cbd2d8e3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SudokuDifficultyPanel
+  uiDocument: {fileID: 4861749548441042308}
+  sudokuGenerator: {fileID: 393123380}
+  gridView: {fileID: 8143833361491433006}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

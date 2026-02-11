@@ -333,6 +333,10 @@
             <ui:Label name="star-6" text="★" class="difficulty-star"/>
             <ui:Label name="star-7" text="★" class="difficulty-star"/>
         </ui:VisualElement>
+        <ui:VisualElement name="difficulty-control-panel" class="difficulty-control-panel">
+            <ui:DropdownField name="difficulty-dropdown" label="Difficulty" class="difficulty-dropdown"/>
+            <ui:Button name="generate-button" text="Generate New Puzzle" class="generate-button"/>
+        </ui:VisualElement>
     </ui:VisualElement>
     <ui:VisualElement name="theme-toggle" class="theme-toggle">
         <ui:Label name="theme-toggle-label" text="☾" class="theme-toggle-label"/>
