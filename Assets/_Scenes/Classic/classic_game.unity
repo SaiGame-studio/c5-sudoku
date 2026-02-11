@@ -359,6 +359,7 @@ GameObject:
   - component: {fileID: 393123379}
   - component: {fileID: 393123380}
   - component: {fileID: 393123381}
+  - component: {fileID: 393123383}
   - component: {fileID: 393123382}
   m_Layer: 0
   m_Name: SudokuGenerator
@@ -443,6 +444,30 @@ MonoBehaviour:
   targetGridView: {fileID: 0}
   totalMoves: 0
   currentMove: 0
+--- !u!114 &393123383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 393123378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee7fcd11533353e4d87608b643bf0b86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SudokuPatternAnalyzer
+  autoAnalyze: 1
+  showDetailedLog: 0
+  patternsFoundCount: 0
+  patternsReport: 
+  fullHouseCount: 0
+  nakedSingleCount: 0
+  hiddenSingleCount: 0
+  nakedPairCount: 0
+  hiddenPairCount: 0
+  pointingPairCount: 0
+  xWingCount: 0
+  advancedPatternCount: 0
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -953,7 +978,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1197444009
 RectTransform:
   m_ObjectHideFlags: 0
@@ -990,7 +1015,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1596259707
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1272,8 +1297,10 @@ MonoBehaviour:
   uiDocument: {fileID: 7165603691242713602}
   sudokuGenerator: {fileID: 393123380}
   resultAnalyzer: {fileID: 0}
+  patternAnalyzer: {fileID: 0}
   popupOffset: {x: 0, y: -10}
   autoAnalyze: 1
+  autoAnalyzePatterns: 1
   completionPercentage: 0
   correctCells: 0
   incorrectCells: 0
@@ -1350,8 +1377,10 @@ MonoBehaviour:
   uiDocument: {fileID: 4861749548441042308}
   sudokuGenerator: {fileID: 393123380}
   resultAnalyzer: {fileID: 393123381}
+  patternAnalyzer: {fileID: 0}
   popupOffset: {x: 0, y: -10}
   autoAnalyze: 1
+  autoAnalyzePatterns: 1
   completionPercentage: 0
   correctCells: 0
   incorrectCells: 0

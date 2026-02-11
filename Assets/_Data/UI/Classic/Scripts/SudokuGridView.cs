@@ -1,6 +1,7 @@
 using com.cyborgAssets.inspectorButtonPro;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System.Collections.Generic;
 
 public class SudokuGridView : SaiBehaviour
 {
@@ -13,12 +14,14 @@ public class SudokuGridView : SaiBehaviour
     [Header("Dependencies")]
     [SerializeField] private SudokuGenerator sudokuGenerator;
     [SerializeField] private SudokuResultAnalyzer resultAnalyzer;
+    [SerializeField] private SudokuPatternAnalyzer patternAnalyzer;
 
     [Header("Popup Settings")]
     [SerializeField] private Vector2 popupOffset = new Vector2(0f, -10f);
 
     [Header("Live Analysis")]
     [SerializeField] private bool autoAnalyze = true;
+    [SerializeField] private bool autoAnalyzePatterns = true;
     [SerializeField] private float completionPercentage = 0f;
     [SerializeField] private int correctCells = 0;
     [SerializeField] private int incorrectCells = 0;
@@ -43,6 +46,7 @@ public class SudokuGridView : SaiBehaviour
         this.LoadUIDocument();
         this.LoadSudokuGenerator();
         this.LoadResultAnalyzer();
+        this.LoadPatternAnalyzer();
     }
 
     private void LoadUIDocument()
@@ -64,6 +68,13 @@ public class SudokuGridView : SaiBehaviour
         if (this.resultAnalyzer != null) return;
         this.resultAnalyzer = FindFirstObjectByType<SudokuResultAnalyzer>();
         Debug.Log(transform.name + ": LoadResultAnalyzer", gameObject);
+    }
+
+    private void LoadPatternAnalyzer()
+    {
+        if (this.patternAnalyzer != null) return;
+        this.patternAnalyzer = FindFirstObjectByType<SudokuPatternAnalyzer>();
+        Debug.Log(transform.name + ": LoadPatternAnalyzer", gameObject);
     }
 
     protected override void Start()
@@ -153,6 +164,12 @@ public class SudokuGridView : SaiBehaviour
         if (this.autoAnalyze)
         {
             this.AnalyzeCurrentState();
+        }
+
+        // Initial pattern analysis
+        if (this.autoAnalyzePatterns)
+        {
+            this.AnalyzePatterns();
         }
     }
 
@@ -367,6 +384,12 @@ public class SudokuGridView : SaiBehaviour
             button.AddToClassList("popup-note-button--active");
         else
             button.RemoveFromClassList("popup-note-button--active");
+
+        // Auto analyze patterns after note change
+        if (this.autoAnalyzePatterns)
+        {
+            this.AnalyzePatterns();
+        }
     }
 
     private void OnErase()
@@ -637,6 +660,52 @@ public class SudokuGridView : SaiBehaviour
     public float GetCompletionPercentage()
     {
         return this.completionPercentage;
+    }
+
+    /// <summary>
+    /// Get all cell notes for pattern analysis
+    /// </summary>
+    private List<int>[,] GetAllCellNotes()
+    {
+        List<int>[,] allNotes = new List<int>[GRID_SIZE, GRID_SIZE];
+
+        for (int row = 0; row < GRID_SIZE; row++)
+        {
+            for (int col = 0; col < GRID_SIZE; col++)
+            {
+                if (this.cells[row, col].Notes != null && this.cells[row, col].Notes.Count > 0)
+                {
+                    allNotes[row, col] = new List<int>(this.cells[row, col].Notes);
+                }
+                else
+                {
+                    allNotes[row, col] = new List<int>();
+                }
+            }
+        }
+
+        return allNotes;
+    }
+
+    /// <summary>
+    /// Analyze patterns based on current notes
+    /// </summary>
+    private void AnalyzePatterns()
+    {
+        if (this.patternAnalyzer == null) return;
+
+        int[,] currentPuzzle = this.GetCurrentUserPuzzle();
+        List<int>[,] allNotes = this.GetAllCellNotes();
+
+        this.patternAnalyzer.AnalyzePatterns(currentPuzzle, allNotes);
+    }
+
+    /// <summary>
+    /// Get all cell notes (public for external access)
+    /// </summary>
+    public List<int>[,] GetCellNotes()
+    {
+        return this.GetAllCellNotes();
     }
 
     /// <summary>

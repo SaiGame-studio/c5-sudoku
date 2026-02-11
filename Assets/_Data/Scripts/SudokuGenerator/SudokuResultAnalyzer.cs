@@ -23,6 +23,7 @@ public class SudokuResultAnalyzer : SaiSingleton<SudokuResultAnalyzer>
     [SerializeField] private float timeTaken = 0f;
     [SerializeField] private int hintsUsed = 0;
     
+    [Space(10)]
     [Header("Analysis Details")]
     [TextArea(5, 10)]
     [SerializeField] private string analysisReport = "";
