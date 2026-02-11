@@ -26,6 +26,10 @@ public class SudokuGridView : SaiBehaviour
     [TextArea(11, 11)]
     [SerializeField] private string userPuzzlePreview = "";
 
+    [Header("Auto Play")]
+    [SerializeField] private float autoPlayDelay = 1f;
+    [SerializeField] private bool isAutoPlaying = false;
+
     private VisualElement root;
     private VisualElement gridContainer;
     private VisualElement popupOverlay;
@@ -36,6 +40,7 @@ public class SudokuGridView : SaiBehaviour
     private SudokuCell[,] cells;
     private SudokuCell selectedCell;
     private bool isLightMode;
+    private Coroutine autoPlayCoroutine;
 
     protected override void LoadComponents()
     {
@@ -453,6 +458,9 @@ public class SudokuGridView : SaiBehaviour
     /// </summary>
     public void NewGame()
     {
+        // Stop auto play if running
+        this.StopAutoPlay();
+
         this.selectedCell = null;
         this.HidePopup();
         this.ClearAllHighlights();
@@ -637,6 +645,107 @@ public class SudokuGridView : SaiBehaviour
     public float GetCompletionPercentage()
     {
         return this.completionPercentage;
+    }
+    #endregion
+
+    #region Auto Play
+    [ProButton]
+    /// <summary>
+    /// Start auto-playing the puzzle
+    /// </summary>
+    public void StartAutoPlay()
+    {
+        if (this.isAutoPlaying)
+        {
+            Debug.LogWarning("Auto play is already running!");
+            return;
+        }
+
+        if (this.sudokuGenerator == null)
+        {
+            Debug.LogError("SudokuGenerator not found!");
+            return;
+        }
+
+        this.autoPlayCoroutine = StartCoroutine(this.AutoPlayCoroutine());
+    }
+
+    [ProButton]
+    /// <summary>
+    /// Stop auto-playing
+    /// </summary>
+    public void StopAutoPlay()
+    {
+        if (this.autoPlayCoroutine != null)
+        {
+            StopCoroutine(this.autoPlayCoroutine);
+            this.autoPlayCoroutine = null;
+        }
+        
+        this.isAutoPlaying = false;
+        Debug.Log("Auto play stopped.");
+    }
+
+    private System.Collections.IEnumerator AutoPlayCoroutine()
+    {
+        this.isAutoPlaying = true;
+        int[,] solution = this.sudokuGenerator.GetSolution();
+
+        Debug.Log($"<color=cyan>Auto play started</color> (delay: {this.autoPlayDelay}s)");
+
+        // Collect all empty cells (non-clues)
+        System.Collections.Generic.List<(int row, int col)> emptyCells = new System.Collections.Generic.List<(int, int)>();
+        
+        for (int row = 0; row < GRID_SIZE; row++)
+        {
+            for (int col = 0; col < GRID_SIZE; col++)
+            {
+                if (!this.cells[row, col].IsClue && this.cells[row, col].Value == 0)
+                {
+                    emptyCells.Add((row, col));
+                }
+            }
+        }
+
+        Debug.Log($"Found {emptyCells.Count} empty cells to fill.");
+
+        // Fill each empty cell with correct answer
+        foreach (var (row, col) in emptyCells)
+        {
+            // Select the cell
+            this.ClearAllHighlights();
+            this.selectedCell = this.cells[row, col];
+            this.selectedCell.SetSelected(true);
+            this.HighlightRelatedCells(row, col);
+
+            // Fill with correct number
+            int correctNumber = solution[row, col];
+            this.selectedCell.SetPlayerValue(correctNumber);
+            this.selectedCell.SetError(false);
+
+            // Refresh highlights to show same numbers
+            this.HighlightSameNumber(correctNumber);
+
+            // Auto analyze if enabled
+            if (this.autoAnalyze)
+            {
+                this.AnalyzeCurrentState();
+            }
+
+            // Check if victory
+            if (this.currentResult == SudokuResultAnalyzer.GameResult.Victory)
+            {
+                Debug.Log($"<color=green>Auto play completed!</color> Puzzle solved in {emptyCells.Count} moves.");
+                this.isAutoPlaying = false;
+                yield break;
+            }
+
+            // Wait before next move
+            yield return new WaitForSeconds(this.autoPlayDelay);
+        }
+
+        this.isAutoPlaying = false;
+        Debug.Log("<color=green>Auto play finished!</color>");
     }
     #endregion
 }
