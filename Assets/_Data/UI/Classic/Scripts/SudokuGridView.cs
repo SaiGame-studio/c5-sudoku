@@ -26,10 +26,6 @@ public class SudokuGridView : SaiBehaviour
     [TextArea(11, 11)]
     [SerializeField] private string userPuzzlePreview = "";
 
-    [Header("Auto Play")]
-    [SerializeField] private float autoPlayDelay = 1f;
-    [SerializeField] private bool isAutoPlaying = false;
-
     private VisualElement root;
     private VisualElement gridContainer;
     private VisualElement popupOverlay;
@@ -40,7 +36,6 @@ public class SudokuGridView : SaiBehaviour
     private SudokuCell[,] cells;
     private SudokuCell selectedCell;
     private bool isLightMode;
-    private Coroutine autoPlayCoroutine;
 
     protected override void LoadComponents()
     {
@@ -458,9 +453,6 @@ public class SudokuGridView : SaiBehaviour
     /// </summary>
     public void NewGame()
     {
-        // Stop auto play if running
-        this.StopAutoPlay();
-
         this.selectedCell = null;
         this.HidePopup();
         this.ClearAllHighlights();
@@ -483,7 +475,7 @@ public class SudokuGridView : SaiBehaviour
         this.RefreshDifficultyStars();
     }
 
-    private const int TOTAL_STARS = 7;
+    private const int TOTAL_STARS = 9;
 
     private void RefreshDifficultyStars()
     {
@@ -646,106 +638,69 @@ public class SudokuGridView : SaiBehaviour
     {
         return this.completionPercentage;
     }
-    #endregion
 
-    #region Auto Play
-    [ProButton]
     /// <summary>
-    /// Start auto-playing the puzzle
+    /// Get cell data for external access (e.g., AutoPlayer)
     /// </summary>
-    public void StartAutoPlay()
+    public CellData GetCellData(int row, int col)
     {
-        if (this.isAutoPlaying)
+        if (row < 0 || row >= GRID_SIZE || col < 0 || col >= GRID_SIZE)
         {
-            Debug.LogWarning("Auto play is already running!");
-            return;
+            return new CellData { value = 0, isClue = false };
         }
 
-        if (this.sudokuGenerator == null)
+        SudokuCell cell = this.cells[row, col];
+        return new CellData
         {
-            Debug.LogError("SudokuGenerator not found!");
-            return;
-        }
-
-        this.autoPlayCoroutine = StartCoroutine(this.AutoPlayCoroutine());
+            value = cell.Value,
+            isClue = cell.IsClue
+        };
     }
 
-    [ProButton]
     /// <summary>
-    /// Stop auto-playing
+    /// Fill a specific cell with a number (for external control like AutoPlayer)
     /// </summary>
-    public void StopAutoPlay()
+    public void FillCell(int row, int col, int number)
     {
-        if (this.autoPlayCoroutine != null)
-        {
-            StopCoroutine(this.autoPlayCoroutine);
-            this.autoPlayCoroutine = null;
-        }
-        
-        this.isAutoPlaying = false;
-        Debug.Log("Auto play stopped.");
-    }
+        if (row < 0 || row >= GRID_SIZE || col < 0 || col >= GRID_SIZE)
+            return;
 
-    private System.Collections.IEnumerator AutoPlayCoroutine()
-    {
-        this.isAutoPlaying = true;
+        SudokuCell cell = this.cells[row, col];
+        if (cell.IsClue) return;
+
+        // Clear current selection and highlights
+        this.ClearAllHighlights();
+
+        // Select the cell
+        this.selectedCell = cell;
+        cell.SetSelected(true);
+        this.HighlightRelatedCells(row, col);
+
+        // Fill with number
+        cell.SetPlayerValue(number);
+
+        // Validate
         int[,] solution = this.sudokuGenerator.GetSolution();
+        bool isCorrect = solution[row, col] == number;
+        cell.SetError(!isCorrect);
 
-        Debug.Log($"<color=cyan>Auto play started</color> (delay: {this.autoPlayDelay}s)");
+        // Refresh highlights
+        this.HighlightSameNumber(number);
 
-        // Collect all empty cells (non-clues)
-        System.Collections.Generic.List<(int row, int col)> emptyCells = new System.Collections.Generic.List<(int, int)>();
-        
-        for (int row = 0; row < GRID_SIZE; row++)
+        // Auto analyze if enabled
+        if (this.autoAnalyze)
         {
-            for (int col = 0; col < GRID_SIZE; col++)
-            {
-                if (!this.cells[row, col].IsClue && this.cells[row, col].Value == 0)
-                {
-                    emptyCells.Add((row, col));
-                }
-            }
+            this.AnalyzeCurrentState();
         }
+    }
 
-        Debug.Log($"Found {emptyCells.Count} empty cells to fill.");
-
-        // Fill each empty cell with correct answer
-        foreach (var (row, col) in emptyCells)
-        {
-            // Select the cell
-            this.ClearAllHighlights();
-            this.selectedCell = this.cells[row, col];
-            this.selectedCell.SetSelected(true);
-            this.HighlightRelatedCells(row, col);
-
-            // Fill with correct number
-            int correctNumber = solution[row, col];
-            this.selectedCell.SetPlayerValue(correctNumber);
-            this.selectedCell.SetError(false);
-
-            // Refresh highlights to show same numbers
-            this.HighlightSameNumber(correctNumber);
-
-            // Auto analyze if enabled
-            if (this.autoAnalyze)
-            {
-                this.AnalyzeCurrentState();
-            }
-
-            // Check if victory
-            if (this.currentResult == SudokuResultAnalyzer.GameResult.Victory)
-            {
-                Debug.Log($"<color=green>Auto play completed!</color> Puzzle solved in {emptyCells.Count} moves.");
-                this.isAutoPlaying = false;
-                yield break;
-            }
-
-            // Wait before next move
-            yield return new WaitForSeconds(this.autoPlayDelay);
-        }
-
-        this.isAutoPlaying = false;
-        Debug.Log("<color=green>Auto play finished!</color>");
+    /// <summary>
+    /// Cell data structure for external access
+    /// </summary>
+    public struct CellData
+    {
+        public int value;
+        public bool isClue;
     }
     #endregion
 }

@@ -359,6 +359,7 @@ GameObject:
   - component: {fileID: 393123379}
   - component: {fileID: 393123380}
   - component: {fileID: 393123381}
+  - component: {fileID: 393123382}
   m_Layer: 0
   m_Name: SudokuGenerator
   m_TagString: Untagged
@@ -423,6 +424,25 @@ MonoBehaviour:
   timeTaken: 0
   hintsUsed: 0
   analysisReport: 
+--- !u!114 &393123382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 393123378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d171e5f7c2335d458b0fe767f619de9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SudokuAutoPlayer
+  autoPlayDelay: 1
+  isAutoPlaying: 0
+  sudokuGenerator: {fileID: 393123380}
+  resultAnalyzer: {fileID: 393123381}
+  targetGridView: {fileID: 0}
+  totalMoves: 0
+  currentMove: 0
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1258,6 +1278,7 @@ MonoBehaviour:
   correctCells: 0
   incorrectCells: 0
   currentResult: 0
+  userPuzzlePreview: 
 --- !u!114 &7165603691242713602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1335,6 +1356,7 @@ MonoBehaviour:
   correctCells: 0
   incorrectCells: 0
   currentResult: 0
+  userPuzzlePreview: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
