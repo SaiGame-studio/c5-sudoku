@@ -194,6 +194,7 @@ public class SudokuDifficultyPanel : SaiBehaviour
 
             if (this.gridView != null)
             {
+                this.gridView.ClearHint();
                 this.gridView.InitializeGrid();
             }
         }

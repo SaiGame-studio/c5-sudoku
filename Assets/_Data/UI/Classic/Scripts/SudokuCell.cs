@@ -190,6 +190,17 @@ public class SudokuCell
         return this.notes.Contains(number);
     }
 
+    public void RemoveNote(int number)
+    {
+        if (this.isClue) return;
+        if (number < 1 || number > GRID_SIZE) return;
+
+        if (this.notes.Remove(number))
+        {
+            this.RefreshDisplay();
+        }
+    }
+
     public void ClearNotes()
     {
         this.notes.Clear();

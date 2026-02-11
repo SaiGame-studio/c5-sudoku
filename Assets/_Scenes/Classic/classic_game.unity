@@ -738,7 +738,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &960835122
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1332,6 +1332,7 @@ MonoBehaviour:
   resultAnalyzer: {fileID: 0}
   patternAnalyzer: {fileID: 0}
   hintSystem: {fileID: 0}
+  autoNotes: {fileID: 0}
   popupOffset: {x: 0, y: -10}
   autoAnalyze: 1
   autoAnalyzePatterns: 1
@@ -1411,8 +1412,9 @@ MonoBehaviour:
   uiDocument: {fileID: 4861749548441042308}
   sudokuGenerator: {fileID: 393123380}
   resultAnalyzer: {fileID: 393123381}
-  patternAnalyzer: {fileID: 0}
-  hintSystem: {fileID: 0}
+  patternAnalyzer: {fileID: 393123383}
+  hintSystem: {fileID: 393123385}
+  autoNotes: {fileID: 393123384}
   popupOffset: {x: 0, y: -10}
   autoAnalyze: 1
   autoAnalyzePatterns: 1

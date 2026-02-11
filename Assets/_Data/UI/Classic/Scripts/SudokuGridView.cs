@@ -46,6 +46,8 @@ public class SudokuGridView : SaiBehaviour
     private bool isLightMode;
     private int[,] cachedSolution;
     private PatternInfo currentHintPattern;
+    private Vector2Int lastScreenSize;
+    private VisualElement mainContainer;
 
     protected override void LoadComponents()
     {
@@ -106,10 +108,54 @@ public class SudokuGridView : SaiBehaviour
         this.InitializeGrid();
     }
 
+    private void Update()
+    {
+        // Check for screen size changes
+        if (Screen.width != this.lastScreenSize.x || Screen.height != this.lastScreenSize.y)
+        {
+            this.lastScreenSize = new Vector2Int(Screen.width, Screen.height);
+            this.ApplyResponsiveScale();
+        }
+    }
+
+    [ProButton]
+    public void ApplyResponsiveScale()
+    {
+        if (this.mainContainer == null)
+        {
+            Debug.LogWarning("MainContainer is null, cannot apply responsive scale");
+            return;
+        }
+
+        // Base resolution: 1920x1080 (landscape)
+        float baseWidth = 1920f;
+        float baseHeight = 1080f;
+
+        // Calculate scale factor based on screen size
+        float scaleX = Screen.width / baseWidth;
+        float scaleY = Screen.height / baseHeight;
+        float scale = Mathf.Min(scaleX, scaleY);
+
+        // Apply minimum scale to avoid too small UI
+        scale = Mathf.Max(scale, 0.5f);
+        scale+=0.2f;
+
+        Debug.Log($"Applying landscape scale: {scale:F2} (Screen: {Screen.width}x{Screen.height})");
+
+        // Set transform-origin to center for proper scaling
+        this.mainContainer.style.transformOrigin = new StyleTransformOrigin(
+            new TransformOrigin(new Length(50, LengthUnit.Percent), new Length(50, LengthUnit.Percent))
+        );
+
+        // Apply scale to main container
+        this.mainContainer.style.scale = new StyleScale(new Scale(new Vector3(scale, scale, 1)));
+    }
+
     [ProButton]
     public void InitializeGrid()
     {
         this.root = this.uiDocument.rootVisualElement;
+        this.mainContainer = this.root.Q<VisualElement>("sudoku-main-container");
         this.gridContainer = this.root.Q<VisualElement>("sudoku-grid");
         this.popupOverlay = this.root.Q<VisualElement>("popup-overlay");
         this.popupContainer = this.root.Q<VisualElement>("popup-container");
@@ -119,6 +165,11 @@ public class SudokuGridView : SaiBehaviour
         this.hintButton = this.root.Q<Button>("hint-button");
         this.autoNotesButton = this.root.Q<Button>("auto-notes-button");
         this.patternNameLabel = this.root.Q<Label>("pattern-name-label");
+
+        this.lastScreenSize = new Vector2Int(Screen.width, Screen.height);
+
+        // Apply initial responsive scale
+        this.ApplyResponsiveScale();
 
         this.cells = new SudokuCell[GRID_SIZE, GRID_SIZE];
 
@@ -166,7 +217,11 @@ public class SudokuGridView : SaiBehaviour
             for (int col = 0; col < GRID_SIZE; col++)
             {
                 VisualElement existingElement = this.root.Q<VisualElement>("cell-" + row + "-" + col);
-                if (existingElement == null) continue;
+                if (existingElement == null) 
+                {
+                    Debug.LogWarning($"Cell element cell-{row}-{col} not found in UXML!");
+                    continue;
+                }
 
                 SudokuCell cell = new SudokuCell(row, col, existingElement);
                 this.cells[row, col] = cell;
@@ -399,7 +454,7 @@ public class SudokuGridView : SaiBehaviour
         this.selectedCell.SetPlayerValue(number);
 
         // Validate with cached solution
-        bool isCorrect = this.cachedSolution != null && 
+        bool isCorrect = this.cachedSolution != null &&
                          this.cachedSolution[this.selectedCell.Row, this.selectedCell.Col] == number;
         this.selectedCell.SetError(!isCorrect);
 
@@ -521,7 +576,7 @@ public class SudokuGridView : SaiBehaviour
         this.HidePopup();
         this.ClearAllHighlights();
         this.LoadPuzzle();
-        
+
         // Reset analysis stats
         this.completionPercentage = 0f;
         this.correctCells = 0;
@@ -598,7 +653,7 @@ public class SudokuGridView : SaiBehaviour
         // Update stats for inspector visibility
         this.currentResult = result;
         this.completionPercentage = this.resultAnalyzer.GetCompletionPercentage();
-        
+
         // Count correct and incorrect cells
         this.correctCells = 0;
         this.incorrectCells = 0;
@@ -638,7 +693,7 @@ public class SudokuGridView : SaiBehaviour
     private string GetUserPuzzlePreview(int[,] userPuzzle, int[,] solution)
     {
         System.Text.StringBuilder sb = new System.Text.StringBuilder();
-        
+
         for (int i = 0; i < GRID_SIZE; i++)
         {
             if (i % BOX_SIZE == 0 && i != 0)
@@ -742,11 +797,25 @@ public class SudokuGridView : SaiBehaviour
         }
 
         SudokuCell cell = this.cells[row, col];
-        return new CellData
+        if (cell == null)
+        {
+            Debug.LogWarning($"Cell at [{row},{col}] is null!");
+            return new CellData { value = 0, isClue = false };
+        }
+
+        CellData data = new CellData
         {
             value = cell.Value,
             isClue = cell.IsClue
         };
+
+        // Temporary debug for problematic cells
+        if (row == 0 && col == 0)
+        {
+            Debug.Log($"GetCellData[{row},{col}]: value={data.value}, isClue={data.isClue}");
+        }
+
+        return data;
     }
 
     /// <summary>
@@ -772,7 +841,7 @@ public class SudokuGridView : SaiBehaviour
         cell.SetPlayerValue(number);
 
         // Validate with cached solution
-        bool isCorrect = this.cachedSolution != null && 
+        bool isCorrect = this.cachedSolution != null &&
                          this.cachedSolution[row, col] == number;
         cell.SetError(!isCorrect);
 
@@ -813,7 +882,7 @@ public class SudokuGridView : SaiBehaviour
             return;
 
         SudokuCell cell = this.cells[row, col];
-        
+
         // Remove note if present
         if (cell.HasNote(number))
         {
@@ -827,7 +896,7 @@ public class SudokuGridView : SaiBehaviour
     public int[,] GetCurrentUserPuzzle()
     {
         int[,] puzzle = new int[GRID_SIZE, GRID_SIZE];
-        
+
         for (int row = 0; row < GRID_SIZE; row++)
         {
             for (int col = 0; col < GRID_SIZE; col++)
@@ -835,7 +904,7 @@ public class SudokuGridView : SaiBehaviour
                 puzzle[row, col] = this.cells[row, col].Value;
             }
         }
-        
+
         return puzzle;
     }
 
@@ -885,6 +954,9 @@ public class SudokuGridView : SaiBehaviour
             return;
         }
 
+        // Clear all existing notes before auto filling
+        this.ClearAllNotes();
+        
         // Use the existing SudokuAutoNotes component
         this.autoNotes.StartAutoNotes();
     }
@@ -950,7 +1022,7 @@ public class SudokuGridView : SaiBehaviour
         {
             this.patternNameLabel.text = "No hint available";
         }
-        
+
         Debug.Log($"<color=yellow>No Hint Available:</color> {message}");
     }
 
