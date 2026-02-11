@@ -48,16 +48,10 @@ public class SudokuPatternAnalyzer : SaiBehaviour
     [SerializeField] private string patternsReport = "";
 
     [Header("Pattern Statistics")]
-    [SerializeField] private int fullHouseCount = 0;
-    [SerializeField] private int nakedSingleCount = 0;
-    [SerializeField] private int hiddenSingleCount = 0;
-    [SerializeField] private int nakedPairCount = 0;
-    [SerializeField] private int hiddenPairCount = 0;
-    [SerializeField] private int pointingPairCount = 0;
-    [SerializeField] private int xWingCount = 0;
-    [SerializeField] private int advancedPatternCount = 0;
+    [SerializeField] private List<PatternStatistic> patternStatistics = new List<PatternStatistic>();
 
     private List<PatternInfo> detectedPatterns;
+    private Dictionary<PatternType, int> patternCounts;
     private const int GRID_SIZE = 9;
     private const int BOX_SIZE = 3;
 
@@ -65,6 +59,54 @@ public class SudokuPatternAnalyzer : SaiBehaviour
     {
         base.Awake();
         this.detectedPatterns = new List<PatternInfo>();
+        this.patternCounts = new Dictionary<PatternType, int>();
+        this.InitializeStatistics();
+    }
+
+    /// <summary>
+    /// Initialize pattern statistics list with all pattern types
+    /// </summary>
+    private void InitializeStatistics()
+    {
+        this.patternStatistics.Clear();
+        
+        // Add all pattern types (skip None)
+        foreach (PatternType type in System.Enum.GetValues(typeof(PatternType)))
+        {
+            if (type == PatternType.None) continue;
+            
+            this.patternStatistics.Add(new PatternStatistic
+            {
+                patternName = type.ToString(),
+                count = 0
+            });
+            
+            this.patternCounts[type] = 0;
+        }
+    }
+
+    /// <summary>
+    /// Increment pattern count and update statistics display
+    /// </summary>
+    private void IncrementPatternCount(PatternType type)
+    {
+        if (type == PatternType.None) return;
+        
+        if (!this.patternCounts.ContainsKey(type))
+        {
+            this.patternCounts[type] = 0;
+        }
+        
+        this.patternCounts[type]++;
+        
+        // Update display list
+        int index = this.patternStatistics.FindIndex(s => s.patternName == type.ToString());
+        if (index >= 0)
+        {
+            PatternStatistic stat = this.patternStatistics[index];
+            stat.count = this.patternCounts[type];
+            this.patternStatistics[index] = stat;
+        }
     }
 
     /// <summary>
@@ -124,7 +166,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
                     $"Row {row + 1}: Cell [{row},{emptyCol}] must be {missingNumber}",
                     new List<(int, int)> { (row, emptyCol) }
                 ));
-                this.fullHouseCount++;
+                this.IncrementPatternCount(PatternType.FullHouse);
             }
         }
 
@@ -149,7 +191,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
                     $"Column {col + 1}: Cell [{emptyRow},{col}] must be {missingNumber}",
                     new List<(int, int)> { (emptyRow, col) }
                 ));
-                this.fullHouseCount++;
+                this.IncrementPatternCount(PatternType.FullHouse);
             }
         }
 
@@ -182,7 +224,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
                         $"Box ({boxRow},{boxCol}): Cell [{emptyR},{emptyC}] must be {missingNumber}",
                         new List<(int, int)> { (emptyR, emptyC) }
                     ));
-                    this.fullHouseCount++;
+                    this.IncrementPatternCount(PatternType.FullHouse);
                 }
             }
         }
@@ -208,7 +250,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
                         new List<(int, int)> { (row, col) },
                         value
                     ));
-                    this.nakedSingleCount++;
+                    this.IncrementPatternCount(PatternType.NakedSingle);
                 }
             }
         }
@@ -246,7 +288,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
                             new List<(int, int)> { (row, col) },
                             num
                         ));
-                        this.hiddenSingleCount++;
+                        this.IncrementPatternCount(PatternType.HiddenSingle);
                     }
                 }
             }
@@ -273,7 +315,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
                             new List<(int, int)> { (row, col) },
                             num
                         ));
-                        this.hiddenSingleCount++;
+                        this.IncrementPatternCount(PatternType.HiddenSingle);
                     }
                 }
             }
@@ -342,7 +384,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
                         $"{unitType}: Naked Pair {{{string.Join(",", union)}}} at [{cells[i].r},{cells[i].c}] and [{cells[j].r},{cells[j].c}]",
                         new List<(int, int)> { (cells[i].r, cells[i].c), (cells[j].r, cells[j].c) }
                     ));
-                    this.nakedPairCount++;
+                    this.IncrementPatternCount(PatternType.NakedPair);
                 }
             }
         }
@@ -405,7 +447,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
                                 $"Box ({boxRow},{boxCol}): {num} points to Row {positions[0].r + 1}",
                                 positions
                             ));
-                            this.pointingPairCount++;
+                            this.IncrementPatternCount(PatternType.PointingPair);
                         }
                         // Check if in same column
                         else if (positions[0].c == positions[1].c)
@@ -415,7 +457,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
                                 $"Box ({boxRow},{boxCol}): {num} points to Column {positions[0].c + 1}",
                                 positions
                             ));
-                            this.pointingPairCount++;
+                            this.IncrementPatternCount(PatternType.PointingPair);
                         }
                     }
                 }
@@ -473,7 +515,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
                                 $"X-Wing: {num} in rows {row1 + 1},{row2 + 1} columns {cols1[0] + 1},{cols1[1] + 1}",
                                 new List<(int, int)> { (row1, cols1[0]), (row1, cols1[1]), (row2, cols1[0]), (row2, cols1[1]) }
                             ));
-                            this.xWingCount++;
+                            this.IncrementPatternCount(PatternType.XWing);
                         }
                     }
                 }
@@ -574,14 +616,17 @@ public class SudokuPatternAnalyzer : SaiBehaviour
 
     private void ResetStatistics()
     {
-        this.fullHouseCount = 0;
-        this.nakedSingleCount = 0;
-        this.hiddenSingleCount = 0;
-        this.nakedPairCount = 0;
-        this.hiddenPairCount = 0;
-        this.pointingPairCount = 0;
-        this.xWingCount = 0;
-        this.advancedPatternCount = 0;
+        foreach (PatternType type in this.patternCounts.Keys.ToList())
+        {
+            this.patternCounts[type] = 0;
+        }
+        
+        for (int i = 0; i < this.patternStatistics.Count; i++)
+        {
+            PatternStatistic stat = this.patternStatistics[i];
+            stat.count = 0;
+            this.patternStatistics[i] = stat;
+        }
     }
 
     private void GenerateReport()
@@ -672,4 +717,14 @@ public class PatternInfo
     {
         return $"[{this.type}] {this.description}";
     }
+}
+
+/// <summary>
+/// Pattern statistics for Inspector display
+/// </summary>
+[System.Serializable]
+public struct PatternStatistic
+{
+    public string patternName;
+    public int count;
 }
