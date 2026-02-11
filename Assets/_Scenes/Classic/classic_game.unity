@@ -436,7 +436,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d171e5f7c2335d458b0fe767f619de9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SudokuAutoPlayer
-  autoPlayDelay: 1
+  autoPlayDelay: 0.5
   isAutoPlaying: 0
   sudokuGenerator: {fileID: 393123380}
   resultAnalyzer: {fileID: 393123381}
@@ -953,7 +953,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1197444009
 RectTransform:
   m_ObjectHideFlags: 0
@@ -990,7 +990,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1596259707
 RectTransform:
   m_ObjectHideFlags: 0

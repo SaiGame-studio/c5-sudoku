@@ -269,8 +269,8 @@
 /* ===== Theme Toggle Button ===== */
 .theme-toggle {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    bottom: 35px;
+    right: 30px;
     width: 96px;
     height: 96px;
     border-radius: 54px;
