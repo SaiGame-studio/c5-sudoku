@@ -11,6 +11,7 @@ public class SudokuCell
     private const string CLASS_HIGHLIGHTED = "sudoku-cell--highlighted";
     private const string CLASS_SAME_NUMBER = "sudoku-cell--same-number";
     private const string CLASS_ERROR = "sudoku-cell--error";
+    private const string CLASS_HINT = "sudoku-cell--hint";
 
     private const int GRID_SIZE = 9;
     private const int BOX_SIZE = 3;
@@ -247,10 +248,23 @@ public class SudokuCell
         }
     }
 
+    public void SetHint(bool hint)
+    {
+        if (hint)
+        {
+            this.container.AddToClassList(CLASS_HINT);
+        }
+        else
+        {
+            this.container.RemoveFromClassList(CLASS_HINT);
+        }
+    }
+
     public void ClearHighlights()
     {
         this.container.RemoveFromClassList(CLASS_SELECTED);
         this.container.RemoveFromClassList(CLASS_HIGHLIGHTED);
         this.container.RemoveFromClassList(CLASS_SAME_NUMBER);
+        this.container.RemoveFromClassList(CLASS_HINT);
     }
 }

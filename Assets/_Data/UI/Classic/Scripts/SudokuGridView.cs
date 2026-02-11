@@ -15,6 +15,7 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private SudokuGenerator sudokuGenerator;
     [SerializeField] private SudokuResultAnalyzer resultAnalyzer;
     [SerializeField] private SudokuPatternAnalyzer patternAnalyzer;
+    [SerializeField] private SudokuHintSystem hintSystem;
 
     [Header("Popup Settings")]
     [SerializeField] private Vector2 popupOffset = new Vector2(0f, -10f);
@@ -36,10 +37,12 @@ public class SudokuGridView : SaiBehaviour
     private VisualElement themeToggle;
     private Label themeToggleLabel;
     private VisualElement difficultyStarsContainer;
+    private Button hintButton;
     private SudokuCell[,] cells;
     private SudokuCell selectedCell;
     private bool isLightMode;
     private int[,] cachedSolution;
+    private PatternInfo currentHintPattern;
 
     protected override void LoadComponents()
     {
@@ -48,6 +51,7 @@ public class SudokuGridView : SaiBehaviour
         this.LoadSudokuGenerator();
         this.LoadResultAnalyzer();
         this.LoadPatternAnalyzer();
+        this.LoadHintSystem();
     }
 
     private void LoadUIDocument()
@@ -78,6 +82,13 @@ public class SudokuGridView : SaiBehaviour
         Debug.Log(transform.name + ": LoadPatternAnalyzer", gameObject);
     }
 
+    private void LoadHintSystem()
+    {
+        if (this.hintSystem != null) return;
+        this.hintSystem = FindFirstObjectByType<SudokuHintSystem>();
+        Debug.Log(transform.name + ": LoadHintSystem", gameObject);
+    }
+
     protected override void Start()
     {
         base.Start();
@@ -94,6 +105,7 @@ public class SudokuGridView : SaiBehaviour
         this.themeToggle = this.root.Q<VisualElement>("theme-toggle");
         this.themeToggleLabel = this.root.Q<Label>("theme-toggle-label");
         this.difficultyStarsContainer = this.root.Q<VisualElement>("difficulty-stars");
+        this.hintButton = this.root.Q<Button>("hint-button");
 
         this.cells = new SudokuCell[GRID_SIZE, GRID_SIZE];
 
@@ -103,6 +115,12 @@ public class SudokuGridView : SaiBehaviour
             evt.StopPropagation();
             this.ToggleTheme();
         });
+
+        // Hint button click
+        if (this.hintButton != null)
+        {
+            this.hintButton.clicked += this.OnHintButtonClicked;
+        }
 
         // Click overlay background to close popup
         this.popupOverlay.RegisterCallback<ClickEvent>(evt =>
@@ -808,5 +826,91 @@ public class SudokuGridView : SaiBehaviour
         public int value;
         public bool isClue;
     }
+    #endregion
+
+    #region Hint System
+
+    /// <summary>
+    /// Handle hint button click
+    /// </summary>
+    private void OnHintButtonClicked()
+    {
+        if (this.hintSystem == null)
+        {
+            Debug.LogWarning("Hint System is not available");
+            return;
+        }
+
+        int[,] currentPuzzle = this.GetCurrentUserPuzzle();
+        List<int>[,] cellNotes = this.GetAllCellNotes();
+
+        HintResult result = this.hintSystem.GetHint(currentPuzzle, cellNotes);
+
+        if (result.success)
+        {
+            this.ShowHint(result);
+        }
+        else
+        {
+            this.ShowNoHintMessage(result.message);
+        }
+    }
+
+    /// <summary>
+    /// Show hint with visual feedback
+    /// </summary>
+    private void ShowHint(HintResult result)
+    {
+        if (result.patternInfo == null) return;
+
+        this.currentHintPattern = result.patternInfo;
+
+        this.ClearAllHighlights();
+
+        if (result.patternInfo.affectedCells != null && result.patternInfo.affectedCells.Count > 0)
+        {
+            foreach (var cellPos in result.patternInfo.affectedCells)
+            {
+                if (cellPos.row >= 0 && cellPos.row < GRID_SIZE && cellPos.col >= 0 && cellPos.col < GRID_SIZE)
+                {
+                    this.cells[cellPos.row, cellPos.col].SetHint(true);
+                }
+            }
+
+            var firstCell = result.patternInfo.affectedCells[0];
+            this.selectedCell = this.cells[firstCell.row, firstCell.col];
+            this.selectedCell.SetSelected(true);
+        }
+
+        Debug.Log($"<color=cyan>Hint:</color> {result.message}");
+    }
+
+    /// <summary>
+    /// Show message when no hint is available
+    /// </summary>
+    private void ShowNoHintMessage(string message)
+    {
+        Debug.Log($"<color=yellow>No Hint Available:</color> {message}");
+    }
+
+    /// <summary>
+    /// Clear hint highlighting
+    /// </summary>
+    public void ClearHint()
+    {
+        if (this.currentHintPattern != null && this.currentHintPattern.affectedCells != null)
+        {
+            foreach (var cellPos in this.currentHintPattern.affectedCells)
+            {
+                if (cellPos.row >= 0 && cellPos.row < GRID_SIZE && cellPos.col >= 0 && cellPos.col < GRID_SIZE)
+                {
+                    this.cells[cellPos.row, cellPos.col].SetHint(false);
+                }
+            }
+        }
+
+        this.currentHintPattern = null;
+    }
+
     #endregion
 }

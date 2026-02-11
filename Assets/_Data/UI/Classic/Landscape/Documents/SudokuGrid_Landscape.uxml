@@ -336,6 +336,7 @@
         <ui:VisualElement name="difficulty-control-panel" class="difficulty-control-panel">
             <ui:DropdownField name="difficulty-dropdown" label="Difficulty" class="difficulty-dropdown"/>
             <ui:Button name="generate-button" text="Generate New Puzzle" class="generate-button"/>
+            <ui:Button name="hint-button" text="Get Hint" class="hint-button"/>
         </ui:VisualElement>
     </ui:VisualElement>
     <ui:VisualElement name="theme-toggle" class="theme-toggle">

@@ -120,6 +120,16 @@
     color: rgb(255, 100, 100);
 }
 
+.sudoku-cell--hint {
+    background-color: rgb(40, 100, 60);
+    border-color: rgb(100, 255, 150);
+    border-width: 2px;
+}
+
+.sudoku-cell--hint > .sudoku-cell-label {
+    color: rgb(150, 255, 180);
+}
+
 .popup-overlay {
     position: absolute;
     left: 0;
@@ -354,6 +364,16 @@
     color: rgb(200, 30, 30);
 }
 
+.light-mode .sudoku-cell--hint {
+    background-color: rgb(200, 255, 220);
+    border-color: rgb(50, 180, 80);
+    border-width: 2px;
+}
+
+.light-mode .sudoku-cell--hint > .sudoku-cell-label {
+    color: rgb(20, 120, 50);
+}
+
 .light-mode .sudoku-note-label {
     color: rgb(60, 100, 160);
 }
@@ -498,6 +518,29 @@
     background-color: rgb(40, 80, 150);
 }
 
+.hint-button {
+    background-color: rgb(40, 140, 80);
+    border-color: rgb(60, 160, 100);
+    border-width: 2px;
+    border-radius: 5px;
+    padding: 15px 30px;
+    color: rgb(240, 250, 245);
+    font-size: 20px;
+    -unity-font-style: bold;
+    transition-duration: 0.15s;
+    min-width: 250px;
+    margin-top: 10px;
+}
+
+.hint-button:hover {
+    background-color: rgb(60, 160, 100);
+    border-color: rgb(80, 180, 120);
+}
+
+.hint-button:active {
+    background-color: rgb(30, 110, 60);
+}
+
 /* Light Mode Styles for Difficulty Panel - Portrait */
 .light-mode .difficulty-control-panel {
     background-color: transparent;
@@ -531,4 +574,19 @@
 
 .light-mode .generate-button:active {
     background-color: rgb(70, 120, 200);
+}
+
+.light-mode .hint-button {
+    background-color: rgb(60, 180, 110);
+    border-color: rgb(40, 160, 90);
+    color: rgb(255, 255, 255);
+}
+
+.light-mode .hint-button:hover {
+    background-color: rgb(80, 200, 130);
+    border-color: rgb(60, 180, 110);
+}
+
+.light-mode .hint-button:active {
+    background-color: rgb(40, 160, 90);
 }
