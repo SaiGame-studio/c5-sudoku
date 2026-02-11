@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using com.cyborgAssets.inspectorButtonPro;
 
-public class SudokuGenerator : MonoBehaviour
+public class SudokuGenerator : SaiSingleton<SudokuGenerator>
 {
     public enum DifficultyLevel
     {
@@ -13,7 +13,9 @@ public class SudokuGenerator : MonoBehaviour
         Hard,
         VeryHard,
         Expert,
-        Master
+        Master,
+        Extreme,
+        Legendary
     }
 
     [Header("Difficulty Settings")]
@@ -33,8 +35,9 @@ public class SudokuGenerator : MonoBehaviour
     private const int GRID_SIZE = 9;
     private const int BOX_SIZE = 3;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         this.InitializeDifficultySettings();
     }
 
@@ -48,7 +51,9 @@ public class SudokuGenerator : MonoBehaviour
             { DifficultyLevel.Hard, new DifficultySettings(DifficultyLevel.Hard, 35, 40) },
             { DifficultyLevel.VeryHard, new DifficultySettings(DifficultyLevel.VeryHard, 30, 35) },
             { DifficultyLevel.Expert, new DifficultySettings(DifficultyLevel.Expert, 25, 30) },
-            { DifficultyLevel.Master, new DifficultySettings(DifficultyLevel.Master, 20, 25) }
+            { DifficultyLevel.Master, new DifficultySettings(DifficultyLevel.Master, 20, 25) },
+            { DifficultyLevel.Extreme, new DifficultySettings(DifficultyLevel.Extreme, 18, 20) },
+            { DifficultyLevel.Legendary, new DifficultySettings(DifficultyLevel.Legendary, 17, 18) }
         };
     }
 
@@ -67,6 +72,12 @@ public class SudokuGenerator : MonoBehaviour
     /// </summary>
     public void GeneratePuzzle(DifficultyLevel difficulty)
     {
+        // Ensure difficulty settings are initialized
+        if (this.difficultyMap == null)
+        {
+            this.InitializeDifficultySettings();
+        }
+
         this.currentDifficulty = difficulty;
         this.solution = new int[GRID_SIZE, GRID_SIZE];
         this.puzzle = new int[GRID_SIZE, GRID_SIZE];

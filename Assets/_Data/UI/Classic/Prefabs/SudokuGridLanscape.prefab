@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4861749549086870950}
   - component: {fileID: 8143833360795395596}
   m_Layer: 5
-  m_Name: SudokuGrid
+  m_Name: SudokuGridLanscape
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -70,3 +70,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SudokuGridView
   uiDocument: {fileID: 4861749549086870950}
   sudokuGenerator: {fileID: 0}
+  popupOffset: {x: 0, y: -10}

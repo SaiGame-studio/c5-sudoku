@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine.UIElements;
 
 public class SudokuCell
@@ -11,18 +12,72 @@ public class SudokuCell
     private const string CLASS_SAME_NUMBER = "sudoku-cell--same-number";
     private const string CLASS_ERROR = "sudoku-cell--error";
 
+    private const int GRID_SIZE = 9;
+    private const int BOX_SIZE = 3;
+
     private VisualElement container;
-    private Label label;
+    private Label mainLabel;
+    private VisualElement notesGrid;
+    private Label[] noteLabels;
     private int row;
     private int col;
     private int value;
     private bool isClue;
+    private bool isError;
+    private HashSet<int> notes;
 
     public int Row => this.row;
     public int Col => this.col;
     public int Value => this.value;
     public bool IsClue => this.isClue;
+    public bool IsError => this.isError;
     public VisualElement Element => this.container;
+    public HashSet<int> Notes => this.notes;
+
+    public SudokuCell(int row, int col, VisualElement existingElement)
+    {
+        this.row = row;
+        this.col = col;
+        this.value = 0;
+        this.isClue = false;
+        this.notes = new HashSet<int>();
+
+        this.container = existingElement;
+
+        // Find or create main label
+        this.mainLabel = this.container.Q<Label>(className: "sudoku-cell-label");
+        if (this.mainLabel == null)
+        {
+            this.mainLabel = new Label();
+            this.mainLabel.AddToClassList(CLASS_LABEL);
+            this.container.Add(this.mainLabel);
+        }
+
+        // Build notes 3x3 grid (always added at runtime)
+        this.notesGrid = new VisualElement();
+        this.notesGrid.AddToClassList("sudoku-notes-grid");
+        this.notesGrid.style.display = DisplayStyle.None;
+        this.noteLabels = new Label[GRID_SIZE + 1];
+
+        for (int r = 0; r < BOX_SIZE; r++)
+        {
+            VisualElement noteRow = new VisualElement();
+            noteRow.AddToClassList("sudoku-notes-row");
+
+            for (int c = 0; c < BOX_SIZE; c++)
+            {
+                int num = r * BOX_SIZE + c + 1;
+                Label noteLabel = new Label();
+                noteLabel.AddToClassList("sudoku-note-label");
+                this.noteLabels[num] = noteLabel;
+                noteRow.Add(noteLabel);
+            }
+
+            this.notesGrid.Add(noteRow);
+        }
+
+        this.container.Add(this.notesGrid);
+    }
 
     public SudokuCell(int row, int col)
     {
@@ -30,20 +85,48 @@ public class SudokuCell
         this.col = col;
         this.value = 0;
         this.isClue = false;
+        this.notes = new HashSet<int>();
 
         this.container = new VisualElement();
         this.container.AddToClassList(CLASS_CELL);
 
-        this.label = new Label();
-        this.label.AddToClassList(CLASS_LABEL);
-        this.container.Add(this.label);
+        // Main number label
+        this.mainLabel = new Label();
+        this.mainLabel.AddToClassList(CLASS_LABEL);
+        this.container.Add(this.mainLabel);
+
+        // Notes 3x3 grid
+        this.notesGrid = new VisualElement();
+        this.notesGrid.AddToClassList("sudoku-notes-grid");
+        this.notesGrid.style.display = DisplayStyle.None;
+        this.noteLabels = new Label[GRID_SIZE + 1]; // index 1-9
+
+        for (int r = 0; r < BOX_SIZE; r++)
+        {
+            VisualElement noteRow = new VisualElement();
+            noteRow.AddToClassList("sudoku-notes-row");
+
+            for (int c = 0; c < BOX_SIZE; c++)
+            {
+                int num = r * BOX_SIZE + c + 1;
+                Label noteLabel = new Label();
+                noteLabel.AddToClassList("sudoku-note-label");
+                this.noteLabels[num] = noteLabel;
+                noteRow.Add(noteLabel);
+            }
+
+            this.notesGrid.Add(noteRow);
+        }
+
+        this.container.Add(this.notesGrid);
     }
 
     public void SetValue(int number, bool isClue)
     {
         this.value = number;
         this.isClue = isClue;
-        this.label.text = number > 0 ? number.ToString() : "";
+        this.notes.Clear();
+        this.mainLabel.text = number > 0 ? number.ToString() : "";
 
         this.container.RemoveFromClassList(CLASS_CLUE);
         this.container.RemoveFromClassList(CLASS_EMPTY);
@@ -56,6 +139,8 @@ public class SudokuCell
         {
             this.container.AddToClassList(CLASS_EMPTY);
         }
+
+        this.RefreshDisplay();
     }
 
     public void SetPlayerValue(int number)
@@ -63,7 +148,54 @@ public class SudokuCell
         if (this.isClue) return;
 
         this.value = number;
-        this.label.text = number > 0 ? number.ToString() : "";
+        this.notes.Clear();
+        this.mainLabel.text = number > 0 ? number.ToString() : "";
+        this.RefreshDisplay();
+    }
+
+    public void ToggleNote(int number)
+    {
+        if (this.isClue) return;
+        if (number < 1 || number > GRID_SIZE) return;
+
+        // Clear main value when adding notes
+        if (this.value > 0)
+        {
+            this.value = 0;
+            this.mainLabel.text = "";
+        }
+
+        if (this.notes.Contains(number))
+        {
+            this.notes.Remove(number);
+        }
+        else
+        {
+            this.notes.Add(number);
+        }
+
+        this.RefreshDisplay();
+    }
+
+    public bool HasNote(int number)
+    {
+        return this.notes.Contains(number);
+    }
+
+    private void RefreshDisplay()
+    {
+        bool showNotes = this.value == 0 && this.notes.Count > 0;
+
+        this.mainLabel.style.display = showNotes ? DisplayStyle.None : DisplayStyle.Flex;
+        this.notesGrid.style.display = showNotes ? DisplayStyle.Flex : DisplayStyle.None;
+
+        if (showNotes)
+        {
+            for (int i = 1; i <= GRID_SIZE; i++)
+            {
+                this.noteLabels[i].text = this.notes.Contains(i) ? i.ToString() : "";
+            }
+        }
     }
 
     public void SetSelected(bool selected)
@@ -104,6 +236,7 @@ public class SudokuCell
 
     public void SetError(bool error)
     {
+        this.isError = error;
         if (error)
         {
             this.container.AddToClassList(CLASS_ERROR);
@@ -119,6 +252,5 @@ public class SudokuCell
         this.container.RemoveFromClassList(CLASS_SELECTED);
         this.container.RemoveFromClassList(CLASS_HIGHLIGHTED);
         this.container.RemoveFromClassList(CLASS_SAME_NUMBER);
-        this.container.RemoveFromClassList(CLASS_ERROR);
     }
 }
