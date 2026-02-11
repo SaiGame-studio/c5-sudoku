@@ -1,5 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/_Data/UI/Classic/Styles/SudokuGrid.uss?fileID=7433441132597879392&amp;guid=984abce156cf73243808b82667dcfa8b&amp;type=3#SudokuGrid"/>
+    <Style src="project://database/Assets/_Data/UI/Classic/Landscape/Styles/SudokuGrid_Landscape.uss"/>
     <ui:VisualElement class="sudoku-grid-root">
         <ui:VisualElement name="sudoku-grid" class="sudoku-grid">
             <!-- Band 0 (rows 0-2) -->
