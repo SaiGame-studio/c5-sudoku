@@ -12,9 +12,17 @@ public class SudokuGridView : SaiBehaviour
 
     [Header("Dependencies")]
     [SerializeField] private SudokuGenerator sudokuGenerator;
+    [SerializeField] private SudokuResultAnalyzer resultAnalyzer;
 
     [Header("Popup Settings")]
     [SerializeField] private Vector2 popupOffset = new Vector2(0f, -10f);
+
+    [Header("Live Analysis")]
+    [SerializeField] private bool autoAnalyze = true;
+    [SerializeField] private float completionPercentage = 0f;
+    [SerializeField] private int correctCells = 0;
+    [SerializeField] private int incorrectCells = 0;
+    [SerializeField] private SudokuResultAnalyzer.GameResult currentResult = SudokuResultAnalyzer.GameResult.NotCompleted;
 
     private VisualElement root;
     private VisualElement gridContainer;
@@ -32,6 +40,7 @@ public class SudokuGridView : SaiBehaviour
         base.LoadComponents();
         this.LoadUIDocument();
         this.LoadSudokuGenerator();
+        this.LoadResultAnalyzer();
     }
 
     private void LoadUIDocument()
@@ -46,6 +55,13 @@ public class SudokuGridView : SaiBehaviour
         if (this.sudokuGenerator != null) return;
         this.sudokuGenerator = FindFirstObjectByType<SudokuGenerator>();
         Debug.Log(transform.name + ": LoadSudokuGenerator", gameObject);
+    }
+
+    private void LoadResultAnalyzer()
+    {
+        if (this.resultAnalyzer != null) return;
+        this.resultAnalyzer = FindFirstObjectByType<SudokuResultAnalyzer>();
+        Debug.Log(transform.name + ": LoadResultAnalyzer", gameObject);
     }
 
     protected override void Start()
@@ -323,6 +339,12 @@ public class SudokuGridView : SaiBehaviour
 
         this.HidePopup();
         this.RefreshHighlights();
+
+        // Auto analyze after filling number
+        if (this.autoAnalyze)
+        {
+            this.AnalyzeCurrentState();
+        }
     }
 
     private void OnToggleNote(int number, VisualElement button)
@@ -347,6 +369,12 @@ public class SudokuGridView : SaiBehaviour
         this.selectedCell.SetError(false);
         this.HidePopup();
         this.RefreshHighlights();
+
+        // Auto analyze after erasing
+        if (this.autoAnalyze)
+        {
+            this.AnalyzeCurrentState();
+        }
     }
     #endregion
 
@@ -467,6 +495,94 @@ public class SudokuGridView : SaiBehaviour
             this.root.RemoveFromClassList("light-mode");
             this.themeToggleLabel.text = "\u263E"; // Moon
         }
+    }
+    #endregion
+
+    #region Result Analysis
+    /// <summary>
+    /// Get current user puzzle state from all cells
+    /// </summary>
+    private int[,] GetCurrentUserPuzzle()
+    {
+        int[,] userPuzzle = new int[GRID_SIZE, GRID_SIZE];
+
+        for (int row = 0; row < GRID_SIZE; row++)
+        {
+            for (int col = 0; col < GRID_SIZE; col++)
+            {
+                userPuzzle[row, col] = this.cells[row, col].Value;
+            }
+        }
+
+        return userPuzzle;
+    }
+
+    /// <summary>
+    /// Automatically analyze current puzzle state
+    /// </summary>
+    private void AnalyzeCurrentState()
+    {
+        if (this.resultAnalyzer == null || this.sudokuGenerator == null) return;
+
+        int[,] userPuzzle = this.GetCurrentUserPuzzle();
+        int[,] solution = this.sudokuGenerator.GetSolution();
+
+        // Submit for analysis
+        SudokuResultAnalyzer.GameResult result = this.resultAnalyzer.SubmitSolution(
+            userPuzzle,
+            solution,
+            gameTime: Time.time, // Can track actual game time
+            hints: 0 // Can track hints used
+        );
+
+        // Update stats for inspector visibility
+        this.currentResult = result;
+        this.completionPercentage = this.resultAnalyzer.GetCompletionPercentage();
+        
+        // Count correct and incorrect cells
+        this.correctCells = 0;
+        this.incorrectCells = 0;
+        for (int row = 0; row < GRID_SIZE; row++)
+        {
+            for (int col = 0; col < GRID_SIZE; col++)
+            {
+                int userValue = userPuzzle[row, col];
+                if (userValue != 0)
+                {
+                    if (userValue == solution[row, col])
+                        this.correctCells++;
+                    else
+                        this.incorrectCells++;
+                }
+            }
+        }
+
+        // Log result if victory or defeat
+        if (result == SudokuResultAnalyzer.GameResult.Victory)
+        {
+            Debug.Log("<color=green>VICTORY!</color> Puzzle solved correctly!");
+            Debug.Log(this.resultAnalyzer.GetAnalysisReport());
+        }
+        else if (result == SudokuResultAnalyzer.GameResult.Defeat)
+        {
+            Debug.Log($"<color=yellow>Errors detected:</color> {this.incorrectCells} incorrect cells");
+        }
+    }
+
+    /// <summary>
+    /// Get current game result
+    /// </summary>
+    public SudokuResultAnalyzer.GameResult GetCurrentResult()
+    {
+        return this.currentResult;
+    }
+
+    /// <summary>
+    /// Get current completion percentage
+    /// </summary>
+    public float GetCompletionPercentage()
+    {
+        return this.completionPercentage;
     }
     #endregion
 }
