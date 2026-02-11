@@ -537,24 +537,6 @@ public class SudokuGridView : SaiBehaviour
 
     #region Result Analysis
     /// <summary>
-    /// Get current user puzzle state from all cells
-    /// </summary>
-    private int[,] GetCurrentUserPuzzle()
-    {
-        int[,] userPuzzle = new int[GRID_SIZE, GRID_SIZE];
-
-        for (int row = 0; row < GRID_SIZE; row++)
-        {
-            for (int col = 0; col < GRID_SIZE; col++)
-            {
-                userPuzzle[row, col] = this.cells[row, col].Value;
-            }
-        }
-
-        return userPuzzle;
-    }
-
-    /// <summary>
     /// Automatically analyze current puzzle state
     /// </summary>
     private void AnalyzeCurrentState()
@@ -761,6 +743,59 @@ public class SudokuGridView : SaiBehaviour
         {
             this.AnalyzeCurrentState();
         }
+    }
+
+    /// <summary>
+    /// Add a note to a specific cell (for external control like AutoNotes)
+    /// </summary>
+    public void AddNoteToCell(int row, int col, int number)
+    {
+        if (row < 0 || row >= GRID_SIZE || col < 0 || col >= GRID_SIZE)
+            return;
+
+        SudokuCell cell = this.cells[row, col];
+        if (cell.IsClue || cell.Value != 0) return;
+
+        // Add note if not already present
+        if (!cell.HasNote(number))
+        {
+            cell.ToggleNote(number);
+        }
+    }
+
+    /// <summary>
+    /// Remove a note from a specific cell (for external control like AutoNotes)
+    /// </summary>
+    public void RemoveNoteFromCell(int row, int col, int number)
+    {
+        if (row < 0 || row >= GRID_SIZE || col < 0 || col >= GRID_SIZE)
+            return;
+
+        SudokuCell cell = this.cells[row, col];
+        
+        // Remove note if present
+        if (cell.HasNote(number))
+        {
+            cell.ToggleNote(number);
+        }
+    }
+
+    /// <summary>
+    /// Get current user puzzle state (for external access like AutoNotes)
+    /// </summary>
+    public int[,] GetCurrentUserPuzzle()
+    {
+        int[,] puzzle = new int[GRID_SIZE, GRID_SIZE];
+        
+        for (int row = 0; row < GRID_SIZE; row++)
+        {
+            for (int col = 0; col < GRID_SIZE; col++)
+            {
+                puzzle[row, col] = this.cells[row, col].Value;
+            }
+        }
+        
+        return puzzle;
     }
 
     /// <summary>

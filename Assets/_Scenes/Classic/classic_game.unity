@@ -361,6 +361,7 @@ GameObject:
   - component: {fileID: 393123381}
   - component: {fileID: 393123383}
   - component: {fileID: 393123382}
+  - component: {fileID: 393123384}
   m_Layer: 0
   m_Name: SudokuGenerator
   m_TagString: Untagged
@@ -468,6 +469,26 @@ MonoBehaviour:
   pointingPairCount: 0
   xWingCount: 0
   advancedPatternCount: 0
+--- !u!114 &393123384
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 393123378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb1c2eb80f8388c4288559ea7ac398b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SudokuAutoNotes
+  noteDelay: 0.1
+  isRunning: 0
+  sudokuGenerator: {fileID: 393123380}
+  patternAnalyzer: {fileID: 393123383}
+  targetGridView: {fileID: 0}
+  totalCells: 0
+  cellsProcessed: 0
+  totalNotesAdded: 0
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
