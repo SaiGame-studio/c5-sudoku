@@ -353,7 +353,13 @@
                 </ui:VisualElement>
                 <ui:Button name="generate-button" text="&#xf021;" class="generate-button"/>
             </ui:VisualElement>
-            <ui:Button name="hint-button" text="Get Hint" class="hint-button"/>
+            <ui:VisualElement class="button-row">
+                <ui:Button name="hint-button" text="&#xf0eb;" class="hint-button"/>
+                <ui:Button name="auto-notes-button" text="&#xf304;" class="auto-notes-button"/>
+            </ui:VisualElement>
+            <ui:VisualElement name="pattern-display" class="pattern-display">
+                <ui:Label name="pattern-name-label" text="" class="pattern-name-label"/>
+            </ui:VisualElement>
         </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

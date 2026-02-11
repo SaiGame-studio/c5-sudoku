@@ -16,6 +16,7 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private SudokuResultAnalyzer resultAnalyzer;
     [SerializeField] private SudokuPatternAnalyzer patternAnalyzer;
     [SerializeField] private SudokuHintSystem hintSystem;
+    [SerializeField] private SudokuAutoNotes autoNotes;
 
     [Header("Popup Settings")]
     [SerializeField] private Vector2 popupOffset = new Vector2(0f, -10f);
@@ -38,6 +39,8 @@ public class SudokuGridView : SaiBehaviour
     private Label themeToggleLabel;
     private VisualElement difficultyStarsContainer;
     private Button hintButton;
+    private Button autoNotesButton;
+    private Label patternNameLabel;
     private SudokuCell[,] cells;
     private SudokuCell selectedCell;
     private bool isLightMode;
@@ -52,6 +55,7 @@ public class SudokuGridView : SaiBehaviour
         this.LoadResultAnalyzer();
         this.LoadPatternAnalyzer();
         this.LoadHintSystem();
+        this.LoadAutoNotes();
     }
 
     private void LoadUIDocument()
@@ -89,6 +93,13 @@ public class SudokuGridView : SaiBehaviour
         Debug.Log(transform.name + ": LoadHintSystem", gameObject);
     }
 
+    private void LoadAutoNotes()
+    {
+        if (this.autoNotes != null) return;
+        this.autoNotes = FindFirstObjectByType<SudokuAutoNotes>();
+        Debug.Log(transform.name + ": LoadAutoNotes", gameObject);
+    }
+
     protected override void Start()
     {
         base.Start();
@@ -106,6 +117,8 @@ public class SudokuGridView : SaiBehaviour
         this.themeToggleLabel = this.root.Q<Label>("theme-toggle-label");
         this.difficultyStarsContainer = this.root.Q<VisualElement>("difficulty-stars");
         this.hintButton = this.root.Q<Button>("hint-button");
+        this.autoNotesButton = this.root.Q<Button>("auto-notes-button");
+        this.patternNameLabel = this.root.Q<Label>("pattern-name-label");
 
         this.cells = new SudokuCell[GRID_SIZE, GRID_SIZE];
 
@@ -122,6 +135,12 @@ public class SudokuGridView : SaiBehaviour
             this.hintButton.clicked += this.OnHintButtonClicked;
         }
 
+        // Auto Notes button click
+        if (this.autoNotesButton != null)
+        {
+            this.autoNotesButton.clicked += this.OnAutoNotesButtonClicked;
+        }
+
         // Click overlay background to close popup
         this.popupOverlay.RegisterCallback<ClickEvent>(evt =>
         {
@@ -135,6 +154,7 @@ public class SudokuGridView : SaiBehaviour
         this.root.Focus();
 
         this.BuildGrid();
+        this.ClearAllNotes();
         this.LoadPuzzle();
         this.RefreshDifficultyStars();
     }
@@ -196,6 +216,7 @@ public class SudokuGridView : SaiBehaviour
     private void OnCellClicked(int row, int col)
     {
         this.ClearAllHighlights();
+        this.ClearHint();
 
         SudokuCell cell = this.cells[row, col];
         this.selectedCell = cell;
@@ -856,6 +877,34 @@ public class SudokuGridView : SaiBehaviour
         }
     }
 
+    private void OnAutoNotesButtonClicked()
+    {
+        if (this.autoNotes == null)
+        {
+            Debug.LogWarning("Auto Notes System is not available");
+            return;
+        }
+
+        // Use the existing SudokuAutoNotes component
+        this.autoNotes.StartAutoNotes();
+    }
+
+    private void ClearAllNotes()
+    {
+        if (this.cells == null) return;
+
+        for (int row = 0; row < GRID_SIZE; row++)
+        {
+            for (int col = 0; col < GRID_SIZE; col++)
+            {
+                if (this.cells[row, col] != null)
+                {
+                    this.cells[row, col].ClearNotes();
+                }
+            }
+        }
+    }
+
     /// <summary>
     /// Show hint with visual feedback
     /// </summary>
@@ -864,6 +913,12 @@ public class SudokuGridView : SaiBehaviour
         if (result.patternInfo == null) return;
 
         this.currentHintPattern = result.patternInfo;
+
+        // Update pattern display label
+        if (this.patternNameLabel != null)
+        {
+            this.patternNameLabel.text = $"{result.patternInfo.type.ToString()}";
+        }
 
         this.ClearAllHighlights();
 
@@ -890,6 +945,12 @@ public class SudokuGridView : SaiBehaviour
     /// </summary>
     private void ShowNoHintMessage(string message)
     {
+        // Update pattern display label
+        if (this.patternNameLabel != null)
+        {
+            this.patternNameLabel.text = "No hint available";
+        }
+        
         Debug.Log($"<color=yellow>No Hint Available:</color> {message}");
     }
 
@@ -898,6 +959,12 @@ public class SudokuGridView : SaiBehaviour
     /// </summary>
     public void ClearHint()
     {
+        // Clear pattern display label
+        if (this.patternNameLabel != null)
+        {
+            this.patternNameLabel.text = "";
+        }
+
         if (this.currentHintPattern != null && this.currentHintPattern.affectedCells != null)
         {
             foreach (var cellPos in this.currentHintPattern.affectedCells)

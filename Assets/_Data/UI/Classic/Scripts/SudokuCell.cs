@@ -54,6 +54,13 @@ public class SudokuCell
             this.container.Add(this.mainLabel);
         }
 
+        // Remove old notes grid if exists
+        VisualElement oldNotesGrid = this.container.Q<VisualElement>(className: "sudoku-notes-grid");
+        if (oldNotesGrid != null)
+        {
+            this.container.Remove(oldNotesGrid);
+        }
+
         // Build notes 3x3 grid (always added at runtime)
         this.notesGrid = new VisualElement();
         this.notesGrid.AddToClassList("sudoku-notes-grid");
@@ -181,6 +188,12 @@ public class SudokuCell
     public bool HasNote(int number)
     {
         return this.notes.Contains(number);
+    }
+
+    public void ClearNotes()
+    {
+        this.notes.Clear();
+        this.RefreshDisplay();
     }
 
     private void RefreshDisplay()
