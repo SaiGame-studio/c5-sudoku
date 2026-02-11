@@ -347,13 +347,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SudokuGenerator
   currentDifficulty: 0
   isPuzzleGenerated: 1
-  totalClues: 55
-  emptyCells: 26
+  totalClues: 52
+  emptyCells: 29
   summary: 
-  puzzlePreview: "7 3 1 | x 2 x | 4 x 6 \r\n9 6 5 | 7 x 4 | x 2 x \r\nx 4 8 | 1 x
-    3 | x x x \r\n------+-------+------\r\n6 8 x | 4 x 9 | 3 x x \r\n1 9 3 | 5 7
-    6 | 8 4 x \r\nx 7 4 | 2 x x | x x x \r\n------+-------+------\r\n4 5 7 | 6 9
-    x | 2 x x \r\n8 1 6 | 3 5 2 | 7 9 4 \r\n3 2 9 | 8 4 7 | 6 x 5 \r\n"
+  puzzlePreview: "8 7 x | 3 9 x | 6 4 x \r\n1 6 3 | 5 x x | 9 8 x \r\nx x 4 | 8 6
+    x | x x x \r\n------+-------+------\r\n3 2 x | 7 8 x | 1 5 x \r\n5 1 7 | 4 2
+    3 | 8 x 9 \r\n9 4 x | x 5 6 | 3 x x \r\n------+-------+------\r\n4 3 x | 6 x
+    5 | 7 9 x \r\n6 8 9 | x x x | x 1 5 \r\n7 5 x | 9 4 8 | 2 x 6 \r\n"
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -921,7 +921,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1197444009
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1289,7 +1289,7 @@ GameObject:
   - component: {fileID: 7165603691242713602}
   - component: {fileID: 5840470150497540520}
   m_Layer: 5
-  m_Name: SudokuGridLanscape
+  m_Name: SudokuGridPortrait
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
