@@ -1,6 +1,8 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/_Data/UI/Classic/Landscape/Styles/SudokuGrid_Landscape.uss?fileID=7433441132597879392&amp;guid=b2326dbb7b14a3b48abff5404a6d2524&amp;type=3#SudokuGrid_Landscape"/>
     <ui:VisualElement class="sudoku-grid-root">
+        <ui:VisualElement class="sudoku-main-container">
+        <ui:VisualElement class="sudoku-left-container">
         <ui:VisualElement name="sudoku-grid" class="sudoku-grid">
             <ui:VisualElement class="sudoku-band">
                 <ui:VisualElement class="sudoku-box">
@@ -332,11 +334,27 @@
             <ui:Label name="star-5" text="★" class="difficulty-star"/>
             <ui:Label name="star-6" text="★" class="difficulty-star"/>
             <ui:Label name="star-7" text="★" class="difficulty-star"/>
+            <ui:Label name="star-8" text="★" class="difficulty-star"/>
+            <ui:Label name="star-9" text="★" class="difficulty-star"/>
+        </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="difficulty-control-panel" class="difficulty-control-panel">
-            <ui:DropdownField name="difficulty-dropdown" label="Difficulty" class="difficulty-dropdown"/>
-            <ui:Button name="generate-button" text="Generate New Puzzle" class="generate-button"/>
+            <ui:VisualElement class="difficulty-top-row">
+                <ui:VisualElement name="difficulty-dropdown" class="difficulty-dropdown-stars">
+                    <ui:Label name="diff-star-1" text="★" class="difficulty-dropdown-star"/>
+                    <ui:Label name="diff-star-2" text="★" class="difficulty-dropdown-star"/>
+                    <ui:Label name="diff-star-3" text="★" class="difficulty-dropdown-star"/>
+                    <ui:Label name="diff-star-4" text="★" class="difficulty-dropdown-star"/>
+                    <ui:Label name="diff-star-5" text="★" class="difficulty-dropdown-star"/>
+                    <ui:Label name="diff-star-6" text="★" class="difficulty-dropdown-star"/>
+                    <ui:Label name="diff-star-7" text="★" class="difficulty-dropdown-star"/>
+                    <ui:Label name="diff-star-8" text="★" class="difficulty-dropdown-star"/>
+                    <ui:Label name="diff-star-9" text="★" class="difficulty-dropdown-star"/>
+                </ui:VisualElement>
+                <ui:Button name="generate-button" text="&#xf021;" class="generate-button"/>
+            </ui:VisualElement>
             <ui:Button name="hint-button" text="Get Hint" class="hint-button"/>
+        </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
     <ui:VisualElement name="theme-toggle" class="theme-toggle">

@@ -5,6 +5,17 @@
     padding: 10px;
 }
 
+.sudoku-main-container {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.sudoku-left-container {
+    flex-direction: column;
+    align-items: center;
+}
+
 .sudoku-grid {
     flex-direction: column;
     background-color: rgb(30, 30, 30);
@@ -459,48 +470,61 @@
 
 /* Difficulty Control Panel */
 .difficulty-control-panel {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    padding: 20px;
+    margin-left: 30px;
+    min-width: 220px;
+}
+
+.difficulty-top-row {
     flex-direction: row;
     align-items: center;
-    justify-content: center;
-    padding: 15px;
-    margin-top: 10px;
+    justify-content: space-between;
+    margin-bottom: 15px;
 }
 
-.difficulty-dropdown {
-    min-width: 180px;
-    margin-right: 15px;
+.difficulty-dropdown-stars {
+    flex-direction: row;
+    align-items: center;
+    padding: 6px 8px;
+    border-radius: 8px;
     background-color: rgb(45, 45, 50);
-    border-color: rgb(100, 100, 120);
     border-width: 2px;
-    border-radius: 4px;
-    padding: 5px 10px;
+    border-color: rgb(100, 100, 120);
 }
 
-.difficulty-dropdown > Label {
-    color: rgb(200, 200, 220);
-    font-size: 14px;
-    margin-right: 8px;
+.difficulty-dropdown-star {
+    font-size: 20px;
+    color: rgb(70, 70, 80);
+    -unity-text-align: middle-center;
+    margin: 0 1px;
+    transition-duration: 0.15s;
 }
 
-.difficulty-dropdown .unity-base-field__input {
-    background-color: rgb(50, 50, 55);
-    color: rgb(220, 220, 240);
-    border-color: rgb(80, 80, 100);
-    border-width: 1px;
-    border-radius: 3px;
-    padding: 5px;
+.difficulty-dropdown-star:hover {
+    color: rgb(255, 210, 50);
+}
+
+.difficulty-dropdown-star--active {
+    color: rgb(255, 210, 50);
 }
 
 .generate-button {
     background-color: rgb(50, 100, 180);
     border-color: rgb(80, 120, 200);
     border-width: 2px;
-    border-radius: 5px;
-    padding: 10px 20px;
+    border-radius: 8px;
+    padding: 8px 12px;
     color: rgb(240, 240, 250);
-    font-size: 16px;
+    font-size: 20px;
     -unity-font-style: bold;
     transition-duration: 0.15s;
+    min-width: 42px;
+    min-height: 42px;
+    margin-left: 8px;
+    -unity-font-definition: url("project://database/Assets/_Data/Fonts/fa-solid-900.ttf");
 }
 
 .generate-button:hover {
@@ -517,12 +541,11 @@
     border-color: rgb(60, 160, 100);
     border-width: 2px;
     border-radius: 5px;
-    padding: 10px 20px;
+    padding: 10px 15px;
     color: rgb(240, 250, 245);
     font-size: 16px;
     -unity-font-style: bold;
     transition-duration: 0.15s;
-    margin-left: 10px;
 }
 
 .hint-button:hover {
@@ -539,19 +562,21 @@
     background-color: transparent;
 }
 
-.light-mode .difficulty-dropdown {
+.light-mode .difficulty-dropdown-stars {
     background-color: rgb(245, 245, 250);
     border-color: rgb(170, 170, 190);
 }
 
-.light-mode .difficulty-dropdown > Label {
-    color: rgb(40, 40, 50);
+.light-mode .difficulty-dropdown-star {
+    color: rgb(200, 200, 210);
 }
 
-.light-mode .difficulty-dropdown .unity-base-field__input {
-    background-color: rgb(255, 255, 255);
-    color: rgb(30, 30, 40);
-    border-color: rgb(180, 180, 200);
+.light-mode .difficulty-dropdown-star:hover {
+    color: rgb(220, 170, 0);
+}
+
+.light-mode .difficulty-dropdown-star--active {
+    color: rgb(220, 170, 0);
 }
 
 .light-mode .generate-button {

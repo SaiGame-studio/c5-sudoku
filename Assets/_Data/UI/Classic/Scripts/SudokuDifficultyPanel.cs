@@ -13,10 +13,14 @@ public class SudokuDifficultyPanel : SaiBehaviour
     [SerializeField] private SudokuGridView gridView;
 
     private VisualElement root;
-    private DropdownField difficultyDropdown;
+    private VisualElement difficultyDropdownContainer;
+    private Label[] difficultyStars;
     private Button generateButton;
 
     private Dictionary<string, SudokuGenerator.DifficultyLevel> difficultyMap;
+    private Dictionary<int, SudokuGenerator.DifficultyLevel> starToDifficultyMap;
+    private int currentStarLevel = 3;
+    private const int TOTAL_DIFFICULTY_STARS = 9;
 
     protected override void LoadComponents()
     {
@@ -68,6 +72,19 @@ public class SudokuDifficultyPanel : SaiBehaviour
             { "Extreme", SudokuGenerator.DifficultyLevel.Extreme },
             { "Legendary", SudokuGenerator.DifficultyLevel.Legendary }
         };
+
+        this.starToDifficultyMap = new Dictionary<int, SudokuGenerator.DifficultyLevel>
+        {
+            { 1, SudokuGenerator.DifficultyLevel.VeryEasy },
+            { 2, SudokuGenerator.DifficultyLevel.Easy },
+            { 3, SudokuGenerator.DifficultyLevel.Medium },
+            { 4, SudokuGenerator.DifficultyLevel.Hard },
+            { 5, SudokuGenerator.DifficultyLevel.VeryHard },
+            { 6, SudokuGenerator.DifficultyLevel.Expert },
+            { 7, SudokuGenerator.DifficultyLevel.Master },
+            { 8, SudokuGenerator.DifficultyLevel.Extreme },
+            { 9, SudokuGenerator.DifficultyLevel.Legendary }
+        };
     }
 
     private void InitializeUI()
@@ -75,12 +92,12 @@ public class SudokuDifficultyPanel : SaiBehaviour
         if (this.uiDocument == null) return;
 
         this.root = this.uiDocument.rootVisualElement;
-        this.difficultyDropdown = this.root.Q<DropdownField>("difficulty-dropdown");
+        this.difficultyDropdownContainer = this.root.Q<VisualElement>("difficulty-dropdown");
         this.generateButton = this.root.Q<Button>("generate-button");
 
-        if (this.difficultyDropdown != null)
+        if (this.difficultyDropdownContainer != null)
         {
-            this.SetupDifficultyDropdown();
+            this.SetupDifficultyStars();
         }
 
         if (this.generateButton != null)
@@ -89,44 +106,80 @@ public class SudokuDifficultyPanel : SaiBehaviour
         }
     }
 
-    private void SetupDifficultyDropdown()
+    private void SetupDifficultyStars()
     {
-        List<string> difficultyChoices = new List<string>(this.difficultyMap.Keys);
-        this.difficultyDropdown.choices = difficultyChoices;
+        this.difficultyStars = new Label[TOTAL_DIFFICULTY_STARS];
         
-        string currentDifficulty = this.GetCurrentDifficultyString();
-        this.difficultyDropdown.value = currentDifficulty;
-
-        this.difficultyDropdown.RegisterValueChangedCallback(evt =>
+        for (int i = 0; i < TOTAL_DIFFICULTY_STARS; i++)
         {
-            this.OnDifficultyChanged(evt.newValue);
-        });
+            int starIndex = i + 1;
+            this.difficultyStars[i] = this.root.Q<Label>($"diff-star-{starIndex}");
+            
+            if (this.difficultyStars[i] != null)
+            {
+                int capturedIndex = starIndex;
+                this.difficultyStars[i].RegisterCallback<ClickEvent>(evt => this.OnStarClicked(capturedIndex));
+            }
+        }
+
+        this.SetCurrentDifficultyFromGenerator();
+        this.UpdateStarVisuals();
     }
 
-    private string GetCurrentDifficultyString()
+    private void SetCurrentDifficultyFromGenerator()
     {
         if (this.sudokuGenerator == null)
-            return "Medium";
+        {
+            this.currentStarLevel = 3;
+            return;
+        }
 
         SudokuGenerator.DifficultyLevel currentLevel = this.sudokuGenerator.GetDifficulty();
         
-        foreach (var kvp in this.difficultyMap)
+        foreach (var kvp in this.starToDifficultyMap)
         {
             if (kvp.Value == currentLevel)
-                return kvp.Key;
+            {
+                this.currentStarLevel = kvp.Key;
+                return;
+            }
         }
 
-        return "Medium";
+        this.currentStarLevel = 3;
     }
 
-    private void OnDifficultyChanged(string newDifficulty)
+    private void OnStarClicked(int starLevel)
+    {
+        this.currentStarLevel = starLevel;
+        this.UpdateStarVisuals();
+        this.OnDifficultyChanged(starLevel);
+    }
+
+    private void UpdateStarVisuals()
+    {
+        for (int i = 0; i < this.difficultyStars.Length; i++)
+        {
+            if (this.difficultyStars[i] == null) continue;
+
+            if (i < this.currentStarLevel)
+            {
+                this.difficultyStars[i].AddToClassList("difficulty-dropdown-star--active");
+            }
+            else
+            {
+                this.difficultyStars[i].RemoveFromClassList("difficulty-dropdown-star--active");
+            }
+        }
+    }
+
+    private void OnDifficultyChanged(int starLevel)
     {
         if (this.sudokuGenerator == null) return;
 
-        if (this.difficultyMap.TryGetValue(newDifficulty, out SudokuGenerator.DifficultyLevel level))
+        if (this.starToDifficultyMap.TryGetValue(starLevel, out SudokuGenerator.DifficultyLevel level))
         {
             this.sudokuGenerator.SetDifficulty(level);
-            Debug.Log($"Difficulty changed to: {newDifficulty}");
+            Debug.Log($"Difficulty changed to: {level} ({starLevel} stars)");
         }
     }
 
@@ -134,12 +187,10 @@ public class SudokuDifficultyPanel : SaiBehaviour
     {
         if (this.sudokuGenerator == null) return;
 
-        string selectedDifficulty = this.difficultyDropdown.value;
-        
-        if (this.difficultyMap.TryGetValue(selectedDifficulty, out SudokuGenerator.DifficultyLevel level))
+        if (this.starToDifficultyMap.TryGetValue(this.currentStarLevel, out SudokuGenerator.DifficultyLevel level))
         {
             this.sudokuGenerator.GeneratePuzzle(level);
-            Debug.Log($"Generated new puzzle with difficulty: {selectedDifficulty}");
+            Debug.Log($"Generated new puzzle with difficulty: {level} ({this.currentStarLevel} stars)");
 
             if (this.gridView != null)
             {
