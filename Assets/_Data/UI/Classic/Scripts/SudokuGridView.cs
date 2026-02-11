@@ -39,6 +39,7 @@ public class SudokuGridView : SaiBehaviour
     private SudokuCell[,] cells;
     private SudokuCell selectedCell;
     private bool isLightMode;
+    private int[,] cachedSolution;
 
     protected override void LoadComponents()
     {
@@ -149,6 +150,7 @@ public class SudokuGridView : SaiBehaviour
 
         this.sudokuGenerator.GeneratePuzzle();
         int[,] puzzle = this.sudokuGenerator.GetPuzzle();
+        this.cachedSolution = this.sudokuGenerator.GetSolution();
 
         for (int row = 0; row < GRID_SIZE; row++)
         {
@@ -357,9 +359,9 @@ public class SudokuGridView : SaiBehaviour
 
         this.selectedCell.SetPlayerValue(number);
 
-        // Validate
-        int[,] solution = this.sudokuGenerator.GetSolution();
-        bool isCorrect = solution[this.selectedCell.Row, this.selectedCell.Col] == number;
+        // Validate with cached solution
+        bool isCorrect = this.cachedSolution != null && 
+                         this.cachedSolution[this.selectedCell.Row, this.selectedCell.Col] == number;
         this.selectedCell.SetError(!isCorrect);
 
         this.HidePopup();
@@ -541,10 +543,10 @@ public class SudokuGridView : SaiBehaviour
     /// </summary>
     private void AnalyzeCurrentState()
     {
-        if (this.resultAnalyzer == null || this.sudokuGenerator == null) return;
+        if (this.resultAnalyzer == null || this.cachedSolution == null) return;
 
         int[,] userPuzzle = this.GetCurrentUserPuzzle();
-        int[,] solution = this.sudokuGenerator.GetSolution();
+        int[,] solution = this.cachedSolution;
 
         // Submit for analysis
         SudokuResultAnalyzer.GameResult result = this.resultAnalyzer.SubmitSolution(
@@ -730,9 +732,9 @@ public class SudokuGridView : SaiBehaviour
         // Fill with number
         cell.SetPlayerValue(number);
 
-        // Validate
-        int[,] solution = this.sudokuGenerator.GetSolution();
-        bool isCorrect = solution[row, col] == number;
+        // Validate with cached solution
+        bool isCorrect = this.cachedSolution != null && 
+                         this.cachedSolution[row, col] == number;
         cell.SetError(!isCorrect);
 
         // Refresh highlights
