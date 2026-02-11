@@ -163,7 +163,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
                 int missingNumber = this.GetMissingNumberInRow(puzzle, row);
                 this.detectedPatterns.Add(new PatternInfo(
                     PatternType.FullHouse,
-                    $"Row {row + 1}: Cell [{row},{emptyCol}] must be {missingNumber}",
+                    $"Row {row + 1}: Cell [{row + 1},{emptyCol + 1}] must be {missingNumber}",
                     new List<(int, int)> { (row, emptyCol) }
                 ));
                 this.IncrementPatternCount(PatternType.FullHouse);
@@ -188,7 +188,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
                 int missingNumber = this.GetMissingNumberInColumn(puzzle, col);
                 this.detectedPatterns.Add(new PatternInfo(
                     PatternType.FullHouse,
-                    $"Column {col + 1}: Cell [{emptyRow},{col}] must be {missingNumber}",
+                    $"Column {col + 1}: Cell [{emptyRow + 1},{col + 1}] must be {missingNumber}",
                     new List<(int, int)> { (emptyRow, col) }
                 ));
                 this.IncrementPatternCount(PatternType.FullHouse);
@@ -221,7 +221,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
                     int missingNumber = this.GetMissingNumberInBox(puzzle, boxRow, boxCol);
                     this.detectedPatterns.Add(new PatternInfo(
                         PatternType.FullHouse,
-                        $"Box ({boxRow},{boxCol}): Cell [{emptyR},{emptyC}] must be {missingNumber}",
+                        $"Box ({boxRow + 1},{boxCol + 1}): Cell [{emptyR + 1},{emptyC + 1}] must be {missingNumber}",
                         new List<(int, int)> { (emptyR, emptyC) }
                     ));
                     this.IncrementPatternCount(PatternType.FullHouse);
@@ -246,7 +246,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
                     int value = notes[row, col][0];
                     this.detectedPatterns.Add(new PatternInfo(
                         PatternType.NakedSingle,
-                        $"Cell [{row},{col}] has only one candidate: {value}",
+                        $"Cell [{row + 1},{col + 1}] has only one candidate: {value}",
                         new List<(int, int)> { (row, col) },
                         value
                     ));
@@ -284,7 +284,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
                     {
                         this.detectedPatterns.Add(new PatternInfo(
                             PatternType.HiddenSingle,
-                            $"Row {row + 1}: Only [{row},{col}] can be {num}",
+                            $"Row {row + 1}: Only [{row + 1},{col + 1}] can be {num}",
                             new List<(int, int)> { (row, col) },
                             num
                         ));
@@ -311,7 +311,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
                     {
                         this.detectedPatterns.Add(new PatternInfo(
                             PatternType.HiddenSingle,
-                            $"Column {col + 1}: Only [{row},{col}] can be {num}",
+                            $"Column {col + 1}: Only [{row + 1},{col + 1}] can be {num}",
                             new List<(int, int)> { (row, col) },
                             num
                         ));
@@ -381,7 +381,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
                 {
                     this.detectedPatterns.Add(new PatternInfo(
                         PatternType.NakedPair,
-                        $"{unitType}: Naked Pair {{{string.Join(",", union)}}} at [{cells[i].r},{cells[i].c}] and [{cells[j].r},{cells[j].c}]",
+                        $"{unitType}: Naked Pair {{{string.Join(",", union)}}} at [{cells[i].r + 1},{cells[i].c + 1}] and [{cells[j].r + 1},{cells[j].c + 1}]",
                         new List<(int, int)> { (cells[i].r, cells[i].c), (cells[j].r, cells[j].c) }
                     ));
                     this.IncrementPatternCount(PatternType.NakedPair);
@@ -444,7 +444,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
                         {
                             this.detectedPatterns.Add(new PatternInfo(
                                 PatternType.PointingPair,
-                                $"Box ({boxRow},{boxCol}): {num} points to Row {positions[0].r + 1}",
+                                $"Box ({boxRow + 1},{boxCol + 1}): {num} points to Row {positions[0].r + 1}",
                                 positions
                             ));
                             this.IncrementPatternCount(PatternType.PointingPair);
@@ -454,7 +454,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
                         {
                             this.detectedPatterns.Add(new PatternInfo(
                                 PatternType.PointingPair,
-                                $"Box ({boxRow},{boxCol}): {num} points to Column {positions[0].c + 1}",
+                                $"Box ({boxRow + 1},{boxCol + 1}): {num} points to Column {positions[0].c + 1}",
                                 positions
                             ));
                             this.IncrementPatternCount(PatternType.PointingPair);
