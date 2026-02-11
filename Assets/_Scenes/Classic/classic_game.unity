@@ -345,15 +345,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b22f37ab19475d64abdeb6f0f0e73d59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SudokuGenerator
-  currentDifficulty: 0
+  currentDifficulty: 8
   isPuzzleGenerated: 1
-  totalClues: 52
-  emptyCells: 29
+  totalClues: 18
+  emptyCells: 63
   summary: 
-  puzzlePreview: "8 7 x | 3 9 x | 6 4 x \r\n1 6 3 | 5 x x | 9 8 x \r\nx x 4 | 8 6
-    x | x x x \r\n------+-------+------\r\n3 2 x | 7 8 x | 1 5 x \r\n5 1 7 | 4 2
-    3 | 8 x 9 \r\n9 4 x | x 5 6 | 3 x x \r\n------+-------+------\r\n4 3 x | 6 x
-    5 | 7 9 x \r\n6 8 9 | x x x | x 1 5 \r\n7 5 x | 9 4 8 | 2 x 6 \r\n"
+  puzzlePreview: "x 1 6 | 9 x x | x 7 x \r\n3 2 x | x x x | x x x \r\nx 9 x | x x
+    5 | x 3 x \r\n------+-------+------\r\nx 5 x | x x x | 9 x 1 \r\nx x 1 | x x
+    2 | x x x \r\nx 3 x | x 1 x | x x x \r\n------+-------+------\r\nx x x | x x
+    x | x x x \r\nx x x | x x x | 3 x x \r\nx x x | x x x | 8 x x \r\n"
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -921,7 +921,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1197444009
 RectTransform:
   m_ObjectHideFlags: 0

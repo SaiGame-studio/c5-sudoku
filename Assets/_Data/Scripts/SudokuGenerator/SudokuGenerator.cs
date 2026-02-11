@@ -13,7 +13,9 @@ public class SudokuGenerator : SaiSingleton<SudokuGenerator>
         Hard,
         VeryHard,
         Expert,
-        Master
+        Master,
+        Extreme,
+        Legendary
     }
 
     [Header("Difficulty Settings")]
@@ -49,7 +51,9 @@ public class SudokuGenerator : SaiSingleton<SudokuGenerator>
             { DifficultyLevel.Hard, new DifficultySettings(DifficultyLevel.Hard, 35, 40) },
             { DifficultyLevel.VeryHard, new DifficultySettings(DifficultyLevel.VeryHard, 30, 35) },
             { DifficultyLevel.Expert, new DifficultySettings(DifficultyLevel.Expert, 25, 30) },
-            { DifficultyLevel.Master, new DifficultySettings(DifficultyLevel.Master, 20, 25) }
+            { DifficultyLevel.Master, new DifficultySettings(DifficultyLevel.Master, 20, 25) },
+            { DifficultyLevel.Extreme, new DifficultySettings(DifficultyLevel.Extreme, 18, 20) },
+            { DifficultyLevel.Legendary, new DifficultySettings(DifficultyLevel.Legendary, 17, 18) }
         };
     }
 
