@@ -3,6 +3,8 @@
     <ui:VisualElement class="sudoku-grid-root">
         <ui:VisualElement name="sudoku-main-container" class="sudoku-main-container">
             <ui:VisualElement class="sudoku-top-container">
+                <ui:VisualElement name="grid-top-bar" class="grid-top-bar">
+                </ui:VisualElement>
                 <ui:VisualElement name="sudoku-grid" class="sudoku-grid">
                     <ui:VisualElement class="sudoku-band">
                         <ui:VisualElement class="sudoku-box">
@@ -326,17 +328,22 @@
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
-            </ui:VisualElement>
-            <ui:VisualElement name="difficulty-stars" class="difficulty-stars">
-                <ui:Label name="star-1" text="★" class="difficulty-star"/>
-                <ui:Label name="star-2" text="★" class="difficulty-star"/>
-                <ui:Label name="star-3" text="★" class="difficulty-star"/>
-                <ui:Label name="star-4" text="★" class="difficulty-star"/>
-                <ui:Label name="star-5" text="★" class="difficulty-star"/>
-                <ui:Label name="star-6" text="★" class="difficulty-star"/>
-                <ui:Label name="star-7" text="★" class="difficulty-star"/>
-                <ui:Label name="star-8" text="★" class="difficulty-star"/>
-                <ui:Label name="star-9" text="★" class="difficulty-star"/>
+                <ui:VisualElement name="grid-bottom-bar" class="grid-bottom-bar">
+                    <ui:VisualElement name="difficulty-stars" class="difficulty-stars">
+                        <ui:Label name="star-1" text="★" class="difficulty-star"/>
+                        <ui:Label name="star-2" text="★" class="difficulty-star"/>
+                        <ui:Label name="star-3" text="★" class="difficulty-star"/>
+                        <ui:Label name="star-4" text="★" class="difficulty-star"/>
+                        <ui:Label name="star-5" text="★" class="difficulty-star"/>
+                        <ui:Label name="star-6" text="★" class="difficulty-star"/>
+                        <ui:Label name="star-7" text="★" class="difficulty-star"/>
+                        <ui:Label name="star-8" text="★" class="difficulty-star"/>
+                        <ui:Label name="star-9" text="★" class="difficulty-star"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="theme-toggle" class="theme-toggle">
+                        <ui:Label name="theme-toggle-label" text="☾" class="theme-toggle-label"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement name="difficulty-control-panel" class="difficulty-control-panel">
                 <ui:VisualElement class="difficulty-top-row" style="width: 400px;">
@@ -362,9 +369,6 @@
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
-    </ui:VisualElement>
-    <ui:VisualElement name="theme-toggle" class="theme-toggle" style="top: auto; bottom: 50px; position: absolute; width: 80px; height: 80px; right: 50px; border-top-left-radius: 50px; border-bottom-left-radius: 50px; border-top-right-radius: 50px; border-bottom-right-radius: 50px;">
-        <ui:Label name="theme-toggle-label" text="☾" class="theme-toggle-label" style="font-size: 50px;"/>
     </ui:VisualElement>
     <ui:VisualElement name="popup-overlay" class="popup-overlay popup-overlay--hidden">
         <ui:VisualElement name="popup-container" class="popup-container"/>

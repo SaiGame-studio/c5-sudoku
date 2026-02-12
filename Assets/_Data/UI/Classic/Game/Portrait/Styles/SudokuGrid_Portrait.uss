@@ -383,7 +383,7 @@
 .difficulty-stars {
     align-self: center;
     flex-direction: row;
-    margin-top: 8px;
+    margin-top: 0;
     padding: 7px 16px;
     border-radius: 10px;
     background-color: rgb(55, 58, 70);
@@ -402,10 +402,25 @@
     color: rgb(255, 210, 50);
 }
 
+.grid-top-bar {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 0;
+}
+
+.grid-bottom-bar {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 8px;
+    padding-right: 5px;
+}
+
 .theme-toggle {
-    position: absolute;
-    top: 10px;
-    right: 10px;
+    margin-left: auto;
     width: 50px;
     height: 50px;
     border-radius: 20px;
