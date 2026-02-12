@@ -8,7 +8,7 @@ public class GameManager : SaiSingleton<GameManager>
     [SerializeField] private string mainMenuSceneName = "main_menu";
     [SerializeField] private string classicHomeSceneName = "classic_home";
     [SerializeField] private string classicGameSceneName = "classic_game";
-    [SerializeField] private string adventureSceneName = "adventure_home";
+    [SerializeField] private string storySceneName = "story_home";
 
     #region Scene Management
     [ProButton]
@@ -35,9 +35,9 @@ public class GameManager : SaiSingleton<GameManager>
     /// <summary>
     /// Load Adventure Scene
     /// </summary>
-    public void LoadAdventureScene()
+    public void LoadStoryScene()
     {
-        SceneManager.LoadScene(this.adventureSceneName);
+        SceneManager.LoadScene(this.storySceneName);
     }
 
     [ProButton]
