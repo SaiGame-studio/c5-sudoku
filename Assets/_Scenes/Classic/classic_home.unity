@@ -941,6 +941,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClassicHomeLevelList
   uiDocument: {fileID: 1393854817}
+  editorScaleFactor: 1
 --- !u!114 &1393854817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1033,6 +1034,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClassicHomeLevelList
   uiDocument: {fileID: 1410745335}
+  editorScaleFactor: 1
 --- !u!1 &1457944208
 GameObject:
   m_ObjectHideFlags: 0
@@ -1048,7 +1050,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1457944209
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1085,7 +1087,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1770334951
 RectTransform:
   m_ObjectHideFlags: 0
