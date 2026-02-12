@@ -16,6 +16,8 @@ public static class GameData
             case 4: return SudokuGenerator.DifficultyLevel.VeryHard;
             case 5: return SudokuGenerator.DifficultyLevel.Expert;
             case 6: return SudokuGenerator.DifficultyLevel.Master;
+            case 7: return SudokuGenerator.DifficultyLevel.Extreme;
+            case 8: return SudokuGenerator.DifficultyLevel.Legendary;
             default: return SudokuGenerator.DifficultyLevel.Medium;
         }
     }
@@ -28,9 +30,11 @@ public static class GameData
         "Hard",
         "Very Hard",
         "Expert",
-        "Master"
+        "Master",
+        "Extreme",
+        "Legendary"
     };
 
-    public const int DIFFICULTY_COUNT = 7;
+    public const int DIFFICULTY_COUNT = 9;
     public const int LEVELS_PER_DIFFICULTY = 3;
 }

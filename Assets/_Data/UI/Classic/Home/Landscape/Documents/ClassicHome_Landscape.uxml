@@ -46,6 +46,12 @@
                         <ui:VisualElement name="card-2-6" class="level-card difficulty-6"><ui:Label text="&#x2605;&#x2605;&#x2605;&#x2605;&#10;&#x2605;&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
                     </ui:VisualElement>
 
+                    <!-- Row 4: Extreme & Legendary -->
+                    <ui:VisualElement class="level-row">
+                        <ui:VisualElement name="card-3-7" class="level-card difficulty-7"><ui:Label text="&#x2605;&#x2605;&#x2605;&#x2605;&#10;&#x2605;&#x2605;&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
+                        <ui:VisualElement name="card-3-8" class="level-card difficulty-8"><ui:Label text="&#x2605;&#x2605;&#x2605;&#x2605;&#x2605;&#10;&#x2605;&#x2605;&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
+                    </ui:VisualElement>
+
                 </ui:VisualElement>
             </ui:ScrollView>
 

@@ -38,25 +38,33 @@ public class ClassicHomeLevelList : SaiBehaviour
 
     private void RegisterCardCallbacks()
     {
-        // Cards are named "card-{row}-{difficulty}" in the UXML
+        // Rows 1-3: cards named "card-{row}-{difficulty}" for difficulties 0-6
         for (int row = 0; row < GameData.LEVELS_PER_DIFFICULTY; row++)
         {
-            for (int diff = 0; diff < GameData.DIFFICULTY_COUNT; diff++)
+            for (int diff = 0; diff < 7; diff++)
             {
-                string cardName = "card-" + row + "-" + diff;
-                VisualElement card = this.root.Q<VisualElement>(cardName);
-                if (card == null) continue;
-
-                int capturedLevel = row + 1;
-                int capturedDifficulty = diff;
-
-                card.RegisterCallback<ClickEvent>(evt =>
-                {
-                    evt.StopPropagation();
-                    this.OnLevelSelected(capturedLevel, capturedDifficulty);
-                });
+                this.RegisterCard("card-" + row + "-" + diff, row + 1, diff);
             }
         }
+
+        // Row 4: single cards for Extreme (7) and Legendary (8)
+        this.RegisterCard("card-3-7", 1, 7);
+        this.RegisterCard("card-3-8", 1, 8);
+    }
+
+    private void RegisterCard(string cardName, int level, int difficulty)
+    {
+        VisualElement card = this.root.Q<VisualElement>(cardName);
+        if (card == null) return;
+
+        int capturedLevel = level;
+        int capturedDifficulty = difficulty;
+
+        card.RegisterCallback<ClickEvent>(evt =>
+        {
+            evt.StopPropagation();
+            this.OnLevelSelected(capturedLevel, capturedDifficulty);
+        });
     }
 
     private void RegisterBackButton()
