@@ -15,7 +15,7 @@ public class GameManager : SaiSingleton<GameManager>
     /// <summary>
     /// Load Classic Home Scene
     /// </summary>
-    public void LoadClassicScene()
+    public void LoadClassicHome()
     {
         SceneManager.LoadScene(this.classicHomeSceneName);
     }
