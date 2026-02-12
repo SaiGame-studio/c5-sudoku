@@ -335,6 +335,9 @@ public class SudokuGridView : SaiBehaviour
             });
         }
 
+        // Back button click
+        this.RegisterBackButton();
+
         // Keyboard input for fill and notes
         this.root.RegisterCallback<KeyDownEvent>(this.OnKeyDown);
         this.root.focusable = true;
@@ -730,6 +733,21 @@ public class SudokuGridView : SaiBehaviour
                 this.cells[row, col].ClearHighlights();
             }
         }
+    }
+    #endregion
+
+    #region Back Button
+    private void RegisterBackButton()
+    {
+        Button backButton = this.root.Q<Button>("back-button");
+        if (backButton == null) return;
+
+        backButton.clicked += this.OnBackButtonClicked;
+    }
+
+    private void OnBackButtonClicked()
+    {
+        GameManager.Instance.LoadClassicHome();
     }
     #endregion
 

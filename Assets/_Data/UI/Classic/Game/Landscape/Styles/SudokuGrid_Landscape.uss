@@ -844,3 +844,25 @@
 .light-mode .pattern-name-label {
     color: rgb(40, 60, 100);
 }
+
+.back-button {
+    background-color: rgb(50, 55, 70);
+    border-color: rgb(80, 90, 120);
+    border-width: 2px;
+    border-radius: 10px;
+    padding: 10px 30px;
+    color: rgb(200, 210, 230);
+    font-size: 20px;
+    -unity-font-style: bold;
+    transition-duration: 0.15s;
+    -unity-font-definition: url("project://database/Assets/_Data/Fonts/fa-solid-900.ttf");
+}
+
+.back-button:hover {
+    background-color: rgb(65, 70, 90);
+    border-color: rgb(100, 120, 160);
+}
+
+.back-button:active {
+    background-color: rgb(40, 45, 60);
+}

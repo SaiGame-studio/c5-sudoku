@@ -129,6 +129,13 @@
     font-size: 20px;
 }
 
+/* ===== Disabled State ===== */
+.menu-button:disabled {
+    opacity: 0.4;
+    background-color: rgb(30, 32, 42);
+    border-color: rgb(55, 60, 75);
+}
+
 /* ===== Footer ===== */
 .menu-footer {
     margin-top: auto;

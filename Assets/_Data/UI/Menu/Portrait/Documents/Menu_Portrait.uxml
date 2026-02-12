@@ -11,16 +11,14 @@
                     <ui:Label text="Classic Mode" class="menu-button-label"/>
                     <ui:Label text="9 difficulty levels" class="menu-button-desc"/>
                 </ui:Button>
-                <ui:Button name="story-button" class="menu-button story-button">
+                <ui:Button name="story-button" enabled="false" class="menu-button story-button">
                     <ui:Label text="Story Mode" class="menu-button-label"/>
-                    <ui:Label text="Adventure awaits" class="menu-button-desc"/>
+                    <ui:Label text="Comming soon" class="menu-button-desc"/>
                 </ui:Button>
                 <ui:Button name="quit-button" class="menu-button quit-button">
                     <ui:Label text="Quit" class="menu-button-label"/>
                 </ui:Button>
-            </ui:VisualElement>
-            <ui:VisualElement class="menu-footer">
-                <ui:Label text="v1.0" class="menu-version"/>
+                <ui:Label text="v0.0.1" class="menu-version"/>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
