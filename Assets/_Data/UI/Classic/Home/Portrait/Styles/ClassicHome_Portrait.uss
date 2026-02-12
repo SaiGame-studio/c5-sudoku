@@ -1,0 +1,187 @@
+/* ===== Classic Home - Portrait ===== */
+
+.home-root {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: rgb(22, 22, 30);
+    padding: 12px;
+}
+
+.home-container {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    flex-grow: 1;
+}
+
+/* ===== Header ===== */
+.home-header {
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 20px 10px;
+}
+
+.home-title {
+    font-size: 72px;
+    color: rgb(255, 215, 0);
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    letter-spacing: 10px;
+    margin-bottom: 6px;
+}
+
+.home-subtitle {
+    font-size: 26px;
+    color: rgb(160, 175, 210);
+    -unity-text-align: middle-center;
+    -unity-font-style: italic;
+}
+
+/* ===== Level Grid ===== */
+.level-scroll {
+    flex-grow: 1;
+    width: 100%;
+}
+
+.level-list-container {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    padding: 10px;
+}
+
+/* ===== Row ===== */
+.level-row {
+    flex-direction: row;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+/* ===== Level Card ===== */
+.level-card {
+    width: 100px;
+    height: 50px;
+    margin: 4px;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(38, 42, 56);
+    border-width: 2px;
+    border-color: rgb(70, 80, 110);
+    border-radius: 10px;
+    transition-duration: 0.15s;
+    padding: 4px;
+}
+
+.level-card:hover {
+    background-color: rgb(50, 58, 80);
+    scale: 1.06;
+}
+
+.level-card:active {
+    background-color: rgb(40, 50, 70);
+    scale: 0.96;
+}
+
+.level-card-stars {
+    font-size: 14px;
+    color: rgb(255, 200, 50);
+    -unity-text-align: middle-center;
+    letter-spacing: 1px;
+    white-space: normal;
+}
+
+/* ===== Difficulty color accents ===== */
+.difficulty-0 { border-color: rgb(80, 180, 120); }
+.difficulty-0:hover { border-color: rgb(100, 220, 150); }
+.difficulty-0 .level-card-stars { color: rgb(140, 230, 170); }
+
+.difficulty-1 { border-color: rgb(80, 160, 200); }
+.difficulty-1:hover { border-color: rgb(100, 190, 240); }
+.difficulty-1 .level-card-stars { color: rgb(130, 200, 240); }
+
+.difficulty-2 { border-color: rgb(100, 130, 200); }
+.difficulty-2:hover { border-color: rgb(130, 160, 240); }
+.difficulty-2 .level-card-stars { color: rgb(160, 180, 240); }
+
+.difficulty-3 { border-color: rgb(180, 150, 60); }
+.difficulty-3:hover { border-color: rgb(220, 190, 80); }
+.difficulty-3 .level-card-stars { color: rgb(230, 200, 100); }
+
+.difficulty-4 { border-color: rgb(200, 120, 60); }
+.difficulty-4:hover { border-color: rgb(240, 150, 80); }
+.difficulty-4 .level-card-stars { color: rgb(240, 170, 100); }
+
+.difficulty-5 { border-color: rgb(200, 80, 80); }
+.difficulty-5:hover { border-color: rgb(240, 110, 110); }
+.difficulty-5 .level-card-stars { color: rgb(240, 130, 130); }
+
+.difficulty-6 { border-color: rgb(170, 70, 200); }
+.difficulty-6:hover { border-color: rgb(210, 100, 240); }
+.difficulty-6 .level-card-stars { color: rgb(210, 140, 240); }
+
+/* ===== Footer ===== */
+.home-footer {
+    padding: 16px;
+    align-items: center;
+}
+
+.back-button {
+    background-color: rgb(50, 55, 70);
+    border-color: rgb(80, 90, 120);
+    border-width: 2px;
+    border-radius: 12px;
+    padding: 14px 40px;
+    color: rgb(200, 210, 230);
+    font-size: 26px;
+    -unity-font-style: bold;
+    transition-duration: 0.15s;
+    -unity-font-definition: url("project://database/Assets/_Data/Fonts/fa-solid-900.ttf");
+}
+
+.back-button:hover {
+    background-color: rgb(65, 70, 90);
+    border-color: rgb(100, 120, 160);
+}
+
+.back-button:active {
+    background-color: rgb(40, 45, 60);
+}
+
+/* ===== Light Mode ===== */
+.light-mode .home-root {
+    background-color: rgb(240, 242, 248);
+}
+
+.light-mode .home-title {
+    color: rgb(50, 60, 100);
+}
+
+.light-mode .home-subtitle {
+    color: rgb(100, 110, 140);
+}
+
+.light-mode .level-card {
+    background-color: rgb(255, 255, 255);
+    border-color: rgb(190, 200, 220);
+}
+
+.light-mode .level-card:hover {
+    background-color: rgb(240, 245, 255);
+}
+
+.light-mode .level-card-stars {
+    color: rgb(200, 160, 0);
+}
+
+.light-mode .back-button {
+    background-color: rgb(235, 238, 245);
+    border-color: rgb(180, 190, 210);
+    color: rgb(50, 60, 80);
+}
+
+.light-mode .back-button:hover {
+    background-color: rgb(220, 225, 240);
+    border-color: rgb(120, 140, 180);
+}

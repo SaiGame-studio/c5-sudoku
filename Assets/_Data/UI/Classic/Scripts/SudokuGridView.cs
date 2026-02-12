@@ -246,6 +246,9 @@ public class SudokuGridView : SaiBehaviour
     {
         if (this.sudokuGenerator == null) return;
 
+        // Apply difficulty from GameData (set by level selection screen)
+        this.sudokuGenerator.SetDifficulty(GameData.GetDifficultyLevel());
+
         this.sudokuGenerator.GeneratePuzzle();
         int[,] puzzle = this.sudokuGenerator.GetPuzzle();
         this.cachedSolution = this.sudokuGenerator.GetSolution();

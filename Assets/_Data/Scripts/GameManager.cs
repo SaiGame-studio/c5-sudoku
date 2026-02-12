@@ -6,18 +6,29 @@ public class GameManager : SaiSingleton<GameManager>
 {
     [Header("Scene Names")]
     [SerializeField] private string mainMenuSceneName = "main_menu";
-    [SerializeField] private string classicSceneName = "classic_home";
+    [SerializeField] private string classicHomeSceneName = "classic_home";
+    [SerializeField] private string classicGameSceneName = "classic_game";
     [SerializeField] private string adventureSceneName = "adventure_home";
 
     #region Scene Management
     [ProButton]
     /// <summary>
-    /// Load Classic Scene
+    /// Load Classic Home Scene
     /// </summary>
     public void LoadClassicScene()
     {
-        Debug.Log("Loading Classic Scene...");
-        SceneManager.LoadScene(classicSceneName);
+        SceneManager.LoadScene(this.classicHomeSceneName);
+    }
+
+    [ProButton]
+    /// <summary>
+    /// Load Classic Game Scene with level and difficulty parameters
+    /// </summary>
+    public void LoadClassicGame(int level, int difficulty)
+    {
+        GameData.SelectedLevel = level;
+        GameData.SelectedDifficulty = difficulty;
+        SceneManager.LoadScene(this.classicGameSceneName);
     }
 
     [ProButton]
@@ -26,8 +37,7 @@ public class GameManager : SaiSingleton<GameManager>
     /// </summary>
     public void LoadAdventureScene()
     {
-        Debug.Log("Loading Adventure Scene...");
-        SceneManager.LoadScene(adventureSceneName);
+        SceneManager.LoadScene(this.adventureSceneName);
     }
 
     [ProButton]
@@ -36,8 +46,7 @@ public class GameManager : SaiSingleton<GameManager>
     /// </summary>
     public void LoadMainMenu()
     {
-        Debug.Log("Loading Main Menu...");
-        SceneManager.LoadScene(mainMenuSceneName);
+        SceneManager.LoadScene(this.mainMenuSceneName);
     }
     #endregion
 

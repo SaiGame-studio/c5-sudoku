@@ -439,7 +439,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d171e5f7c2335d458b0fe767f619de9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SudokuAutoPlayer
-  autoPlayDelay: 0.5
+  autoPlayDelay: 0.2
   isAutoPlaying: 0
   sudokuGenerator: {fileID: 393123380}
   resultAnalyzer: {fileID: 393123381}
@@ -1010,7 +1010,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1197444009
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1047,7 +1047,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1596259707
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1375,6 +1375,7 @@ GameObject:
   - component: {fileID: 8027504349224823920}
   - component: {fileID: 7165603691242713602}
   - component: {fileID: 5840470150497540520}
+  - component: {fileID: 8027504349224823921}
   m_Layer: 5
   m_Name: SudokuGridPortrait
   m_TagString: Untagged
@@ -1397,6 +1398,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1197444009}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8027504349224823921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7966923949765095201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97a63a1181d96f049b04e25cbd2d8e3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SudokuDifficultyPanel
+  uiDocument: {fileID: 7165603691242713602}
+  sudokuGenerator: {fileID: 393123380}
+  gridView: {fileID: 5840470150497540520}
 --- !u!114 &8143833361491433006
 MonoBehaviour:
   m_ObjectHideFlags: 0
