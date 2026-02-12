@@ -92,6 +92,20 @@ public class SudokuDifficultyPanel : SaiBehaviour
         if (this.uiDocument == null) return;
 
         this.root = this.uiDocument.rootVisualElement;
+        if (this.root == null) return;
+
+        // Defer UI setup until visual tree is fully built (fixes scene transition timing)
+        this.root.RegisterCallback<GeometryChangedEvent>(this.OnRootGeometryChanged);
+    }
+
+    private void OnRootGeometryChanged(GeometryChangedEvent evt)
+    {
+        this.root.UnregisterCallback<GeometryChangedEvent>(this.OnRootGeometryChanged);
+        this.SetupUIElements();
+    }
+
+    private void SetupUIElements()
+    {
         this.difficultyDropdownContainer = this.root.Q<VisualElement>("difficulty-dropdown");
         this.generateButton = this.root.Q<Button>("generate-button");
 
