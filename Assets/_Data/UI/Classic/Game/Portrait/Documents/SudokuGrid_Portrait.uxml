@@ -339,7 +339,7 @@
                 <ui:Label name="star-9" text="★" class="difficulty-star"/>
             </ui:VisualElement>
             <ui:VisualElement name="difficulty-control-panel" class="difficulty-control-panel">
-                <ui:VisualElement class="difficulty-top-row">
+                <ui:VisualElement class="difficulty-top-row" style="width: 400px;">
                     <ui:VisualElement name="difficulty-dropdown" class="difficulty-dropdown-stars">
                         <ui:Label name="diff-star-1" text="★" class="difficulty-dropdown-star"/>
                         <ui:Label name="diff-star-2" text="★" class="difficulty-dropdown-star"/>
@@ -351,20 +351,20 @@
                         <ui:Label name="diff-star-8" text="★" class="difficulty-dropdown-star"/>
                         <ui:Label name="diff-star-9" text="★" class="difficulty-dropdown-star"/>
                     </ui:VisualElement>
-                    <ui:Button name="generate-button" text="" class="generate-button"/>
+                    <ui:Button name="generate-button" text="" class="generate-button" style="padding-top: 10px; padding-bottom: 10px; padding-left: 20px; padding-right: 20px;"/>
                 </ui:VisualElement>
-                <ui:VisualElement class="button-row">
-                    <ui:Button name="hint-button" text="" class="hint-button"/>
-                    <ui:Button name="auto-notes-button" text="" class="auto-notes-button"/>
-                </ui:VisualElement>
-                <ui:VisualElement name="pattern-display" class="pattern-display">
-                    <ui:Label name="pattern-name-label" text="" class="pattern-name-label"/>
+                <ui:VisualElement name="VisualElement" class="button-row" style="width: 400px;">
+                    <ui:VisualElement name="pattern-display" class="pattern-display" style="max-height: none; height: 52px;">
+                        <ui:Label name="pattern-name-label" text="" class="pattern-name-label"/>
+                    </ui:VisualElement>
+                    <ui:Button name="hint-button" text="" class="hint-button" style="max-width: 50px; padding-left: 34px; padding-right: 34px; padding-top: 10px; padding-bottom: 10px; margin-right: 7px; margin-left: 7px;"/>
+                    <ui:Button name="auto-notes-button" text="" class="auto-notes-button" style="padding-top: 10px; padding-bottom: 10px;"/>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
-    <ui:VisualElement name="theme-toggle" class="theme-toggle">
-        <ui:Label name="theme-toggle-label" text="☾" class="theme-toggle-label"/>
+    <ui:VisualElement name="theme-toggle" class="theme-toggle" style="top: auto; bottom: 50px; position: absolute; width: 80px; height: 80px; right: 50px; border-top-left-radius: 50px; border-bottom-left-radius: 50px; border-top-right-radius: 50px; border-bottom-right-radius: 50px;">
+        <ui:Label name="theme-toggle-label" text="☾" class="theme-toggle-label" style="font-size: 50px;"/>
     </ui:VisualElement>
     <ui:VisualElement name="popup-overlay" class="popup-overlay popup-overlay--hidden">
         <ui:VisualElement name="popup-container" class="popup-container"/>

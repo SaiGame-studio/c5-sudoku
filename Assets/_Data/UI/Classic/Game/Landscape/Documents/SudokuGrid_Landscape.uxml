@@ -354,11 +354,11 @@
                     <ui:Button name="generate-button" text="" class="generate-button" style="padding-right: 30px; padding-left: 30px;"/>
                 </ui:VisualElement>
                 <ui:VisualElement class="button-row">
-                    <ui:Button name="hint-button" text="" class="hint-button"/>
-                    <ui:Button name="auto-notes-button" text="" class="auto-notes-button"/>
                     <ui:VisualElement name="pattern-display" class="pattern-display" style="padding-top: 12px; padding-right: 18px; padding-bottom: 12px; padding-left: 18px; margin-top: 2px; margin-right: 4px; margin-bottom: 2px; margin-left: 4px; height: 61px;">
                         <ui:Label name="pattern-name-label" text="" class="pattern-name-label"/>
                     </ui:VisualElement>
+                    <ui:Button name="hint-button" text="" class="hint-button"/>
+                    <ui:Button name="auto-notes-button" text="" class="auto-notes-button"/>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>

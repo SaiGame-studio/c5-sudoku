@@ -72,6 +72,7 @@ public class SudokuGenerator : SaiSingleton<SudokuGenerator>
     /// </summary>
     public void GeneratePuzzle(DifficultyLevel difficulty)
     {
+        this.currentDifficulty = difficulty;
         // Ensure difficulty settings are initialized
         if (this.difficultyMap == null)
         {

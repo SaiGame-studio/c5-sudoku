@@ -36,25 +36,25 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private float addLandscapeScale = 0f;
     [SerializeField] private float addPortraitScale = 1.2f;
 
-
-    private VisualElement root;
-    private VisualElement gridContainer;
-    private VisualElement popupOverlay;
-    private VisualElement popupContainer;
-    private VisualElement themeToggle;
-    private Label themeToggleLabel;
-    private VisualElement difficultyStarsContainer;
-    private Button hintButton;
-    private Button autoNotesButton;
-    private Label patternNameLabel;
-    private SudokuCell[,] cells;
-    private SudokuCell selectedCell;
-    private bool isLightMode;
-    private int[,] cachedSolution;
-    private PatternInfo currentHintPattern;
-    private Vector2Int lastScreenSize;
-    private VisualElement mainContainer;
-    private VictoryEffect victoryEffect;
+    [Header("Visual Elements (Runtime Only)")]
+    [SerializeField, HideInInspector] private bool showVisualElements = false;
+    [SerializeField] private VisualElement root;
+    [SerializeField] private VisualElement gridContainer;
+    [SerializeField] private VisualElement popupOverlay;
+    [SerializeField] private VisualElement popupContainer;
+    [SerializeField] private VisualElement themeToggle;
+    [SerializeField] private Label themeToggleLabel;
+    [SerializeField] private VisualElement difficultyStarsContainer;
+    [SerializeField] private Button hintButton;
+    [SerializeField] private Button autoNotesButton;
+    [SerializeField] private Label patternNameLabel;
+    [SerializeField] private SudokuCell[,] cells;
+    [SerializeField] private SudokuCell selectedCell;
+    [SerializeField] private bool isLightMode;
+    [SerializeField] private int[,] cachedSolution;
+    [SerializeField] private PatternInfo currentHintPattern;
+    [SerializeField] private VisualElement mainContainer;
+    [SerializeField] private VictoryEffect victoryEffect;
 
     private void OnRootGeometryChanged(GeometryChangedEvent evt)
     {
@@ -294,8 +294,6 @@ public class SudokuGridView : SaiBehaviour
             return;
         }
 
-        this.lastScreenSize = new Vector2Int(Screen.width, Screen.height);
-
         this.cells = new SudokuCell[GRID_SIZE, GRID_SIZE];
 
         // Delay scale application until UI is fully rendered
@@ -386,6 +384,24 @@ public class SudokuGridView : SaiBehaviour
         this.sudokuGenerator.SetDifficulty(GameData.GetDifficultyLevel());
 
         this.sudokuGenerator.GeneratePuzzle();
+        this.RefreshGridFromCurrentPuzzle();
+    }
+    
+    /// <summary>
+    /// Refresh grid display from current puzzle state without generating new puzzle
+    /// </summary>
+    public void RefreshGridFromCurrentPuzzle()
+    {
+        if (this.sudokuGenerator == null) return;
+        
+        // Reset UI state
+        this.StopVictoryEffect();
+        this.selectedCell = null;
+        this.HidePopup();
+        this.ClearAllHighlights();
+        this.ClearAllNotes();
+        
+        // Load puzzle into grid
         int[,] puzzle = this.sudokuGenerator.GetPuzzle();
         this.cachedSolution = this.sudokuGenerator.GetSolution();
 
@@ -398,7 +414,16 @@ public class SudokuGridView : SaiBehaviour
                 this.cells[row, col].SetValue(value, isClue);
             }
         }
+        
+        // Reset analysis stats
+        this.completionPercentage = 0f;
+        this.correctCells = 0;
+        this.incorrectCells = 0;
+        this.currentResult = SudokuResultAnalyzer.GameResult.NotCompleted;
 
+        // Refresh UI elements
+        this.RefreshDifficultyStars();
+        
         // Initialize preview
         if (this.autoAnalyze)
         {

@@ -634,7 +634,7 @@
 }
 
 .difficulty-dropdown-star {
-    font-size: 24px;
+    font-size: 20px;
     color: rgb(70, 70, 80);
     -unity-text-align: middle-center;
     margin: 0 2px;
