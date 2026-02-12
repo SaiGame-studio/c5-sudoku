@@ -69,6 +69,16 @@ public class SudokuPatternAnalyzer : SaiBehaviour
     /// </summary>
     public void InitializeStatistics()
     {
+        if (this.patternStatistics == null)
+        {
+            this.patternStatistics = new List<PatternStatistic>();
+        }
+
+        if (this.patternCounts == null)
+        {
+            this.patternCounts = new Dictionary<PatternType, int>();
+        }
+
         this.patternStatistics.Clear();
 
         // Add all pattern types (skip None)
@@ -93,6 +103,16 @@ public class SudokuPatternAnalyzer : SaiBehaviour
     {
         if (type == PatternType.None) return;
 
+        if (this.patternCounts == null)
+        {
+            this.patternCounts = new Dictionary<PatternType, int>();
+        }
+
+        if (this.patternStatistics == null)
+        {
+            this.patternStatistics = new List<PatternStatistic>();
+        }
+
         if (!this.patternCounts.ContainsKey(type))
         {
             this.patternCounts[type] = 0;
@@ -115,6 +135,17 @@ public class SudokuPatternAnalyzer : SaiBehaviour
     /// </summary>
     public void AnalyzePatterns(int[,] currentPuzzle, List<int>[,] cellNotes)
     {
+        if (this.detectedPatterns == null)
+        {
+            this.detectedPatterns = new List<PatternInfo>();
+        }
+
+        if (this.patternCounts == null)
+        {
+            this.patternCounts = new Dictionary<PatternType, int>();
+            this.InitializeStatistics();
+        }
+
         this.detectedPatterns.Clear();
         this.ResetStatistics();
 
@@ -617,6 +648,21 @@ public class SudokuPatternAnalyzer : SaiBehaviour
 
     private void ResetStatistics()
     {
+        if (this.patternCounts == null)
+        {
+            this.patternCounts = new Dictionary<PatternType, int>();
+        }
+
+        if (this.detectedPatterns == null)
+        {
+            this.detectedPatterns = new List<PatternInfo>();
+        }
+
+        if (this.patternStatistics == null)
+        {
+            this.patternStatistics = new List<PatternStatistic>();
+        }
+
         foreach (PatternType type in this.patternCounts.Keys.ToList())
         {
             this.patternCounts[type] = 0;

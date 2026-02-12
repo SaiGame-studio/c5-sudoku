@@ -12,6 +12,36 @@ public class ClassicHomeLevelList : SaiBehaviour
     [SerializeField] private float editorScaleFactor = 1.0f;
 
     private VisualElement root;
+    private float currentRuntimeScale = 1.0f;
+
+#if UNITY_EDITOR
+    private void OnEnable()
+    {
+        EditorApplication.playModeStateChanged += this.OnPlayModeStateChanged;
+    }
+
+    private void OnDisable()
+    {
+        EditorApplication.playModeStateChanged -= this.OnPlayModeStateChanged;
+    }
+
+    private void OnPlayModeStateChanged(PlayModeStateChange state)
+    {
+        if (state == PlayModeStateChange.ExitingPlayMode)
+        {
+            this.SaveCurrentScale();
+        }
+    }
+
+    private void SaveCurrentScale()
+    {
+        if (this.root != null)
+        {
+            this.editorScaleFactor = this.root.transform.scale.x;
+            EditorUtility.SetDirty(this);
+        }
+    }
+#endif
 
     protected override void LoadComponents()
     {
@@ -43,8 +73,26 @@ public class ClassicHomeLevelList : SaiBehaviour
             this.root.transform.scale = new Vector3(this.editorScaleFactor, this.editorScaleFactor, 1f);
         }
 
+        this.currentRuntimeScale = this.editorScaleFactor;
+
         this.RegisterCardCallbacks();
         this.RegisterBackButton();
+    }
+
+    public void SetScale(float scale)
+    {
+        if (this.root == null) return;
+
+        this.currentRuntimeScale = scale;
+        this.root.transform.scale = new Vector3(scale, scale, 1f);
+
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+        {
+            this.editorScaleFactor = scale;
+            EditorUtility.SetDirty(this);
+        }
+#endif
     }
 
     private void RegisterCardCallbacks()
@@ -106,26 +154,20 @@ public class ClassicHomeLevelList : SaiBehaviour
     [ProButton]
     private void ScaleUI()
     {
-        this.ApplyScale(this.editorScaleFactor);
-    }
-
-    [ProButton]
-    private void ResetScale()
-    {
-        this.editorScaleFactor = 1.0f;
-        this.ApplyScale(1.0f);
-    }
-
-    private void ApplyScale(float scale)
-    {
         this.LoadUIDocument();
         if (this.uiDocument == null) return;
 
         this.root = this.uiDocument.rootVisualElement;
         if (this.root == null) return;
 
-        this.root.transform.scale = new Vector3(scale, scale, 1f);
-        EditorUtility.SetDirty(this);
+        this.SetScale(this.editorScaleFactor);
+    }
+
+    [ProButton]
+    private void ResetScale()
+    {
+        this.editorScaleFactor = 1.0f;
+        this.SetScale(1.0f);
     }
 #endif
 }

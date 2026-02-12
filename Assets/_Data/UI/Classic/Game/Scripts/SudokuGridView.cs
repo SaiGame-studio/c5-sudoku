@@ -115,13 +115,12 @@ public class SudokuGridView : SaiBehaviour
         // Check for screen size changes
         if (Screen.width != this.lastScreenSize.x || Screen.height != this.lastScreenSize.y)
         {
-            this.lastScreenSize = new Vector2Int(Screen.width, Screen.height);
-            this.ApplyResponsiveScale();
+            // this.lastScreenSize = new Vector2Int(Screen.width, Screen.height);
+            // this.ApplyResponsiveScale();
         }
     }
 
-    [ProButton]
-    public void ApplyResponsiveScale()
+    protected void ApplyResponsiveScale()
     {
         if (this.mainContainer == null)
         {
