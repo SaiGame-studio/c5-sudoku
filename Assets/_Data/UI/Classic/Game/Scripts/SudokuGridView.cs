@@ -156,6 +156,12 @@ public class SudokuGridView : SaiBehaviour
     public void InitializeGrid()
     {
         this.root = this.uiDocument.rootVisualElement;
+        if (this.root == null)
+        {
+            Debug.LogError("UIDocument rootVisualElement is null");
+            return;
+        }
+
         this.mainContainer = this.root.Q<VisualElement>("sudoku-main-container");
         this.gridContainer = this.root.Q<VisualElement>("sudoku-grid");
         this.popupOverlay = this.root.Q<VisualElement>("popup-overlay");
@@ -644,6 +650,12 @@ public class SudokuGridView : SaiBehaviour
     [ProButton]
     public void PlayVictoryEffect()
     {
+        if (!Application.isPlaying)
+        {
+            Debug.LogWarning("PlayVictoryEffect() can only be called during Play Mode");
+            return;
+        }
+
         if (this.victoryEffect == null || this.victoryEffect.IsPlaying) return;
 
         this.ClearAllHighlights();
