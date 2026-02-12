@@ -3,7 +3,10 @@
     <ui:VisualElement class="sudoku-grid-root">
         <ui:VisualElement name="sudoku-main-container" class="sudoku-main-container">
             <ui:VisualElement class="sudoku-top-container">
-                <ui:VisualElement name="grid-top-bar" class="grid-top-bar">
+                <ui:VisualElement name="grid-top-bar" class="grid-top-bar" style="padding-bottom: 5px;">
+                    <ui:VisualElement name="theme-toggle" class="theme-toggle">
+                        <ui:Label name="theme-toggle-label" text="☾" class="theme-toggle-label"/>
+                    </ui:VisualElement>
                 </ui:VisualElement>
                 <ui:VisualElement name="sudoku-grid" class="sudoku-grid">
                     <ui:VisualElement class="sudoku-band">
@@ -339,9 +342,6 @@
                         <ui:Label name="star-7" text="★" class="difficulty-star"/>
                         <ui:Label name="star-8" text="★" class="difficulty-star"/>
                         <ui:Label name="star-9" text="★" class="difficulty-star"/>
-                    </ui:VisualElement>
-                    <ui:VisualElement name="theme-toggle" class="theme-toggle">
-                        <ui:Label name="theme-toggle-label" text="☾" class="theme-toggle-label"/>
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
