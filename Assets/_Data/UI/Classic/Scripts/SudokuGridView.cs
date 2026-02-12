@@ -1,6 +1,7 @@
 using com.cyborgAssets.inspectorButtonPro;
 using UnityEngine;
 using UnityEngine.UIElements;
+using System.Collections;
 using System.Collections.Generic;
 
 public class SudokuGridView : SaiBehaviour
@@ -48,6 +49,7 @@ public class SudokuGridView : SaiBehaviour
     private PatternInfo currentHintPattern;
     private Vector2Int lastScreenSize;
     private VisualElement mainContainer;
+    private VictoryEffect victoryEffect;
 
     protected override void LoadComponents()
     {
@@ -208,6 +210,9 @@ public class SudokuGridView : SaiBehaviour
         this.ClearAllNotes();
         this.LoadPuzzle();
         this.RefreshDifficultyStars();
+
+        // Initialize victory effect after grid is built
+        this.victoryEffect = new VictoryEffect(this.cells, this.root);
     }
 
     private void BuildGrid()
@@ -572,6 +577,7 @@ public class SudokuGridView : SaiBehaviour
     /// </summary>
     public void NewGame()
     {
+        this.StopVictoryEffect();
         this.selectedCell = null;
         this.HidePopup();
         this.ClearAllHighlights();
@@ -629,6 +635,32 @@ public class SudokuGridView : SaiBehaviour
             this.themeToggleLabel.text = "\u263E"; // Moon
         }
     }
+
+    /// <summary>
+    /// Play the victory celebration effect (can be triggered at any time)
+    /// </summary>
+    [ProButton]
+    public void PlayVictoryEffect()
+    {
+        if (this.victoryEffect == null || this.victoryEffect.IsPlaying) return;
+
+        this.ClearAllHighlights();
+        this.HidePopup();
+        this.selectedCell = null;
+
+        StartCoroutine(this.victoryEffect.PlayAnimation());
+    }
+
+    /// <summary>
+    /// Stop the victory effect if currently playing
+    /// </summary>
+    public void StopVictoryEffect()
+    {
+        if (this.victoryEffect != null)
+        {
+            this.victoryEffect.StopEffect();
+        }
+    }
     #endregion
 
     #region Result Analysis
@@ -677,6 +709,7 @@ public class SudokuGridView : SaiBehaviour
         {
             Debug.Log("<color=green>VICTORY!</color> Puzzle solved correctly!");
             Debug.Log(this.resultAnalyzer.GetAnalysisReport());
+            this.PlayVictoryEffect();
         }
         else if (result == SudokuResultAnalyzer.GameResult.Defeat)
         {

@@ -130,6 +130,119 @@
     color: rgb(150, 255, 180);
 }
 
+/* ===== Victory Effect ===== */
+.sudoku-cell--victory {
+    background-color: rgb(60, 50, 10);
+    border-color: rgb(255, 215, 0);
+    border-width: 2px;
+    transition-property: background-color, border-color, scale;
+    transition-duration: 0.4s;
+    transition-timing-function: ease-out;
+    scale: 1.08;
+}
+
+.sudoku-cell--victory > .sudoku-cell-label {
+    color: rgb(255, 223, 100);
+    transition-property: color;
+    transition-duration: 0.4s;
+}
+
+.victory-overlay {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0);
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    opacity: 0;
+    transition-property: opacity, background-color;
+    transition-duration: 0.5s;
+    transition-timing-function: ease-in-out;
+}
+
+.victory-overlay--visible {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, 0.55);
+}
+
+.victory-banner {
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(20, 20, 30, 0.92);
+    border-width: 3px;
+    border-color: rgb(255, 200, 50);
+    border-radius: 16px;
+    padding: 30px 50px;
+    scale: 0.6;
+    transition-property: scale;
+    transition-duration: 0.4s;
+    transition-timing-function: ease-out;
+}
+
+.victory-overlay--visible .victory-banner {
+    scale: 1;
+}
+
+.victory-title {
+    font-size: 48px;
+    color: rgb(255, 215, 0);
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    letter-spacing: 6px;
+    margin-bottom: 8px;
+}
+
+.victory-subtitle {
+    font-size: 22px;
+    color: rgb(200, 220, 255);
+    -unity-text-align: middle-center;
+    -unity-font-style: italic;
+}
+
+/* ===== Fireworks & Confetti ===== */
+.victory-particle-layer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+.firework-spark {
+    position: absolute;
+    opacity: 1;
+    scale: 1;
+    transition-property: translate, opacity, scale;
+    transition-duration: 1.0s, 0.9s, 1.0s;
+    transition-timing-function: ease-out, ease-in, ease-out;
+}
+
+.firework-flash {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    opacity: 0.95;
+    scale: 1;
+    transition-property: opacity, scale;
+    transition-duration: 0.5s, 0.5s;
+    transition-timing-function: ease-out, ease-out;
+}
+
+.firework-flash--fade {
+    opacity: 0;
+    scale: 3;
+}
+
+.confetti-piece {
+    position: absolute;
+    opacity: 1;
+}
+
 .popup-overlay {
     position: absolute;
     left: 0;
@@ -372,6 +485,29 @@
 
 .light-mode .sudoku-cell--hint > .sudoku-cell-label {
     color: rgb(20, 120, 50);
+}
+
+/* Light mode victory */
+.light-mode .sudoku-cell--victory {
+    background-color: rgb(255, 248, 200);
+    border-color: rgb(200, 160, 0);
+}
+
+.light-mode .sudoku-cell--victory > .sudoku-cell-label {
+    color: rgb(150, 120, 0);
+}
+
+.light-mode .victory-banner {
+    background-color: rgba(255, 255, 255, 0.95);
+    border-color: rgb(200, 160, 0);
+}
+
+.light-mode .victory-title {
+    color: rgb(180, 140, 0);
+}
+
+.light-mode .victory-subtitle {
+    color: rgb(60, 80, 120);
 }
 
 .light-mode .sudoku-note-label {
