@@ -1,81 +1,103 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
-    <Style src="project://database/Assets/_Data/UI/Classic/Home/Portrait/Styles/ClassicHome_Portrait.uss"/>
+    <Style src="project://database/Assets/_Data/UI/Classic/Home/Portrait/Styles/ClassicHome_Portrait.uss?fileID=7433441132597879392&amp;guid=4a4ceb6be770066419227f8c0a774dc4&amp;type=3#ClassicHome_Portrait"/>
     <ui:VisualElement class="home-root">
-        <ui:VisualElement class="home-container">
-
-            <!-- Header -->
-            <ui:VisualElement class="home-header">
+        <ui:VisualElement name="home-container" class="home-container">
+            <ui:VisualElement class="home-header" style="margin-top: 20px;">
                 <ui:Label text="SUDOKU" class="home-title"/>
                 <ui:Label text="Classic Mode" class="home-subtitle"/>
             </ui:VisualElement>
-
-            <!-- Level grid: each row = 1 difficulty, 3 cards per row -->
             <ui:ScrollView name="level-scroll" class="level-scroll">
                 <ui:VisualElement name="level-list-container" class="level-list-container">
-
-                    <!-- 1 star -->
                     <ui:VisualElement class="level-row">
-                        <ui:VisualElement name="card-0-0" class="level-card difficulty-0"><ui:Label text="&#x2605;" class="level-card-stars"/></ui:VisualElement>
-                        <ui:VisualElement name="card-1-0" class="level-card difficulty-0"><ui:Label text="&#x2605;" class="level-card-stars"/></ui:VisualElement>
-                        <ui:VisualElement name="card-2-0" class="level-card difficulty-0"><ui:Label text="&#x2605;" class="level-card-stars"/></ui:VisualElement>
+                        <ui:VisualElement name="card-0-0" class="level-card difficulty-0">
+                            <ui:Label text="★" class="level-card-stars"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="card-1-0" class="level-card difficulty-0">
+                            <ui:Label text="★" class="level-card-stars"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="card-2-0" class="level-card difficulty-0">
+                            <ui:Label text="★" class="level-card-stars"/>
+                        </ui:VisualElement>
                     </ui:VisualElement>
-
-                    <!-- 2 stars -->
                     <ui:VisualElement class="level-row">
-                        <ui:VisualElement name="card-0-1" class="level-card difficulty-1"><ui:Label text="&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
-                        <ui:VisualElement name="card-1-1" class="level-card difficulty-1"><ui:Label text="&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
-                        <ui:VisualElement name="card-2-1" class="level-card difficulty-1"><ui:Label text="&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
+                        <ui:VisualElement name="card-0-1" class="level-card difficulty-1">
+                            <ui:Label text="★★" class="level-card-stars"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="card-1-1" class="level-card difficulty-1">
+                            <ui:Label text="★★" class="level-card-stars"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="card-2-1" class="level-card difficulty-1">
+                            <ui:Label text="★★" class="level-card-stars"/>
+                        </ui:VisualElement>
                     </ui:VisualElement>
-
-                    <!-- 3 stars -->
                     <ui:VisualElement class="level-row">
-                        <ui:VisualElement name="card-0-2" class="level-card difficulty-2"><ui:Label text="&#x2605;&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
-                        <ui:VisualElement name="card-1-2" class="level-card difficulty-2"><ui:Label text="&#x2605;&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
-                        <ui:VisualElement name="card-2-2" class="level-card difficulty-2"><ui:Label text="&#x2605;&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
+                        <ui:VisualElement name="card-0-2" class="level-card difficulty-2">
+                            <ui:Label text="★★★" class="level-card-stars"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="card-1-2" class="level-card difficulty-2">
+                            <ui:Label text="★★★" class="level-card-stars"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="card-2-2" class="level-card difficulty-2">
+                            <ui:Label text="★★★" class="level-card-stars"/>
+                        </ui:VisualElement>
                     </ui:VisualElement>
-
-                    <!-- 4 stars -->
                     <ui:VisualElement class="level-row">
-                        <ui:VisualElement name="card-0-3" class="level-card difficulty-3"><ui:Label text="&#x2605;&#x2605;&#10;&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
-                        <ui:VisualElement name="card-1-3" class="level-card difficulty-3"><ui:Label text="&#x2605;&#x2605;&#10;&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
-                        <ui:VisualElement name="card-2-3" class="level-card difficulty-3"><ui:Label text="&#x2605;&#x2605;&#10;&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
+                        <ui:VisualElement name="card-0-3" class="level-card difficulty-3">
+                            <ui:Label text="★★&#10;★★" class="level-card-stars"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="card-1-3" class="level-card difficulty-3">
+                            <ui:Label text="★★&#10;★★" class="level-card-stars"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="card-2-3" class="level-card difficulty-3">
+                            <ui:Label text="★★&#10;★★" class="level-card-stars"/>
+                        </ui:VisualElement>
                     </ui:VisualElement>
-
-                    <!-- 5 stars -->
                     <ui:VisualElement class="level-row">
-                        <ui:VisualElement name="card-0-4" class="level-card difficulty-4"><ui:Label text="&#x2605;&#x2605;&#x2605;&#10;&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
-                        <ui:VisualElement name="card-1-4" class="level-card difficulty-4"><ui:Label text="&#x2605;&#x2605;&#x2605;&#10;&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
-                        <ui:VisualElement name="card-2-4" class="level-card difficulty-4"><ui:Label text="&#x2605;&#x2605;&#x2605;&#10;&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
+                        <ui:VisualElement name="card-0-4" class="level-card difficulty-4">
+                            <ui:Label text="★★★&#10;★★" class="level-card-stars"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="card-1-4" class="level-card difficulty-4">
+                            <ui:Label text="★★★&#10;★★" class="level-card-stars"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="card-2-4" class="level-card difficulty-4">
+                            <ui:Label text="★★★&#10;★★" class="level-card-stars"/>
+                        </ui:VisualElement>
                     </ui:VisualElement>
-
-                    <!-- 6 stars -->
                     <ui:VisualElement class="level-row">
-                        <ui:VisualElement name="card-0-5" class="level-card difficulty-5"><ui:Label text="&#x2605;&#x2605;&#x2605;&#10;&#x2605;&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
-                        <ui:VisualElement name="card-1-5" class="level-card difficulty-5"><ui:Label text="&#x2605;&#x2605;&#x2605;&#10;&#x2605;&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
-                        <ui:VisualElement name="card-2-5" class="level-card difficulty-5"><ui:Label text="&#x2605;&#x2605;&#x2605;&#10;&#x2605;&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
+                        <ui:VisualElement name="card-0-5" class="level-card difficulty-5">
+                            <ui:Label text="★★★&#10;★★★" class="level-card-stars"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="card-1-5" class="level-card difficulty-5">
+                            <ui:Label text="★★★&#10;★★★" class="level-card-stars"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="card-2-5" class="level-card difficulty-5">
+                            <ui:Label text="★★★&#10;★★★" class="level-card-stars"/>
+                        </ui:VisualElement>
                     </ui:VisualElement>
-
-                    <!-- 7 stars -->
                     <ui:VisualElement class="level-row">
-                        <ui:VisualElement name="card-0-6" class="level-card difficulty-6"><ui:Label text="&#x2605;&#x2605;&#x2605;&#x2605;&#10;&#x2605;&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
-                        <ui:VisualElement name="card-1-6" class="level-card difficulty-6"><ui:Label text="&#x2605;&#x2605;&#x2605;&#x2605;&#10;&#x2605;&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
-                        <ui:VisualElement name="card-2-6" class="level-card difficulty-6"><ui:Label text="&#x2605;&#x2605;&#x2605;&#x2605;&#10;&#x2605;&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
+                        <ui:VisualElement name="card-0-6" class="level-card difficulty-6">
+                            <ui:Label text="★★★★&#10;★★★" class="level-card-stars"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="card-1-6" class="level-card difficulty-6">
+                            <ui:Label text="★★★★&#10;★★★" class="level-card-stars"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="card-2-6" class="level-card difficulty-6">
+                            <ui:Label text="★★★★&#10;★★★" class="level-card-stars"/>
+                        </ui:VisualElement>
                     </ui:VisualElement>
-
-                    <!-- 8 & 9 stars: Extreme & Legendary -->
-                    <ui:VisualElement class="level-row">
-                        <ui:VisualElement name="card-3-7" class="level-card difficulty-7"><ui:Label text="&#x2605;&#x2605;&#x2605;&#x2605;&#10;&#x2605;&#x2605;&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
-                        <ui:VisualElement name="card-3-8" class="level-card difficulty-8"><ui:Label text="&#x2605;&#x2605;&#x2605;&#x2605;&#x2605;&#10;&#x2605;&#x2605;&#x2605;&#x2605;" class="level-card-stars"/></ui:VisualElement>
+                    <ui:VisualElement class="level-row level-row-last">
+                        <ui:VisualElement name="card-3-7" class="level-card difficulty-7">
+                            <ui:Label text="★★★★&#10;★★★★" class="level-card-stars"/>
+                        </ui:VisualElement>
+                        <ui:VisualElement name="card-3-8" class="level-card difficulty-8">
+                            <ui:Label text="★★★★★&#10;★★★★" class="level-card-stars"/>
+                        </ui:VisualElement>
                     </ui:VisualElement>
-
                 </ui:VisualElement>
             </ui:ScrollView>
-
-            <!-- Back button -->
             <ui:VisualElement class="home-footer">
-                <ui:Button name="back-button" text="&#xf053;" class="back-button"/>
+                <ui:Button name="back-button" text="" class="back-button"/>
             </ui:VisualElement>
-
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

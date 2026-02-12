@@ -9,50 +9,42 @@ public class ClassicHomeLevelList : SaiBehaviour
 {
     [Header("UI References")]
     [SerializeField] private UIDocument uiDocument;
-    [SerializeField] private float editorScaleFactor = 1.0f;
 
-    private VisualElement root;
-    private float currentRuntimeScale = 1.0f;
+    [Header("Scale Setting")]
+    [SerializeField] private float addLandscapeScale = 1f;
+    [SerializeField] private float addPortraitScale = 2f;
 
-#if UNITY_EDITOR
-    private void OnEnable()
+    [Header("Visual Elements")]
+    [SerializeField] private VisualElement root;
+    [SerializeField] private VisualElement homeContainer;
+
+    private void OnRootGeometryChanged(GeometryChangedEvent evt)
     {
-        EditorApplication.playModeStateChanged += this.OnPlayModeStateChanged;
+        this.ApplyResponsiveScale();
     }
-
-    private void OnDisable()
-    {
-        EditorApplication.playModeStateChanged -= this.OnPlayModeStateChanged;
-    }
-
-    private void OnPlayModeStateChanged(PlayModeStateChange state)
-    {
-        if (state == PlayModeStateChange.ExitingPlayMode)
-        {
-            this.SaveCurrentScale();
-        }
-    }
-
-    private void SaveCurrentScale()
-    {
-        if (this.root != null)
-        {
-            this.editorScaleFactor = this.root.transform.scale.x;
-            EditorUtility.SetDirty(this);
-        }
-    }
-#endif
 
     protected override void LoadComponents()
     {
         base.LoadComponents();
         this.LoadUIDocument();
+        this.LoadUIElements();
     }
 
     private void LoadUIDocument()
     {
         if (this.uiDocument != null) return;
         this.uiDocument = GetComponent<UIDocument>();
+    }
+
+    [ProButton]
+    private void LoadUIElements()
+    {
+        if (this.uiDocument == null) return;
+
+        this.root = this.uiDocument.rootVisualElement;
+        if (this.root == null) return;
+
+        this.homeContainer = this.root.Q<VisualElement>(className: "home-container");
     }
 
     protected override void Start()
@@ -63,36 +55,105 @@ public class ClassicHomeLevelList : SaiBehaviour
 
     private void InitializeUI()
     {
-        if (this.uiDocument == null) return;
-
-        this.root = this.uiDocument.rootVisualElement;
-
-        // Apply scale factor for consistency between editor and runtime
-        if (this.editorScaleFactor != 1.0f)
+        if (this.root == null || this.homeContainer == null)
         {
-            this.root.transform.scale = new Vector3(this.editorScaleFactor, this.editorScaleFactor, 1f);
+            this.LoadUIElements();
         }
 
-        this.currentRuntimeScale = this.editorScaleFactor;
+        if (this.root == null) return;
+
+        this.root.RegisterCallback<GeometryChangedEvent>(evt =>
+        {
+            this.root.UnregisterCallback<GeometryChangedEvent>(this.OnRootGeometryChanged);
+            this.ApplyResponsiveScale();
+        });
 
         this.RegisterCardCallbacks();
         this.RegisterBackButton();
     }
 
-    public void SetScale(float scale)
+    [ProButton]
+    private void ApplyResponsiveScale()
     {
-        if (this.root == null) return;
-
-        this.currentRuntimeScale = scale;
-        this.root.transform.scale = new Vector3(scale, scale, 1f);
-
-#if UNITY_EDITOR
-        if (!Application.isPlaying)
+        if (this.homeContainer == null)
         {
-            this.editorScaleFactor = scale;
-            EditorUtility.SetDirty(this);
+            this.LoadUIElements();
         }
-#endif
+
+        if (this.homeContainer == null) return;
+
+        float canvasWidth = 0f;
+        float canvasHeight = 0f;
+
+        var panelSettings = this.uiDocument.panelSettings;
+
+        if (panelSettings != null)
+        {
+            Vector2 refRes = panelSettings.referenceResolution;
+            if (refRes.x > 0 && refRes.y > 0)
+            {
+                canvasWidth = refRes.x;
+                canvasHeight = refRes.y;
+            }
+            else if (panelSettings.targetTexture != null)
+            {
+                canvasWidth = panelSettings.targetTexture.width;
+                canvasHeight = panelSettings.targetTexture.height;
+            }
+        }
+
+        if (canvasWidth <= 0 || float.IsNaN(canvasWidth))
+        {
+            canvasWidth = Screen.width;
+            canvasHeight = Screen.height;
+        }
+
+        bool isLandscape = canvasWidth > canvasHeight;
+
+        if (isLandscape)
+        {
+            this.ApplyResponsiveScaleLandscape(canvasWidth, canvasHeight);
+        }
+        else
+        {
+            this.ApplyResponsiveScalePortrait(canvasWidth, canvasHeight);
+        }
+    }
+
+    private void ApplyResponsiveScaleLandscape(float canvasWidth, float canvasHeight)
+    {
+        float baseWidth = 1920f;
+        float baseHeight = 1080f;
+
+        float scaleX = canvasWidth / baseWidth;
+        float scaleY = canvasHeight / baseHeight;
+        float scale = Mathf.Min(scaleX, scaleY);
+
+        scale = Mathf.Max(scale, 0.5f);
+        scale += this.addLandscapeScale;
+
+        this.homeContainer.style.transformOrigin = new StyleTransformOrigin(
+            new TransformOrigin(new Length(50, LengthUnit.Percent), new Length(0, LengthUnit.Percent))
+        );
+        this.homeContainer.style.scale = new StyleScale(new Scale(new Vector3(scale, scale, 1)));
+    }
+
+    private void ApplyResponsiveScalePortrait(float canvasWidth, float canvasHeight)
+    {
+        float baseWidth = 1080f;
+        float baseHeight = 1920f;
+
+        float scaleX = canvasWidth / baseWidth;
+        float scaleY = canvasHeight / baseHeight;
+        float scale = Mathf.Min(scaleX, scaleY);
+
+        scale = Mathf.Max(scale, 0.4f);
+        scale += this.addPortraitScale;
+
+        this.homeContainer.style.transformOrigin = new StyleTransformOrigin(
+            new TransformOrigin(new Length(50, LengthUnit.Percent), new Length(0, LengthUnit.Percent))
+        );
+        this.homeContainer.style.scale = new StyleScale(new Scale(new Vector3(scale, scale, 1)));
     }
 
     private void RegisterCardCallbacks()
@@ -146,28 +207,6 @@ public class ClassicHomeLevelList : SaiBehaviour
 
     private void OnBackButtonClicked()
     {
-        Debug.Log("Back button clicked in " + gameObject.name);
         GameManager.Instance.LoadMainMenu();
     }
-
-#if UNITY_EDITOR
-    [ProButton]
-    private void ScaleUI()
-    {
-        this.LoadUIDocument();
-        if (this.uiDocument == null) return;
-
-        this.root = this.uiDocument.rootVisualElement;
-        if (this.root == null) return;
-
-        this.SetScale(this.editorScaleFactor);
-    }
-
-    [ProButton]
-    private void ResetScale()
-    {
-        this.editorScaleFactor = 1.0f;
-        this.SetScale(1.0f);
-    }
-#endif
 }

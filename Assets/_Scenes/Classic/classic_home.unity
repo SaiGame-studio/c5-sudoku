@@ -667,7 +667,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClassicHomeLevelList
   uiDocument: {fileID: 1393854817}
-  editorScaleFactor: 1
+  addLandscapeScale: 1
+  addPortraitScale: 2
 --- !u!114 &1393854817
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -760,7 +761,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClassicHomeLevelList
   uiDocument: {fileID: 1410745335}
-  editorScaleFactor: 1
+  addLandscapeScale: 1
+  addPortraitScale: 1.2
 --- !u!1 &1457944208
 GameObject:
   m_ObjectHideFlags: 0
