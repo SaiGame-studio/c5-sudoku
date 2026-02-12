@@ -400,13 +400,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SudokuGenerator
   currentDifficulty: 0
   isPuzzleGenerated: 1
-  totalClues: 51
-  emptyCells: 30
+  totalClues: 52
+  emptyCells: 29
   summary: 
-  puzzlePreview: "x 9 x | 3 x x | 6 x 4 \r\n2 5 x | 7 6 x | x 1 9 \r\n4 x x | 1 9
-    8 | 3 5 2 \r\n------+-------+------\r\nx 3 2 | x 8 7 | 5 4 x \r\nx x 5 | x 1
-    6 | 2 x x \r\n9 4 1 | 5 3 2 | 7 x x \r\n------+-------+------\r\n5 x 9 | 8 x
-    x | x 2 x \r\nx 1 6 | 2 5 9 | 4 8 7 \r\nx 2 x | x 7 x | 9 3 5 \r\n"
+  puzzlePreview: "5 x x | 1 x x | 7 3 8 \r\nx 3 7 | x x 4 | 9 x x \r\n1 2 x | 7 9
+    3 | 6 x 5 \r\n------+-------+------\r\n7 x 3 | 5 2 6 | 8 1 9 \r\n2 5 1 | 3 x
+    9 | 4 x x \r\n9 x x | 4 1 7 | 3 5 x \r\n------+-------+------\r\n4 1 2 | x x
+    x | 5 6 3 \r\nx x x | 2 4 5 | x 8 x \r\nx 7 5 | x 3 1 | 2 x 4 \r\n"
 --- !u!114 &393123381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -488,12 +488,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SudokuPatternAnalyzer
   autoAnalyze: 1
   showDetailedLog: 0
-  patternsFoundCount: 1
-  patternsReport: "=== SUDOKU PATTERN ANALYSIS ===\n\r\nTotal Patterns Found: 1\n\r\n---
-    FullHouse (1) ---\r\n  \u2022 Row 8: Cell [8,1] must be 3\r\n\r\n"
+  patternsFoundCount: 3
+  patternsReport: "=== SUDOKU PATTERN ANALYSIS ===\n\r\nTotal Patterns Found: 3\n\r\n---
+    FullHouse (3) ---\r\n  \u2022 Row 4: Cell [4,2] must be 4\r\n  \u2022 Column
+    7: Cell [8,7] must be 1\r\n  \u2022 Box (2,2): Cell [5,5] must be 8\r\n\r\n"
   patternStatistics:
   - patternName: FullHouse
-    count: 1
+    count: 3
   - patternName: NakedSingle
     count: 0
   - patternName: HiddenSingle
@@ -1079,7 +1080,7 @@ MonoBehaviour:
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: e8856d158d32eef4abe4a32fd9d3d7e6, type: 2}
+  m_PanelSettings: {fileID: 11400000, guid: f29bca7bc07fda34c8c502b974eff0a2, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 9bbaaffbe9dc326428f829c6578c4b7e, type: 3}
   m_SortingOrder: 0
@@ -1150,6 +1151,8 @@ MonoBehaviour:
   incorrectCells: 0
   currentResult: 0
   userPuzzlePreview: 
+  addLandscapeScale: 0
+  addPortraitScale: 1.2
 --- !u!114 &7165603691242713602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1162,7 +1165,7 @@ MonoBehaviour:
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: e8856d158d32eef4abe4a32fd9d3d7e6, type: 2}
+  m_PanelSettings: {fileID: 11400000, guid: b03bd34471bc7a74483bebcb9cff6786, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 665e0e7ba9e46704e9a51788b8b3e1fd, type: 3}
   m_SortingOrder: 0
@@ -1244,14 +1247,16 @@ MonoBehaviour:
   autoAnalyze: 1
   autoAnalyzePatterns: 1
   completionPercentage: 65.4321
-  correctCells: 51
+  correctCells: 52
   incorrectCells: 0
   currentResult: 0
-  userPuzzlePreview: "\xB7 9 \xB7 | 3 \xB7 \xB7 | 6 \xB7 4 \r\n2 5 \xB7 | 7 6 \xB7
-    | \xB7 1 9 \r\n4 \xB7 \xB7 | 1 9 8 | 3 5 2 \r\n------+-------+------\r\n\xB7
-    3 2 | \xB7 8 7 | 5 4 \xB7 \r\n\xB7 \xB7 5 | \xB7 1 6 | 2 \xB7 \xB7 \r\n9 4 1
-    | 5 3 2 | 7 \xB7 \xB7 \r\n------+-------+------\r\n5 \xB7 9 | 8 \xB7 \xB7 | \xB7
-    2 \xB7 \r\n\xB7 1 6 | 2 5 9 | 4 8 7 \r\n\xB7 2 \xB7 | \xB7 7 \xB7 | 9 3 5 \r\n"
+  userPuzzlePreview: "5 \xB7 \xB7 | 1 \xB7 \xB7 | 7 3 8 \r\n\xB7 3 7 | \xB7 \xB7
+    4 | 9 \xB7 \xB7 \r\n1 2 \xB7 | 7 9 3 | 6 \xB7 5 \r\n------+-------+------\r\n7
+    \xB7 3 | 5 2 6 | 8 1 9 \r\n2 5 1 | 3 \xB7 9 | 4 \xB7 \xB7 \r\n9 \xB7 \xB7 | 4
+    1 7 | 3 5 \xB7 \r\n------+-------+------\r\n4 1 2 | \xB7 \xB7 \xB7 | 5 6 3 \r\n\xB7
+    \xB7 \xB7 | 2 4 5 | \xB7 8 \xB7 \r\n\xB7 7 5 | \xB7 3 1 | 2 \xB7 4 \r\n"
+  addLandscapeScale: 0
+  addPortraitScale: 1.5
 --- !u!114 &8143833361491433007
 MonoBehaviour:
   m_ObjectHideFlags: 0

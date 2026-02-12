@@ -1,6 +1,3 @@
-/* ===== Portrait Mode Styles ===== */
-/* Optimized for vertical/portrait screen orientation */
-
 .sudoku-grid-root {
     flex-grow: 1;
     align-items: center;
@@ -68,14 +65,15 @@
     -unity-text-align: middle-center;
     -unity-font-style: bold;
     position: absolute;
+    opacity: 1;
 }
 
 .sudoku-notes-grid {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     position: absolute;
 }
 
@@ -88,10 +86,15 @@
 .sudoku-note-label {
     width: 8px;
     height: 8px;
-    font-size: 10px;
+    font-size: 9px;
     color: rgb(150, 180, 220);
     -unity-text-align: middle-center;
     -unity-font-style: normal;
+    opacity: 1;
+    align-self: center;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
 }
 
 .sudoku-cell--clue {
@@ -143,7 +146,6 @@
     color: rgb(150, 255, 180);
 }
 
-/* ===== Victory Effect ===== */
 .sudoku-cell--victory {
     background-color: rgb(60, 50, 10);
     border-color: rgb(255, 215, 0);
@@ -215,7 +217,6 @@
     -unity-font-style: italic;
 }
 
-/* ===== Fireworks & Confetti ===== */
 .victory-particle-layer {
     position: absolute;
     left: 0;
@@ -230,7 +231,7 @@
     opacity: 1;
     scale: 1;
     transition-property: translate, opacity, scale;
-    transition-duration: 1.0s, 0.9s, 1.0s;
+    transition-duration: 1s, 0.9s, 1s;
     transition-timing-function: ease-out, ease-in, ease-out;
 }
 
@@ -376,10 +377,9 @@
     color: rgb(255, 150, 150);
     -unity-text-align: middle-center;
     -unity-font-style: bold;
-    -unity-font-definition: url("project://database/Assets/_Data/Fonts/fa-solid-900.ttf");
+    -unity-font-definition: url("project://database/Assets/_Data/Fonts/fa-solid-900.ttf?fileID=12800000&guid=512de696859bfa941b17280a6ca5b068&type=3#fa-solid-900");
 }
 
-/* ===== Difficulty Stars ===== */
 .difficulty-stars {
     align-self: center;
     flex-direction: row;
@@ -402,7 +402,6 @@
     color: rgb(255, 210, 50);
 }
 
-/* ===== Theme Toggle Button ===== */
 .theme-toggle {
     position: absolute;
     top: 10px;
@@ -430,7 +429,6 @@
     -unity-text-align: middle-center;
 }
 
-/* ===== Light Mode ===== */
 .light-mode .sudoku-grid {
     background-color: rgb(230, 230, 235);
     border-color: rgb(60, 60, 60);
@@ -500,7 +498,6 @@
     color: rgb(20, 120, 50);
 }
 
-/* Light mode victory */
 .light-mode .sudoku-cell--victory {
     background-color: rgb(255, 248, 200);
     border-color: rgb(200, 160, 0);
@@ -610,7 +607,6 @@
     color: rgb(40, 40, 50);
 }
 
-/* Difficulty Control Panel - Portrait Mode */
 .difficulty-control-panel {
     flex-direction: column;
     align-items: center;
@@ -665,7 +661,7 @@
     min-width: 48px;
     min-height: 48px;
     margin-left: 9px;
-    -unity-font-definition: url("project://database/Assets/_Data/Fonts/fa-solid-900.ttf");
+    -unity-font-definition: url("project://database/Assets/_Data/Fonts/fa-solid-900.ttf?fileID=12800000&guid=512de696859bfa941b17280a6ca5b068&type=3#fa-solid-900");
 }
 
 .generate-button:hover {
@@ -696,7 +692,7 @@
     transition-duration: 0.15s;
     flex-grow: 1;
     margin-right: 9px;
-    -unity-font-definition: url("project://database/Assets/_Data/Fonts/fa-solid-900.ttf");
+    -unity-font-definition: url("project://database/Assets/_Data/Fonts/fa-solid-900.ttf?fileID=12800000&guid=512de696859bfa941b17280a6ca5b068&type=3#fa-solid-900");
 }
 
 .hint-button:hover {
@@ -719,7 +715,7 @@
     -unity-font-style: bold;
     transition-duration: 0.15s;
     flex-grow: 1;
-    -unity-font-definition: url("project://database/Assets/_Data/Fonts/fa-solid-900.ttf");
+    -unity-font-definition: url("project://database/Assets/_Data/Fonts/fa-solid-900.ttf?fileID=12800000&guid=512de696859bfa941b17280a6ca5b068&type=3#fa-solid-900");
 }
 
 .auto-notes-button:hover {
@@ -735,7 +731,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 30px;
+    min-height: 20px;
     margin-top: 9px;
     padding: 6px 12px;
     background-color: rgba(40, 40, 45, 0.7);
@@ -749,7 +745,6 @@
     -unity-font-style: italic;
 }
 
-/* Light Mode Styles for Difficulty Panel - Portrait */
 .light-mode .difficulty-control-panel {
     background-color: transparent;
 }

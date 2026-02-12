@@ -32,6 +32,11 @@ public class SudokuGridView : SaiBehaviour
     [TextArea(11, 11)]
     [SerializeField] private string userPuzzlePreview = "";
 
+    [Header("Scale Setting")]
+    [SerializeField] private float addLandscapeScale = 0f;
+    [SerializeField] private float addPortraitScale = 1.2f;
+
+
     private VisualElement root;
     private VisualElement gridContainer;
     private VisualElement popupOverlay;
@@ -51,10 +56,16 @@ public class SudokuGridView : SaiBehaviour
     private VisualElement mainContainer;
     private VictoryEffect victoryEffect;
 
+    private void OnRootGeometryChanged(GeometryChangedEvent evt)
+    {
+        this.ApplyResponsiveScale();
+    }
+
     protected override void LoadComponents()
     {
         base.LoadComponents();
         this.LoadUIDocument();
+        this.LoadUIElements();
         this.LoadSudokuGenerator();
         this.LoadResultAnalyzer();
         this.LoadPatternAnalyzer();
@@ -67,6 +78,37 @@ public class SudokuGridView : SaiBehaviour
         if (this.uiDocument != null) return;
         this.uiDocument = GetComponent<UIDocument>();
         Debug.Log(transform.name + ": LoadUIDocument", gameObject);
+    }
+
+    [ProButton]
+    private void LoadUIElements()
+    {
+        if (this.uiDocument == null)
+        {
+            Debug.LogWarning("UIDocument is null, cannot load UI elements");
+            return;
+        }
+
+        this.root = this.uiDocument.rootVisualElement;
+        if (this.root == null)
+        {
+            Debug.LogWarning("UIDocument rootVisualElement is null, UI may not be ready yet");
+            return;
+        }
+
+        // Load all UI element references
+        this.mainContainer = this.root.Q<VisualElement>("sudoku-main-container");
+        this.gridContainer = this.root.Q<VisualElement>("sudoku-grid");
+        this.popupOverlay = this.root.Q<VisualElement>("popup-overlay");
+        this.popupContainer = this.root.Q<VisualElement>("popup-container");
+        this.themeToggle = this.root.Q<VisualElement>("theme-toggle");
+        this.themeToggleLabel = this.root.Q<Label>("theme-toggle-label");
+        this.difficultyStarsContainer = this.root.Q<VisualElement>("difficulty-stars");
+        this.hintButton = this.root.Q<Button>("hint-button");
+        this.autoNotesButton = this.root.Q<Button>("auto-notes-button");
+        this.patternNameLabel = this.root.Q<Label>("pattern-name-label");
+
+        Debug.Log(transform.name + ": LoadUIElements - MainContainer=" + (this.mainContainer != null ? "OK" : "NULL"), gameObject);
     }
 
     private void LoadSudokuGenerator()
@@ -110,38 +152,123 @@ public class SudokuGridView : SaiBehaviour
         this.InitializeGrid();
     }
 
-    private void Update()
-    {
-        // Check for screen size changes
-        if (Screen.width != this.lastScreenSize.x || Screen.height != this.lastScreenSize.y)
-        {
-            // this.lastScreenSize = new Vector2Int(Screen.width, Screen.height);
-            // this.ApplyResponsiveScale();
-        }
-    }
-
+    [ProButton]
     protected void ApplyResponsiveScale()
     {
+        // Ensure UI elements are loaded before scaling
         if (this.mainContainer == null)
         {
-            Debug.LogWarning("MainContainer is null, cannot apply responsive scale");
+            this.LoadUIElements();
+        }
+
+        if (this.mainContainer == null)
+        {
+            Debug.LogWarning("MainContainer is still null after LoadUIElements, cannot apply responsive scale");
             return;
         }
 
+        float canvasWidth = 0f;
+        float canvasHeight = 0f;
+        string resolutionSource = "Unknown";
+
+        var panelSettings = this.uiDocument.panelSettings;
+        
+        // Debug: Log PanelSettings info
+        if (panelSettings != null)
+        {
+            Debug.Log($"<color=yellow>[Debug PanelSettings]</color> Found! RefRes=({panelSettings.referenceResolution.x}, {panelSettings.referenceResolution.y}), ScaleMode={panelSettings.scaleMode}, TargetTexture={panelSettings.targetTexture != null}");
+            
+            // ALWAYS use Reference Resolution if it exists (regardless of scale mode)
+            Vector2 refRes = panelSettings.referenceResolution;
+            if (refRes.x > 0 && refRes.y > 0)
+            {
+                canvasWidth = refRes.x;
+                canvasHeight = refRes.y;
+                resolutionSource = $"Reference Resolution";
+            }
+            // Fallback to RenderTexture
+            else if (panelSettings.targetTexture != null)
+            {
+                canvasWidth = panelSettings.targetTexture.width;
+                canvasHeight = panelSettings.targetTexture.height;
+                resolutionSource = "RenderTexture";
+            }
+            else
+            {
+                Debug.LogWarning($"<color=red>[PanelSettings Problem]</color> Reference Resolution is zero or negative: {refRes}");
+            }
+        }
+        else
+        {
+            Debug.LogError("<color=red>[ApplyScale ERROR]</color> PanelSettings is NULL! Check UIDocument component.");
+        }
+
+        // Fallback: Use Screen size (unreliable in Edit Mode)
+        if (canvasWidth <= 0 || float.IsNaN(canvasWidth))
+        {
+            canvasWidth = Screen.width;
+            canvasHeight = Screen.height;
+            resolutionSource = "Screen Size (UNRELIABLE)";
+            Debug.LogWarning($"<color=orange>[Fallback Warning]</color> Using Screen size because Reference Resolution failed!");
+        }
+
+        // Detect orientation based on canvas size
+        bool isLandscape = canvasWidth > canvasHeight;
+
+        Debug.Log($"<color=cyan>[ApplyResponsiveScale FINAL]</color> Source: <b>{resolutionSource}</b>, Resolution: <b>{canvasWidth:F0}x{canvasHeight:F0}</b>, Orientation: <b>{(isLandscape ? "Landscape" : "Portrait")}</b>");
+
+        if (isLandscape)
+        {
+            this.ApplyResponsiveScaleLandscape(canvasWidth, canvasHeight);
+        }
+        else
+        {
+            this.ApplyResponsiveScalePortrait(canvasWidth, canvasHeight);
+        }
+    }
+
+    private void ApplyResponsiveScaleLandscape(float canvasWidth, float canvasHeight)
+    {
         // Base resolution: 1920x1080 (landscape)
         float baseWidth = 1920f;
         float baseHeight = 1080f;
 
-        // Calculate scale factor based on screen size
-        float scaleX = Screen.width / baseWidth;
-        float scaleY = Screen.height / baseHeight;
+        // Calculate scale factor based on canvas size
+        float scaleX = canvasWidth / baseWidth;
+        float scaleY = canvasHeight / baseHeight;
         float scale = Mathf.Min(scaleX, scaleY);
 
         // Apply minimum scale to avoid too small UI
         scale = Mathf.Max(scale, 0.5f);
-        scale+=0.2f;
+        scale += this.addLandscapeScale;
 
-        Debug.Log($"Applying landscape scale: {scale:F2} (Screen: {Screen.width}x{Screen.height})");
+        Debug.Log($"Applying landscape scale: {scale:F2} (Canvas: {canvasWidth}x{canvasHeight})");
+
+        // Set transform-origin to center for proper scaling
+        this.mainContainer.style.transformOrigin = new StyleTransformOrigin(
+            new TransformOrigin(new Length(50, LengthUnit.Percent), new Length(50, LengthUnit.Percent))
+        );
+
+        // Apply scale to main container
+        this.mainContainer.style.scale = new StyleScale(new Scale(new Vector3(scale, scale, 1)));
+    }
+
+    private void ApplyResponsiveScalePortrait(float canvasWidth, float canvasHeight)
+    {
+        // Base resolution: 1080x1920 (portrait)
+        float baseWidth = 1080f;
+        float baseHeight = 1920f;
+
+        // Calculate scale factor based on canvas size
+        float scaleX = canvasWidth / baseWidth;
+        float scaleY = canvasHeight / baseHeight;
+        float scale = Mathf.Min(scaleX, scaleY);
+
+        // Apply minimum scale to avoid too small UI
+        scale = Mathf.Max(scale, 0.4f);
+        scale += this.addPortraitScale;
+
+        Debug.Log($"Applying portrait scale: {scale:F2} (Canvas: {canvasWidth}x{canvasHeight})");
 
         // Set transform-origin to center for proper scaling
         this.mainContainer.style.transformOrigin = new StyleTransformOrigin(
@@ -155,37 +282,38 @@ public class SudokuGridView : SaiBehaviour
     [ProButton]
     public void InitializeGrid()
     {
-        this.root = this.uiDocument.rootVisualElement;
+        // Ensure UI elements are loaded
+        if (this.root == null || this.mainContainer == null)
+        {
+            this.LoadUIElements();
+        }
+
         if (this.root == null)
         {
-            Debug.LogError("UIDocument rootVisualElement is null");
+            Debug.LogError("UIDocument rootVisualElement is still null after LoadUIElements");
             return;
         }
 
-        this.mainContainer = this.root.Q<VisualElement>("sudoku-main-container");
-        this.gridContainer = this.root.Q<VisualElement>("sudoku-grid");
-        this.popupOverlay = this.root.Q<VisualElement>("popup-overlay");
-        this.popupContainer = this.root.Q<VisualElement>("popup-container");
-        this.themeToggle = this.root.Q<VisualElement>("theme-toggle");
-        this.themeToggleLabel = this.root.Q<Label>("theme-toggle-label");
-        this.difficultyStarsContainer = this.root.Q<VisualElement>("difficulty-stars");
-        this.hintButton = this.root.Q<Button>("hint-button");
-        this.autoNotesButton = this.root.Q<Button>("auto-notes-button");
-        this.patternNameLabel = this.root.Q<Label>("pattern-name-label");
-
         this.lastScreenSize = new Vector2Int(Screen.width, Screen.height);
-
-        // Apply initial responsive scale
-        this.ApplyResponsiveScale();
 
         this.cells = new SudokuCell[GRID_SIZE, GRID_SIZE];
 
-        // Theme toggle click
-        this.themeToggle.RegisterCallback<ClickEvent>(evt =>
+        // Delay scale application until UI is fully rendered
+        this.root.RegisterCallback<GeometryChangedEvent>(evt =>
         {
-            evt.StopPropagation();
-            this.ToggleTheme();
+            this.root.UnregisterCallback<GeometryChangedEvent>(this.OnRootGeometryChanged);
+            this.ApplyResponsiveScale();
         });
+
+        // Theme toggle click
+        if (this.themeToggle != null)
+        {
+            this.themeToggle.RegisterCallback<ClickEvent>(evt =>
+            {
+                evt.StopPropagation();
+                this.ToggleTheme();
+            });
+        }
 
         // Hint button click
         if (this.hintButton != null)
@@ -200,11 +328,14 @@ public class SudokuGridView : SaiBehaviour
         }
 
         // Click overlay background to close popup
-        this.popupOverlay.RegisterCallback<ClickEvent>(evt =>
+        if (this.popupOverlay != null)
         {
-            if (evt.target == this.popupOverlay)
-                this.HidePopup();
-        });
+            this.popupOverlay.RegisterCallback<ClickEvent>(evt =>
+            {
+                if (evt.target == this.popupOverlay)
+                    this.HidePopup();
+            });
+        }
 
         // Keyboard input for fill and notes
         this.root.RegisterCallback<KeyDownEvent>(this.OnKeyDown);
@@ -309,7 +440,6 @@ public class SudokuGridView : SaiBehaviour
         {
             this.OnErase();
             evt.StopPropagation();
-            evt.PreventDefault();
             return;
         }
 
@@ -327,7 +457,6 @@ public class SudokuGridView : SaiBehaviour
         }
 
         evt.StopPropagation();
-        evt.PreventDefault();
     }
 
     private int KeyCodeToNumber(KeyCode keyCode)
