@@ -224,7 +224,12 @@
 /* ===== Completed Level Indicator ===== */
 .level-completed {
     border-width: 3px;
-    background-color: rgba(100, 200, 150, 0.15);
+    border-color: rgb(255, 215, 0);
+    background-color: rgba(60, 50, 10, 0.6);
+}
+
+.level-completed .level-card-stars {
+    color: rgb(255, 223, 100);
 }
 
 .level-completed::after {
@@ -233,12 +238,29 @@
     top: 2px;
     right: 4px;
     font-size: 16px;
-    color: rgb(100, 220, 150);
+    color: rgb(255, 215, 0);
     -unity-font-style: bold;
 }
 
 .level-completed:hover {
-    background-color: rgba(120, 220, 170, 0.25);
+    background-color: rgba(80, 65, 10, 0.7);
+}
+
+.light-mode .level-completed {
+    border-color: rgb(200, 160, 0);
+    background-color: rgba(255, 248, 200, 0.6);
+}
+
+.light-mode .level-completed .level-card-stars {
+    color: rgb(150, 120, 0);
+}
+
+.light-mode .level-completed::after {
+    color: rgb(200, 160, 0);
+}
+
+.light-mode .level-completed:hover {
+    background-color: rgba(255, 248, 200, 0.8);
 }
 
 /* ===== Locked Level Indicator ===== */
