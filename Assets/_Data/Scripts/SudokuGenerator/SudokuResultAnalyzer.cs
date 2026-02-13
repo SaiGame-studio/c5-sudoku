@@ -56,7 +56,34 @@ public class SudokuResultAnalyzer : SaiBehaviour
         this.AnalyzeSolution();
         this.GenerateReport();
         
+        // Save progress and award stars when player wins
+        if (this.currentResult == GameResult.Victory)
+        {
+            this.SaveVictoryProgress();
+        }
+        
         return this.currentResult;
+    }
+
+    /// <summary>
+    /// Save victory progress to GameProgress and award stars
+    /// </summary>
+    private void SaveVictoryProgress()
+    {
+        if (GameProgress.Instance != null)
+        {
+            int difficulty = GameData.SelectedDifficulty;
+            int level = GameData.SelectedLevel;
+            
+            GameProgress.Instance.CompleteLevel(difficulty, level);
+            
+            int starsEarned = GameProgress.GetStarsForDifficulty(difficulty);
+            Debug.Log($"[SudokuResultAnalyzer] Victory! Completed Level {level} of {GameData.DIFFICULTY_NAMES[difficulty]} difficulty. Earned {starsEarned} stars!");
+        }
+        else
+        {
+            Debug.LogWarning("[SudokuResultAnalyzer] GameProgress instance not found. Progress not saved!");
+        }
     }
 
     /// <summary>

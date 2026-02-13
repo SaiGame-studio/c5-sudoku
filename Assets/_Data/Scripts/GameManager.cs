@@ -20,7 +20,6 @@ public class GameManager : SaiSingleton<GameManager>
         SceneManager.LoadScene(this.classicHomeSceneName);
     }
 
-    [ProButton]
     /// <summary>
     /// Load Classic Game Scene with level and difficulty parameters
     /// </summary>
