@@ -304,3 +304,30 @@
 .level-completed:hover {
     background-color: rgba(120, 220, 170, 0.25);
 }
+
+/* ===== Locked Level Indicator ===== */
+.level-locked {
+    opacity: 0.4;
+    background-color: rgba(50, 50, 50, 0.4);
+    border-color: rgb(80, 80, 80);
+}
+
+.level-locked::after {
+    content: '🔒';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    font-size: 24px;
+    color: rgb(150, 150, 150);
+}
+
+.level-locked:hover {
+    background-color: rgba(50, 50, 50, 0.4);
+    scale: 1;
+    cursor: default;
+}
+
+.level-locked:active {
+    scale: 1;
+}

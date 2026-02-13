@@ -746,6 +746,24 @@
     -unity-font-definition: url("project://database/Assets/_Data/Fonts/fa-solid-900.ttf");
 }
 
+.auto-play-button {
+    background-color: rgb(200, 80, 60);
+    border-color: rgb(220, 100, 80);
+    border-width: 3px;
+    border-radius: 8px;
+    padding: 16px 34px;
+    color: rgb(255, 245, 240);
+    font-size: 22px;
+    -unity-font-style: bold;
+    transition-duration: 0.15s;
+    flex-grow: 1;
+    margin-left: 8px;
+    min-width: 50px;
+    min-height: 50px;
+    max-width: 60px;
+    -unity-font-definition: url("project://database/Assets/_Data/Fonts/fa-solid-900.ttf");
+}
+
 .hint-button:hover {
     background-color: rgb(60, 160, 100);
     border-color: rgb(80, 180, 120);
@@ -762,6 +780,15 @@
 
 .auto-notes-button:active {
     background-color: rgb(100, 60, 150);
+}
+
+.auto-play-button:hover {
+    background-color: rgb(220, 100, 80);
+    border-color: rgb(240, 120, 100);
+}
+
+.auto-play-button:active {
+    background-color: rgb(180, 60, 40);
 }
 
 .pattern-display {
@@ -849,6 +876,21 @@
 
 .light-mode .auto-notes-button:active {
     background-color: rgb(120, 90, 200);
+}
+
+.light-mode .auto-play-button {
+    background-color: rgb(230, 100, 80);
+    border-color: rgb(210, 80, 60);
+    color: rgb(255, 255, 255);
+}
+
+.light-mode .auto-play-button:hover {
+    background-color: rgb(250, 120, 100);
+    border-color: rgb(230, 100, 80);
+}
+
+.light-mode .auto-play-button:active {
+    background-color: rgb(210, 80, 60);
 }
 
 .light-mode .pattern-display {

@@ -18,6 +18,7 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private SudokuPatternAnalyzer patternAnalyzer;
     [SerializeField] private SudokuHintSystem hintSystem;
     [SerializeField] private SudokuAutoNotes autoNotes;
+    [SerializeField] private SudokuAutoPlayer autoPlayer;
 
     [Header("Popup Settings")]
     [SerializeField] private Vector2 popupOffset = new Vector2(0f, -10f);
@@ -25,6 +26,9 @@ public class SudokuGridView : SaiBehaviour
     [Header("Live Analysis")]
     [SerializeField] private bool autoAnalyze = true;
     [SerializeField] private bool autoAnalyzePatterns = true;
+    
+    [Header("Debug/Testing")]
+    [SerializeField] private bool showAutoPlayButton = false;
 
     [Header("Scale Setting")]
     [SerializeField] private float addLandscapeScale = 0f;
@@ -42,6 +46,7 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private Label levelNameLabel;
     [SerializeField] private Button hintButton;
     [SerializeField] private Button autoNotesButton;
+    [SerializeField] private Button autoPlayButton;
     [SerializeField] private Label patternNameLabel;
     [SerializeField] private SudokuCell[,] cells;
     [SerializeField] private SudokuCell selectedCell;
@@ -74,6 +79,7 @@ public class SudokuGridView : SaiBehaviour
         this.LoadPatternAnalyzer();
         this.LoadHintSystem();
         this.LoadAutoNotes();
+        this.LoadAutoPlayer();
     }
 
     private void LoadUIDocument()
@@ -110,6 +116,7 @@ public class SudokuGridView : SaiBehaviour
         this.levelNameLabel = this.root.Q<Label>("level-name-label");
         this.hintButton = this.root.Q<Button>("hint-button");
         this.autoNotesButton = this.root.Q<Button>("auto-notes-button");
+        this.autoPlayButton = this.root.Q<Button>("auto-play-button");
         this.patternNameLabel = this.root.Q<Label>("pattern-name-label");
 
         Debug.Log(transform.name + ": LoadUIElements - MainContainer=" + (this.mainContainer != null ? "OK" : "NULL"), gameObject);
@@ -148,6 +155,13 @@ public class SudokuGridView : SaiBehaviour
         if (this.autoNotes != null) return;
         this.autoNotes = FindFirstObjectByType<SudokuAutoNotes>();
         Debug.Log(transform.name + ": LoadAutoNotes", gameObject);
+    }
+    
+    private void LoadAutoPlayer()
+    {
+        if (this.autoPlayer != null) return;
+        this.autoPlayer = FindFirstObjectByType<SudokuAutoPlayer>();
+        Debug.Log(transform.name + ": LoadAutoPlayer", gameObject);
     }
 
     protected override void Start()
@@ -223,6 +237,12 @@ public class SudokuGridView : SaiBehaviour
         if (this.autoNotesButton != null)
         {
             this.autoNotesButton.clicked += this.OnAutoNotesButtonClicked;
+        }
+        
+        if (this.autoPlayButton != null)
+        {
+            this.autoPlayButton.clicked += this.OnAutoPlayButtonClicked;
+            this.UpdateAutoPlayButtonVisibility();
         }
 
         if (this.popupOverlay != null)
@@ -835,6 +855,34 @@ public class SudokuGridView : SaiBehaviour
         this.ClearAllNotes();
         
         this.autoNotes.StartAutoNotes();
+    }
+    
+    /// <summary>
+    /// Handle auto play button click - uses SudokuAutoPlayer to solve puzzle
+    /// </summary>
+    private void OnAutoPlayButtonClicked()
+    {
+        if (this.autoPlayer == null)
+        {
+            Debug.LogWarning("[SudokuGridView] AutoPlayer is not available");
+            return;
+        }
+        
+        Debug.Log("[SudokuGridView] Starting auto-play via SudokuAutoPlayer...");
+        
+        // Use the auto player to solve the puzzle
+        this.autoPlayer.StartAutoPlayOnGridView(this);
+    }
+    
+    /// <summary>
+    /// Update Auto Play button visibility based on inspector setting
+    /// </summary>
+    private void UpdateAutoPlayButtonVisibility()
+    {
+        if (this.autoPlayButton != null)
+        {
+            this.autoPlayButton.style.display = this.showAutoPlayButton ? DisplayStyle.Flex : DisplayStyle.None;
+        }
     }
 
     private void ClearAllNotes()

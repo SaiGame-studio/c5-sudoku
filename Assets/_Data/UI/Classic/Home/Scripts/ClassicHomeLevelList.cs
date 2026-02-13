@@ -70,6 +70,7 @@ public class ClassicHomeLevelList : SaiBehaviour
 
         this.RegisterCardCallbacks();
         this.RegisterBackButton();
+        this.UpdateLockedLevels();
         this.UpdateCompletedLevels();
     }
 
@@ -189,6 +190,17 @@ public class ClassicHomeLevelList : SaiBehaviour
         card.RegisterCallback<ClickEvent>(evt =>
         {
             evt.StopPropagation();
+            
+            // Extract global level number from levelName
+            int levelNumber = GameProgress.ParseLevelName(capturedLevelName);
+            
+            // Check if level is unlocked before allowing selection
+            if (GameProgress.Instance != null && !GameProgress.Instance.IsLevelUnlocked(levelNumber))
+            {
+                Debug.Log($"[ClassicHomeLevelList] Level {levelNumber} is locked! Complete previous levels first.");
+                return;
+            }
+            
             this.OnLevelSelected(capturedLevel, capturedDifficulty, capturedLevelName);
         });
     }
@@ -217,6 +229,25 @@ public class ClassicHomeLevelList : SaiBehaviour
     }
 
     /// <summary>
+    /// Update UI to show which levels are locked/unlocked
+    /// </summary>
+    private void UpdateLockedLevels()
+    {
+        if (GameProgress.Instance == null) return;
+
+        // Check all levels 1-23
+        for (int levelNumber = 1; levelNumber <= 23; levelNumber++)
+        {
+            string levelName = $"level-{levelNumber}";
+            
+            if (!GameProgress.Instance.IsLevelUnlocked(levelNumber))
+            {
+                this.MarkLevelAsLocked(levelName);
+            }
+        }
+    }
+    
+    /// <summary>
     /// Update UI to show which levels have been completed
     /// </summary>
     private void UpdateCompletedLevels()
@@ -234,6 +265,18 @@ public class ClassicHomeLevelList : SaiBehaviour
         }
     }
 
+    /// <summary>
+    /// Add CSS class to mark a level card as locked
+    /// </summary>
+    private void MarkLevelAsLocked(string levelName)
+    {
+        VisualElement card = this.root.Q<VisualElement>(levelName);
+        if (card != null && !card.ClassListContains("level-locked"))
+        {
+            card.AddToClassList("level-locked");
+        }
+    }
+    
     /// <summary>
     /// Add CSS class to mark a level card as completed
     /// </summary>

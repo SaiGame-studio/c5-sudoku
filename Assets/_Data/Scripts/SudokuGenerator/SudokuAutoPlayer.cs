@@ -6,7 +6,7 @@ using com.cyborgAssets.inspectorButtonPro;
 public class SudokuAutoPlayer : SaiBehaviour
 {
     [Header("Settings")]
-    [SerializeField] private float autoPlayDelay = 0.2f;
+    [SerializeField] private float autoPlayDelay = 0.1f;
     [SerializeField] private bool isAutoPlaying = false;
 
     [Header("Dependencies")]

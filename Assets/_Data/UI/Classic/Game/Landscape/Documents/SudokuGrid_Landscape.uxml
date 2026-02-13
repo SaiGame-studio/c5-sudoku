@@ -346,16 +346,7 @@
                     </ui:VisualElement>
                     <ui:Button name="back-button" text="" class="back-button" style="left: 0; position: absolute;"/>
                 </ui:VisualElement>
-            </ui:VisualElement>
-            <ui:VisualElement name="difficulty-control-panel" class="difficulty-control-panel">
-                <ui:VisualElement class="button-row">
-                    <ui:VisualElement name="pattern-display" class="pattern-display" style="padding-top: 12px; padding-right: 18px; padding-bottom: 12px; padding-left: 18px; margin-top: 2px; margin-right: 4px; margin-bottom: 2px; margin-left: 4px; height: 61px;">
-                        <ui:Label name="pattern-name-label" text="" class="pattern-name-label"/>
-                    </ui:VisualElement>
-                    <ui:Button name="hint-button" text="" class="hint-button"/>
-                    <ui:Button name="auto-notes-button" text="" class="auto-notes-button"/>
-                </ui:VisualElement>
-                <ui:VisualElement class="difficulty-top-row" style="margin-bottom: 15px; margin-top: 15px;">
+                <ui:VisualElement name="difficulty-generate" class="difficulty-top-row" style="margin-bottom: 15px; margin-top: 15px;">
                     <ui:VisualElement name="difficulty-dropdown" class="difficulty-dropdown-stars">
                         <ui:Label name="diff-star-1" text="★" class="difficulty-dropdown-star"/>
                         <ui:Label name="diff-star-2" text="★" class="difficulty-dropdown-star"/>
@@ -367,7 +358,17 @@
                         <ui:Label name="diff-star-8" text="★" class="difficulty-dropdown-star"/>
                         <ui:Label name="diff-star-9" text="★" class="difficulty-dropdown-star"/>
                     </ui:VisualElement>
-                    <ui:Button name="generate-button" text="" class="generate-button" style="padding-right: 30px; padding-left: 30px;"/>
+                    <ui:Button name="generate-button" text="" class="generate-button" style="padding-right: 30px; padding-left: 30px; max-height: 50px;"/>
+                    <ui:Button name="auto-play-button" text="A" class="auto-play-button" style="max-height: 50px;"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="difficulty-control-panel" class="difficulty-control-panel" style="width: 500px; margin-top: 35px;">
+                <ui:VisualElement class="button-row">
+                    <ui:VisualElement name="pattern-display" class="pattern-display" style="padding-top: 12px; padding-right: 18px; padding-bottom: 12px; padding-left: 18px; margin-top: 2px; margin-right: 4px; margin-bottom: 2px; margin-left: 4px; height: 66px;">
+                        <ui:Label name="pattern-name-label" text="" class="pattern-name-label"/>
+                    </ui:VisualElement>
+                    <ui:Button name="hint-button" text="" class="hint-button"/>
+                    <ui:Button name="auto-notes-button" text="" class="auto-notes-button"/>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
