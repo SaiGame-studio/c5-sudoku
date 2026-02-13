@@ -70,6 +70,7 @@ public class ClassicHomeLevelList : SaiBehaviour
 
         this.RegisterCardCallbacks();
         this.RegisterBackButton();
+        this.UpdateCompletedLevels();
     }
 
     [ProButton]
@@ -158,32 +159,37 @@ public class ClassicHomeLevelList : SaiBehaviour
 
     private void RegisterCardCallbacks()
     {
-        // Rows 1-3: cards named "card-{row}-{difficulty}" for difficulties 0-6
-        for (int row = 0; row < GameData.LEVELS_PER_DIFFICULTY; row++)
+        // Register level-1 to level-21 (difficulties 0-6, 3 levels each)
+        for (int diff = 0; diff < 7; diff++)
         {
-            for (int diff = 0; diff < 7; diff++)
+            for (int subLevel = 1; subLevel <= GameData.LEVELS_PER_DIFFICULTY; subLevel++)
             {
-                this.RegisterCard("card-" + row + "-" + diff, row + 1, diff);
+                int levelNumber = diff * 3 + subLevel;
+                string levelName = "level-" + levelNumber;
+                this.RegisterCard(levelName, subLevel, diff, levelName);
             }
         }
 
-        // Row 4: single cards for Extreme (7) and Legendary (8)
-        this.RegisterCard("card-3-7", 1, 7);
-        this.RegisterCard("card-3-8", 1, 8);
+        // Register level-22 (Extreme - difficulty 7)
+        this.RegisterCard("level-22", 1, 7, "level-22");
+        
+        // Register level-23 (Legendary - difficulty 8)
+        this.RegisterCard("level-23", 1, 8, "level-23");
     }
 
-    private void RegisterCard(string cardName, int level, int difficulty)
+    private void RegisterCard(string cardName, int level, int difficulty, string levelName)
     {
         VisualElement card = this.root.Q<VisualElement>(cardName);
         if (card == null) return;
 
         int capturedLevel = level;
         int capturedDifficulty = difficulty;
+        string capturedLevelName = levelName;
 
         card.RegisterCallback<ClickEvent>(evt =>
         {
             evt.StopPropagation();
-            this.OnLevelSelected(capturedLevel, capturedDifficulty);
+            this.OnLevelSelected(capturedLevel, capturedDifficulty, capturedLevelName);
         });
     }
 
@@ -200,13 +206,60 @@ public class ClassicHomeLevelList : SaiBehaviour
         Debug.Log("Back button registered in " + gameObject.name);
     }
 
-    private void OnLevelSelected(int level, int difficulty)
+    private void OnLevelSelected(int level, int difficulty, string levelName)
     {
-        GameManager.Instance.LoadClassicGame(level, difficulty);
+        GameManager.Instance.LoadClassicGame(level, difficulty, levelName);
     }
 
     private void OnBackButtonClicked()
     {
         GameManager.Instance.LoadMainMenu();
+    }
+
+    /// <summary>
+    /// Update UI to show which levels have been completed
+    /// </summary>
+    private void UpdateCompletedLevels()
+    {
+        if (GameProgress.Instance == null) return;
+
+        // Check levels 1-21 (difficulties 0-6)
+        for (int diff = 0; diff < 7; diff++)
+        {
+            for (int subLevel = 1; subLevel <= GameData.LEVELS_PER_DIFFICULTY; subLevel++)
+            {
+                int levelNumber = diff * 3 + subLevel;
+                string levelName = "level-" + levelNumber;
+                
+                if (GameProgress.Instance.IsLevelCompleted(diff, subLevel))
+                {
+                    this.MarkLevelAsCompleted(levelName);
+                }
+            }
+        }
+
+        // Check level-22 (Extreme)
+        if (GameProgress.Instance.IsLevelCompleted(7, 1))
+        {
+            this.MarkLevelAsCompleted("level-22");
+        }
+
+        // Check level-23 (Legendary)
+        if (GameProgress.Instance.IsLevelCompleted(8, 1))
+        {
+            this.MarkLevelAsCompleted("level-23");
+        }
+    }
+
+    /// <summary>
+    /// Add CSS class to mark a level card as completed
+    /// </summary>
+    private void MarkLevelAsCompleted(string levelName)
+    {
+        VisualElement card = this.root.Q<VisualElement>(levelName);
+        if (card != null && !card.ClassListContains("level-completed"))
+        {
+            card.AddToClassList("level-completed");
+        }
     }
 }

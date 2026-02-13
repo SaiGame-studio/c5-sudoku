@@ -3,6 +3,7 @@ public static class GameData
     // Level and difficulty parameters passed between scenes
     public static int SelectedLevel { get; set; } = 1;
     public static int SelectedDifficulty { get; set; } = 0;
+    public static string SelectedLevelName { get; set; } = "level-1";
 
     // Map difficulty index (0-6) to SudokuGenerator.DifficultyLevel
     public static SudokuGenerator.DifficultyLevel GetDifficultyLevel()

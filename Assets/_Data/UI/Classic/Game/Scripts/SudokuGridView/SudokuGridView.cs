@@ -39,6 +39,7 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private VisualElement themeToggle;
     [SerializeField] private Label themeToggleLabel;
     [SerializeField] private VisualElement difficultyStarsContainer;
+    [SerializeField] private Label levelNameLabel;
     [SerializeField] private Button hintButton;
     [SerializeField] private Button autoNotesButton;
     [SerializeField] private Label patternNameLabel;
@@ -106,6 +107,7 @@ public class SudokuGridView : SaiBehaviour
         this.themeToggle = this.root.Q<VisualElement>("theme-toggle");
         this.themeToggleLabel = this.root.Q<Label>("theme-toggle-label");
         this.difficultyStarsContainer = this.root.Q<VisualElement>("difficulty-stars");
+        this.levelNameLabel = this.root.Q<Label>("level-name-label");
         this.hintButton = this.root.Q<Button>("hint-button");
         this.autoNotesButton = this.root.Q<Button>("auto-notes-button");
         this.patternNameLabel = this.root.Q<Label>("pattern-name-label");
@@ -243,6 +245,7 @@ public class SudokuGridView : SaiBehaviour
         this.ClearAllNotes();
         this.LoadPuzzle();
         this.RefreshDifficultyStars();
+        this.UpdateLevelNameDisplay();
 
         this.victoryEffect = new VictoryEffect(this.cells, this.root);
     }
@@ -566,6 +569,27 @@ public class SudokuGridView : SaiBehaviour
                 star.AddToClassList("difficulty-star--active");
             else
                 star.RemoveFromClassList("difficulty-star--active");
+        }
+    }
+
+    /// <summary>
+    /// Update level name display from GameData
+    /// </summary>
+    private void UpdateLevelNameDisplay()
+    {
+        if (this.levelNameLabel == null) return;
+
+        string levelName = GameData.SelectedLevelName;
+        
+        // Format the display: "Level 1" instead of "level-1"
+        if (levelName.StartsWith("level-"))
+        {
+            string levelNumber = levelName.Replace("level-", "");
+            this.levelNameLabel.text = "Level " + levelNumber;
+        }
+        else
+        {
+            this.levelNameLabel.text = levelName;
         }
     }
 

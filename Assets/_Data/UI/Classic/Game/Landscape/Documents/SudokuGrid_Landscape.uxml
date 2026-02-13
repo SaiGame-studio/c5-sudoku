@@ -3,7 +3,20 @@
     <ui:VisualElement class="sudoku-grid-root">
         <ui:VisualElement name="sudoku-main-container" class="sudoku-main-container">
             <ui:VisualElement class="sudoku-left-container">
-                <ui:VisualElement name="grid-top-bar" class="grid-top-bar"/>
+                <ui:VisualElement name="grid-top-bar" class="grid-top-bar" style="justify-content: flex-start;">
+                    <ui:Label name="level-name-label" text="Level 1" class="level-name-label" style="align-items: flex-start; align-self: auto; font-size: 24px;"/>
+                    <ui:VisualElement name="difficulty-stars" class="difficulty-stars" style="margin-left: auto; align-self: center; flex-direction: row;">
+                        <ui:Label name="star-1" text="★" class="difficulty-star"/>
+                        <ui:Label name="star-2" text="★" class="difficulty-star"/>
+                        <ui:Label name="star-3" text="★" class="difficulty-star"/>
+                        <ui:Label name="star-4" text="★" class="difficulty-star"/>
+                        <ui:Label name="star-5" text="★" class="difficulty-star"/>
+                        <ui:Label name="star-6" text="★" class="difficulty-star"/>
+                        <ui:Label name="star-7" text="★" class="difficulty-star"/>
+                        <ui:Label name="star-8" text="★" class="difficulty-star"/>
+                        <ui:Label name="star-9" text="★" class="difficulty-star"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
                 <ui:VisualElement name="sudoku-grid" class="sudoku-grid">
                     <ui:VisualElement class="sudoku-band">
                         <ui:VisualElement class="sudoku-box">
@@ -328,22 +341,9 @@
                     </ui:VisualElement>
                 </ui:VisualElement>
                 <ui:VisualElement name="grid-bottom-bar" class="grid-bottom-bar">
-                    <ui:VisualElement name="difficulty-stars" class="difficulty-stars">
-                        <ui:Label name="star-1" text="★" class="difficulty-star"/>
-                        <ui:Label name="star-2" text="★" class="difficulty-star"/>
-                        <ui:Label name="star-3" text="★" class="difficulty-star"/>
-                        <ui:Label name="star-4" text="★" class="difficulty-star"/>
-                        <ui:Label name="star-5" text="★" class="difficulty-star"/>
-                        <ui:Label name="star-6" text="★" class="difficulty-star"/>
-                        <ui:Label name="star-7" text="★" class="difficulty-star"/>
-                        <ui:Label name="star-8" text="★" class="difficulty-star"/>
-                        <ui:Label name="star-9" text="★" class="difficulty-star"/>
-                    </ui:VisualElement>
                     <ui:VisualElement name="theme-toggle" class="theme-toggle">
                         <ui:Label name="theme-toggle-label" text="☾" class="theme-toggle-label"/>
                     </ui:VisualElement>
-                </ui:VisualElement>
-                <ui:VisualElement style="flex-grow: 1; position: relative; left: auto; bottom: auto; width: 100%; margin-top: 10px;">
                     <ui:Button name="back-button" text="" class="back-button" style="left: 0; position: absolute;"/>
                 </ui:VisualElement>
             </ui:VisualElement>

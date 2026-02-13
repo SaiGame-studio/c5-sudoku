@@ -10,79 +10,79 @@
                 <ui:ScrollView name="level-scroll" vertical-scroller-visibility="Hidden" horizontal-scroller-visibility="Hidden" class="level-scroll" style="height: 0;">
                     <ui:VisualElement name="level-list-container" class="level-list-container">
                         <ui:VisualElement class="level-row">
-                            <ui:VisualElement name="card-0-0" class="level-card difficulty-0">
+                            <ui:VisualElement name="level-1" class="level-card difficulty-0">
                                 <ui:Label text="★" class="level-card-stars"/>
                             </ui:VisualElement>
-                            <ui:VisualElement name="card-0-1" class="level-card difficulty-1">
+                            <ui:VisualElement name="level-4" class="level-card difficulty-1">
                                 <ui:Label text="★★" class="level-card-stars"/>
                             </ui:VisualElement>
-                            <ui:VisualElement name="card-0-2" class="level-card difficulty-2">
+                            <ui:VisualElement name="level-7" class="level-card difficulty-2">
                                 <ui:Label text="★★★" class="level-card-stars"/>
                             </ui:VisualElement>
-                            <ui:VisualElement name="card-0-3" class="level-card difficulty-3">
+                            <ui:VisualElement name="level-10" class="level-card difficulty-3">
                                 <ui:Label text="★★★★" class="level-card-stars"/>
                             </ui:VisualElement>
-                            <ui:VisualElement name="card-0-4" class="level-card difficulty-4">
+                            <ui:VisualElement name="level-13" class="level-card difficulty-4">
                                 <ui:Label text="★★★&#10;★★" class="level-card-stars"/>
                             </ui:VisualElement>
-                            <ui:VisualElement name="card-0-5" class="level-card difficulty-5">
+                            <ui:VisualElement name="level-16" class="level-card difficulty-5">
                                 <ui:Label text="★★★&#10;★★★" class="level-card-stars"/>
                             </ui:VisualElement>
-                            <ui:VisualElement name="card-0-6" class="level-card difficulty-6">
+                            <ui:VisualElement name="level-19" class="level-card difficulty-6">
                                 <ui:Label text="★★★★&#10;★★★" class="level-card-stars"/>
                             </ui:VisualElement>
                         </ui:VisualElement>
                         <ui:VisualElement class="level-row">
-                            <ui:VisualElement name="card-1-0" class="level-card difficulty-0">
+                            <ui:VisualElement name="level-2" class="level-card difficulty-0">
                                 <ui:Label text="★" class="level-card-stars"/>
                             </ui:VisualElement>
-                            <ui:VisualElement name="card-1-1" class="level-card difficulty-1">
+                            <ui:VisualElement name="level-5" class="level-card difficulty-1">
                                 <ui:Label text="★★" class="level-card-stars"/>
                             </ui:VisualElement>
-                            <ui:VisualElement name="card-1-2" class="level-card difficulty-2">
+                            <ui:VisualElement name="level-8" class="level-card difficulty-2">
                                 <ui:Label text="★★★" class="level-card-stars"/>
                             </ui:VisualElement>
-                            <ui:VisualElement name="card-1-3" class="level-card difficulty-3">
+                            <ui:VisualElement name="level-11" class="level-card difficulty-3">
                                 <ui:Label text="★★★★" class="level-card-stars"/>
                             </ui:VisualElement>
-                            <ui:VisualElement name="card-1-4" class="level-card difficulty-4">
+                            <ui:VisualElement name="level-14" class="level-card difficulty-4">
                                 <ui:Label text="★★★&#10;★★" class="level-card-stars"/>
                             </ui:VisualElement>
-                            <ui:VisualElement name="card-1-5" class="level-card difficulty-5">
+                            <ui:VisualElement name="level-17" class="level-card difficulty-5">
                                 <ui:Label text="★★★&#10;★★★" class="level-card-stars"/>
                             </ui:VisualElement>
-                            <ui:VisualElement name="card-1-6" class="level-card difficulty-6">
+                            <ui:VisualElement name="level-20" class="level-card difficulty-6">
                                 <ui:Label text="★★★★&#10;★★★" class="level-card-stars"/>
                             </ui:VisualElement>
                         </ui:VisualElement>
                         <ui:VisualElement class="level-row">
-                            <ui:VisualElement name="card-2-0" class="level-card difficulty-0">
+                            <ui:VisualElement name="level-3" class="level-card difficulty-0">
                                 <ui:Label text="★" class="level-card-stars"/>
                             </ui:VisualElement>
-                            <ui:VisualElement name="card-2-1" class="level-card difficulty-1">
+                            <ui:VisualElement name="level-6" class="level-card difficulty-1">
                                 <ui:Label text="★★" class="level-card-stars"/>
                             </ui:VisualElement>
-                            <ui:VisualElement name="card-2-2" class="level-card difficulty-2">
+                            <ui:VisualElement name="level-9" class="level-card difficulty-2">
                                 <ui:Label text="★★★" class="level-card-stars"/>
                             </ui:VisualElement>
-                            <ui:VisualElement name="card-2-3" class="level-card difficulty-3">
+                            <ui:VisualElement name="level-12" class="level-card difficulty-3">
                                 <ui:Label text="★★★★" class="level-card-stars"/>
                             </ui:VisualElement>
-                            <ui:VisualElement name="card-2-4" class="level-card difficulty-4">
+                            <ui:VisualElement name="level-15" class="level-card difficulty-4">
                                 <ui:Label text="★★★&#10;★★" class="level-card-stars"/>
                             </ui:VisualElement>
-                            <ui:VisualElement name="card-2-5" class="level-card difficulty-5">
+                            <ui:VisualElement name="level-18" class="level-card difficulty-5">
                                 <ui:Label text="★★★&#10;★★★" class="level-card-stars"/>
                             </ui:VisualElement>
-                            <ui:VisualElement name="card-2-6" class="level-card difficulty-6">
+                            <ui:VisualElement name="level-21" class="level-card difficulty-6">
                                 <ui:Label text="★★★★&#10;★★★" class="level-card-stars"/>
                             </ui:VisualElement>
                         </ui:VisualElement>
                         <ui:VisualElement class="level-row">
-                            <ui:VisualElement name="card-3-7" class="level-card difficulty-7">
+                            <ui:VisualElement name="level-22" class="level-card difficulty-7">
                                 <ui:Label text="★★★★&#10;★★★★" class="level-card-stars"/>
                             </ui:VisualElement>
-                            <ui:VisualElement name="card-3-8" class="level-card difficulty-8">
+                            <ui:VisualElement name="level-23" class="level-card difficulty-8">
                                 <ui:Label text="★★★★★&#10;★★★★" class="level-card-stars"/>
                             </ui:VisualElement>
                         </ui:VisualElement>

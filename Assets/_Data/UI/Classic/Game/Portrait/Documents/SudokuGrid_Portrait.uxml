@@ -4,6 +4,7 @@
         <ui:VisualElement name="sudoku-main-container" class="sudoku-main-container">
             <ui:VisualElement class="sudoku-top-container">
                 <ui:VisualElement name="grid-top-bar" class="grid-top-bar" style="padding-bottom: 5px;">
+                    <ui:Label name="level-name-label" text="Level 1" class="level-name-label"/>
                     <ui:VisualElement name="theme-toggle" class="theme-toggle">
                         <ui:Label name="theme-toggle-label" text="☾" class="theme-toggle-label"/>
                     </ui:VisualElement>

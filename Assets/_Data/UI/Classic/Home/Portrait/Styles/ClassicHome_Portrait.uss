@@ -284,3 +284,23 @@
     background-color: rgb(220, 225, 240);
     border-color: rgb(120, 140, 180);
 }
+
+/* ===== Completed Level Indicator ===== */
+.level-completed {
+    border-width: 3px;
+    background-color: rgba(100, 200, 150, 0.15);
+}
+
+.level-completed::after {
+    content: '✓';
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    font-size: 16px;
+    color: rgb(100, 220, 150);
+    -unity-font-style: bold;
+}
+
+.level-completed:hover {
+    background-color: rgba(120, 220, 170, 0.25);
+}

@@ -74,11 +74,12 @@ public class SudokuResultAnalyzer : SaiBehaviour
         {
             int difficulty = GameData.SelectedDifficulty;
             int level = GameData.SelectedLevel;
+            string levelName = GameData.SelectedLevelName;
             
             GameProgress.Instance.CompleteLevel(difficulty, level);
             
             int starsEarned = GameProgress.GetStarsForDifficulty(difficulty);
-            Debug.Log($"[SudokuResultAnalyzer] Victory! Completed Level {level} of {GameData.DIFFICULTY_NAMES[difficulty]} difficulty. Earned {starsEarned} stars!");
+            Debug.Log($"[SudokuResultAnalyzer] Victory! Completed {levelName} (Level {level} of {GameData.DIFFICULTY_NAMES[difficulty]} difficulty). Earned {starsEarned} stars!");
         }
         else
         {
