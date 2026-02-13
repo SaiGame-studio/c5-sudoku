@@ -55,6 +55,7 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private int[,] cachedSolution;
     [SerializeField] private VisualElement mainContainer;
     [SerializeField] private VictoryEffect victoryEffect;
+    private ScrollView scrollView;
 
     private SudokuGridViewScaleManager scaleManager;
     private SudokuGridViewPopupHandler popupHandler;
@@ -121,6 +122,16 @@ public class SudokuGridView : SaiBehaviour
         this.autoPlayButton = this.root.Q<Button>("auto-play-button");
         this.patternNameLabel = this.root.Q<Label>("pattern-name-label");
 
+        // Fix ScrollView content container styles (USS #unity-content-container may not apply reliably)
+        this.scrollView = this.root.Q<ScrollView>("sudoku-scroll-view");
+        if (this.scrollView != null)
+        {
+            this.scrollView.contentContainer.style.flexGrow = 0;
+            this.scrollView.contentContainer.style.flexShrink = 0;
+            this.scrollView.contentContainer.style.justifyContent = Justify.FlexStart;
+            this.scrollView.contentContainer.style.alignItems = Align.Center;
+        }
+
         Debug.Log(transform.name + ": LoadUIElements - MainContainer=" + (this.mainContainer != null ? "OK" : "NULL"), gameObject);
     }
 
@@ -172,6 +183,23 @@ public class SudokuGridView : SaiBehaviour
         this.InitializeGrid();
     }
 
+    private void ResetScrollPosition()
+    {
+        if (this.scrollView == null) return;
+        StartCoroutine(this.ResetScrollCoroutine());
+    }
+
+    private IEnumerator ResetScrollCoroutine()
+    {
+        // Wait 2 frames to ensure all layout passes and scale changes are finalized
+        yield return null;
+        yield return null;
+        if (this.scrollView != null)
+        {
+            this.scrollView.scrollOffset = Vector2.zero;
+        }
+    }
+
     [ProButton]
     protected void ApplyResponsiveScale()
     {
@@ -220,6 +248,7 @@ public class SudokuGridView : SaiBehaviour
         {
             this.root.UnregisterCallback<GeometryChangedEvent>(this.OnRootGeometryChanged);
             this.ApplyResponsiveScale();
+            this.ResetScrollPosition();
         });
 
         if (this.themeToggle != null)

@@ -116,8 +116,9 @@ public class SudokuGridViewScaleManager
 
         Debug.Log($"Applying portrait scale: {scale:F2} (Canvas: {canvasWidth}x{canvasHeight})");
 
+        // Use top-center origin so scaled content stays aligned to the top of the ScrollView
         this.mainContainer.style.transformOrigin = new StyleTransformOrigin(
-            new TransformOrigin(new Length(50, LengthUnit.Percent), new Length(50, LengthUnit.Percent))
+            new TransformOrigin(new Length(50, LengthUnit.Percent), new Length(0, LengthUnit.Percent))
         );
 
         this.mainContainer.style.scale = new StyleScale(new Scale(new Vector3(scale, scale, 1)));
