@@ -28,7 +28,7 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private bool autoAnalyzePatterns = true;
     
     [Header("Debug/Testing")]
-    [SerializeField] private bool showAutoPlayButton = false;
+    [SerializeField] private bool showDebugButtons = false;
 
     [Header("Scale Setting")]
     [SerializeField] private float addLandscapeScale = 0f;
@@ -46,6 +46,7 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private Label levelNameLabel;
     [SerializeField] private Button hintButton;
     [SerializeField] private Button autoNotesButton;
+    [SerializeField] private VisualElement debugButtonsContainer;
     [SerializeField] private Button autoPlayButton;
     [SerializeField] private Label patternNameLabel;
     [SerializeField] private SudokuCell[,] cells;
@@ -116,6 +117,7 @@ public class SudokuGridView : SaiBehaviour
         this.levelNameLabel = this.root.Q<Label>("level-name-label");
         this.hintButton = this.root.Q<Button>("hint-button");
         this.autoNotesButton = this.root.Q<Button>("auto-notes-button");
+        this.debugButtonsContainer = this.root.Q<VisualElement>("debug-buttons");
         this.autoPlayButton = this.root.Q<Button>("auto-play-button");
         this.patternNameLabel = this.root.Q<Label>("pattern-name-label");
 
@@ -875,13 +877,19 @@ public class SudokuGridView : SaiBehaviour
     }
     
     /// <summary>
-    /// Update Auto Play button visibility based on inspector setting
+    /// Update debug buttons visibility based on inspector setting
     /// </summary>
     private void UpdateAutoPlayButtonVisibility()
     {
-        if (this.autoPlayButton != null)
+        // If debug-buttons container exists (Landscape), hide/show the entire container
+        if (this.debugButtonsContainer != null)
         {
-            this.autoPlayButton.style.display = this.showAutoPlayButton ? DisplayStyle.Flex : DisplayStyle.None;
+            this.debugButtonsContainer.style.display = this.showDebugButtons ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+        // Otherwise, control individual auto-play button (Portrait)
+        else if (this.autoPlayButton != null)
+        {
+            this.autoPlayButton.style.display = this.showDebugButtons ? DisplayStyle.Flex : DisplayStyle.None;
         }
     }
 

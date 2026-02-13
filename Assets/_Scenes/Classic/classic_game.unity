@@ -1015,10 +1015,11 @@ MonoBehaviour:
   patternAnalyzer: {fileID: 393123383}
   hintSystem: {fileID: 393123385}
   autoNotes: {fileID: 393123384}
+  autoPlayer: {fileID: 0}
   popupOffset: {x: 0, y: -10}
   autoAnalyze: 1
   autoAnalyzePatterns: 1
-  showAutoPlayButton: 0
+  showDebugButtons: 0
   addLandscapeScale: 0
   addPortraitScale: 1.2
   showVisualElements: 0
@@ -1113,14 +1114,15 @@ MonoBehaviour:
   patternAnalyzer: {fileID: 393123383}
   hintSystem: {fileID: 393123385}
   autoNotes: {fileID: 393123384}
+  autoPlayer: {fileID: 393123382}
   popupOffset: {x: 0, y: -10}
   autoAnalyze: 1
   autoAnalyzePatterns: 1
-  showAutoPlayButton: 1
+  showDebugButtons: 1
   addLandscapeScale: 0
-  addPortraitScale: 1.5
+  addPortraitScale: 1.2
   showVisualElements: 0
-  isLightMode: 0
+  isLightMode: 1
 --- !u!114 &8143833361491433007
 MonoBehaviour:
   m_ObjectHideFlags: 0

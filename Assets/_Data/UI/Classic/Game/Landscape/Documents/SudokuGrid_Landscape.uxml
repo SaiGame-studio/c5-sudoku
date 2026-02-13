@@ -4,7 +4,7 @@
         <ui:VisualElement name="sudoku-main-container" class="sudoku-main-container">
             <ui:VisualElement class="sudoku-left-container">
                 <ui:VisualElement name="grid-top-bar" class="grid-top-bar" style="justify-content: flex-start;">
-                    <ui:Label name="level-name-label" text="Level 1" class="level-name-label" style="align-items: flex-start; align-self: auto; font-size: 24px;"/>
+                    <ui:Label name="level-name-label" text="Level 1" class="level-name-label" style="align-items: flex-start; align-self: auto; font-size: 30px;"/>
                     <ui:VisualElement name="difficulty-stars" class="difficulty-stars" style="margin-left: auto; align-self: center; flex-direction: row;">
                         <ui:Label name="star-1" text="★" class="difficulty-star"/>
                         <ui:Label name="star-2" text="★" class="difficulty-star"/>
@@ -346,7 +346,7 @@
                     </ui:VisualElement>
                     <ui:Button name="back-button" text="" class="back-button" style="left: 0; position: absolute;"/>
                 </ui:VisualElement>
-                <ui:VisualElement name="difficulty-generate" class="difficulty-top-row" style="margin-bottom: 15px; margin-top: 15px;">
+                <ui:VisualElement name="debug-buttons" class="difficulty-top-row" style="margin-bottom: 15px; margin-top: 15px;">
                     <ui:VisualElement name="difficulty-dropdown" class="difficulty-dropdown-stars">
                         <ui:Label name="diff-star-1" text="★" class="difficulty-dropdown-star"/>
                         <ui:Label name="diff-star-2" text="★" class="difficulty-dropdown-star"/>
