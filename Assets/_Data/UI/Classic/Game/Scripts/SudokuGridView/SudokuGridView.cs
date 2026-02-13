@@ -25,12 +25,6 @@ public class SudokuGridView : SaiBehaviour
     [Header("Live Analysis")]
     [SerializeField] private bool autoAnalyze = true;
     [SerializeField] private bool autoAnalyzePatterns = true;
-    [SerializeField] private float completionPercentage = 0f;
-    [SerializeField] private int correctCells = 0;
-    [SerializeField] private int incorrectCells = 0;
-    [SerializeField] private SudokuResultAnalyzer.GameResult currentResult = SudokuResultAnalyzer.GameResult.NotCompleted;
-    [TextArea(11, 11)]
-    [SerializeField] private string userPuzzlePreview = "";
 
     [Header("Scale Setting")]
     [SerializeField] private float addLandscapeScale = 0f;
@@ -52,13 +46,21 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private SudokuCell selectedCell;
     [SerializeField] private bool isLightMode;
     [SerializeField] private int[,] cachedSolution;
-    [SerializeField] private PatternInfo currentHintPattern;
     [SerializeField] private VisualElement mainContainer;
     [SerializeField] private VictoryEffect victoryEffect;
 
+    private SudokuGridViewScaleManager scaleManager;
+    private SudokuGridViewPopupHandler popupHandler;
+    private SudokuGridViewHighlightManager highlightManager;
+    private SudokuGridViewAnalysisManager analysisManager;
+    private SudokuGridViewHintManager hintManager;
+
     private void OnRootGeometryChanged(GeometryChangedEvent evt)
     {
-        this.ApplyResponsiveScale();
+        if (this.scaleManager != null)
+        {
+            this.scaleManager.ApplyResponsiveScale();
+        }
     }
 
     protected override void LoadComponents()
@@ -155,7 +157,6 @@ public class SudokuGridView : SaiBehaviour
     [ProButton]
     protected void ApplyResponsiveScale()
     {
-        // Ensure UI elements are loaded before scaling
         if (this.mainContainer == null)
         {
             this.LoadUIElements();
@@ -167,122 +168,23 @@ public class SudokuGridView : SaiBehaviour
             return;
         }
 
-        float canvasWidth = 0f;
-        float canvasHeight = 0f;
-        string resolutionSource = "Unknown";
-
-        var panelSettings = this.uiDocument.panelSettings;
-        
-        // Debug: Log PanelSettings info
-        if (panelSettings != null)
+        if (this.scaleManager == null)
         {
-            Debug.Log($"<color=yellow>[Debug PanelSettings]</color> Found! RefRes=({panelSettings.referenceResolution.x}, {panelSettings.referenceResolution.y}), ScaleMode={panelSettings.scaleMode}, TargetTexture={panelSettings.targetTexture != null}");
-            
-            // ALWAYS use Reference Resolution if it exists (regardless of scale mode)
-            Vector2 refRes = panelSettings.referenceResolution;
-            if (refRes.x > 0 && refRes.y > 0)
-            {
-                canvasWidth = refRes.x;
-                canvasHeight = refRes.y;
-                resolutionSource = $"Reference Resolution";
-            }
-            // Fallback to RenderTexture
-            else if (panelSettings.targetTexture != null)
-            {
-                canvasWidth = panelSettings.targetTexture.width;
-                canvasHeight = panelSettings.targetTexture.height;
-                resolutionSource = "RenderTexture";
-            }
-            else
-            {
-                Debug.LogWarning($"<color=red>[PanelSettings Problem]</color> Reference Resolution is zero or negative: {refRes}");
-            }
-        }
-        else
-        {
-            Debug.LogError("<color=red>[ApplyScale ERROR]</color> PanelSettings is NULL! Check UIDocument component.");
+            this.scaleManager = new SudokuGridViewScaleManager(
+                this.uiDocument, 
+                this.mainContainer, 
+                this.root, 
+                this.addLandscapeScale, 
+                this.addPortraitScale
+            );
         }
 
-        // Fallback: Use Screen size (unreliable in Edit Mode)
-        if (canvasWidth <= 0 || float.IsNaN(canvasWidth))
-        {
-            canvasWidth = Screen.width;
-            canvasHeight = Screen.height;
-            resolutionSource = "Screen Size (UNRELIABLE)";
-            Debug.LogWarning($"<color=orange>[Fallback Warning]</color> Using Screen size because Reference Resolution failed!");
-        }
-
-        // Detect orientation based on canvas size
-        bool isLandscape = canvasWidth > canvasHeight;
-
-        Debug.Log($"<color=cyan>[ApplyResponsiveScale FINAL]</color> Source: <b>{resolutionSource}</b>, Resolution: <b>{canvasWidth:F0}x{canvasHeight:F0}</b>, Orientation: <b>{(isLandscape ? "Landscape" : "Portrait")}</b>");
-
-        if (isLandscape)
-        {
-            this.ApplyResponsiveScaleLandscape(canvasWidth, canvasHeight);
-        }
-        else
-        {
-            this.ApplyResponsiveScalePortrait(canvasWidth, canvasHeight);
-        }
-    }
-
-    private void ApplyResponsiveScaleLandscape(float canvasWidth, float canvasHeight)
-    {
-        // Base resolution: 1920x1080 (landscape)
-        float baseWidth = 1920f;
-        float baseHeight = 1080f;
-
-        // Calculate scale factor based on canvas size
-        float scaleX = canvasWidth / baseWidth;
-        float scaleY = canvasHeight / baseHeight;
-        float scale = Mathf.Min(scaleX, scaleY);
-
-        // Apply minimum scale to avoid too small UI
-        scale = Mathf.Max(scale, 0.5f);
-        scale += this.addLandscapeScale;
-
-        Debug.Log($"Applying landscape scale: {scale:F2} (Canvas: {canvasWidth}x{canvasHeight})");
-
-        // Set transform-origin to center for proper scaling
-        this.mainContainer.style.transformOrigin = new StyleTransformOrigin(
-            new TransformOrigin(new Length(50, LengthUnit.Percent), new Length(50, LengthUnit.Percent))
-        );
-
-        // Apply scale to main container
-        this.mainContainer.style.scale = new StyleScale(new Scale(new Vector3(scale, scale, 1)));
-    }
-
-    private void ApplyResponsiveScalePortrait(float canvasWidth, float canvasHeight)
-    {
-        // Base resolution: 1080x1920 (portrait)
-        float baseWidth = 1080f;
-        float baseHeight = 1920f;
-
-        // Calculate scale factor based on canvas size
-        float scaleX = canvasWidth / baseWidth;
-        float scaleY = canvasHeight / baseHeight;
-        float scale = Mathf.Min(scaleX, scaleY);
-
-        // Apply minimum scale to avoid too small UI
-        scale = Mathf.Max(scale, 0.4f);
-        scale += this.addPortraitScale;
-
-        Debug.Log($"Applying portrait scale: {scale:F2} (Canvas: {canvasWidth}x{canvasHeight})");
-
-        // Set transform-origin to center for proper scaling
-        this.mainContainer.style.transformOrigin = new StyleTransformOrigin(
-            new TransformOrigin(new Length(50, LengthUnit.Percent), new Length(50, LengthUnit.Percent))
-        );
-
-        // Apply scale to main container
-        this.mainContainer.style.scale = new StyleScale(new Scale(new Vector3(scale, scale, 1)));
+        this.scaleManager.ApplyResponsiveScale();
     }
 
     [ProButton]
     public void InitializeGrid()
     {
-        // Ensure UI elements are loaded
         if (this.root == null || this.mainContainer == null)
         {
             this.LoadUIElements();
@@ -296,14 +198,12 @@ public class SudokuGridView : SaiBehaviour
 
         this.cells = new SudokuCell[GRID_SIZE, GRID_SIZE];
 
-        // Delay scale application until UI is fully rendered
         this.root.RegisterCallback<GeometryChangedEvent>(evt =>
         {
             this.root.UnregisterCallback<GeometryChangedEvent>(this.OnRootGeometryChanged);
             this.ApplyResponsiveScale();
         });
 
-        // Theme toggle click
         if (this.themeToggle != null)
         {
             this.themeToggle.RegisterCallback<ClickEvent>(evt =>
@@ -313,19 +213,16 @@ public class SudokuGridView : SaiBehaviour
             });
         }
 
-        // Hint button click
         if (this.hintButton != null)
         {
             this.hintButton.clicked += this.OnHintButtonClicked;
         }
 
-        // Auto Notes button click
         if (this.autoNotesButton != null)
         {
             this.autoNotesButton.clicked += this.OnAutoNotesButtonClicked;
         }
 
-        // Click overlay background to close popup
         if (this.popupOverlay != null)
         {
             this.popupOverlay.RegisterCallback<ClickEvent>(evt =>
@@ -335,21 +232,51 @@ public class SudokuGridView : SaiBehaviour
             });
         }
 
-        // Back button click
         this.RegisterBackButton();
 
-        // Keyboard input for fill and notes
         this.root.RegisterCallback<KeyDownEvent>(this.OnKeyDown);
         this.root.focusable = true;
         this.root.Focus();
 
         this.BuildGrid();
+        this.InitializeManagers();
         this.ClearAllNotes();
         this.LoadPuzzle();
         this.RefreshDifficultyStars();
 
-        // Initialize victory effect after grid is built
         this.victoryEffect = new VictoryEffect(this.cells, this.root);
+    }
+
+    private void InitializeManagers()
+    {
+        this.scaleManager = new SudokuGridViewScaleManager(
+            this.uiDocument, 
+            this.mainContainer, 
+            this.root, 
+            this.addLandscapeScale, 
+            this.addPortraitScale
+        );
+
+        this.popupHandler = new SudokuGridViewPopupHandler(
+            this.root, 
+            this.popupOverlay, 
+            this.popupContainer, 
+            this.popupOffset
+        );
+
+        this.highlightManager = new SudokuGridViewHighlightManager(this.cells);
+
+        this.analysisManager = new SudokuGridViewAnalysisManager(
+            this.resultAnalyzer, 
+            this.patternAnalyzer, 
+            this.cells
+        );
+
+        this.hintManager = new SudokuGridViewHintManager(
+            this.hintSystem, 
+            this.cells, 
+            this.patternNameLabel
+        );
     }
 
     private void BuildGrid()
@@ -383,7 +310,6 @@ public class SudokuGridView : SaiBehaviour
     {
         if (this.sudokuGenerator == null) return;
 
-        // Apply difficulty from GameData (set by level selection screen)
         this.sudokuGenerator.SetDifficulty(GameData.GetDifficultyLevel());
 
         this.sudokuGenerator.GeneratePuzzle();
@@ -397,16 +323,20 @@ public class SudokuGridView : SaiBehaviour
     {
         if (this.sudokuGenerator == null) return;
         
-        // Reset UI state
         this.StopVictoryEffect();
         this.selectedCell = null;
         this.HidePopup();
         this.ClearAllHighlights();
         this.ClearAllNotes();
         
-        // Load puzzle into grid
         int[,] puzzle = this.sudokuGenerator.GetPuzzle();
         this.cachedSolution = this.sudokuGenerator.GetSolution();
+
+        if (this.analysisManager != null)
+        {
+            this.analysisManager.SetCachedSolution(this.cachedSolution);
+            this.analysisManager.ResetStats();
+        }
 
         for (int row = 0; row < GRID_SIZE; row++)
         {
@@ -417,42 +347,39 @@ public class SudokuGridView : SaiBehaviour
                 this.cells[row, col].SetValue(value, isClue);
             }
         }
-        
-        // Reset analysis stats
-        this.completionPercentage = 0f;
-        this.correctCells = 0;
-        this.incorrectCells = 0;
-        this.currentResult = SudokuResultAnalyzer.GameResult.NotCompleted;
 
-        // Refresh UI elements
         this.RefreshDifficultyStars();
         
-        // Initialize preview
-        if (this.autoAnalyze)
+        if (this.autoAnalyze && this.analysisManager != null)
         {
-            this.AnalyzeCurrentState();
+            this.analysisManager.AnalyzeCurrentState(this.PlayVictoryEffect);
         }
 
-        // Initial pattern analysis
-        if (this.autoAnalyzePatterns)
+        if (this.autoAnalyzePatterns && this.analysisManager != null)
         {
-            this.AnalyzePatterns();
+            this.analysisManager.AnalyzePatterns();
         }
     }
 
     private void OnCellClicked(int row, int col)
     {
-        this.ClearAllHighlights();
+        if (this.highlightManager != null)
+        {
+            this.highlightManager.ClearAllHighlights();
+        }
+        
         this.ClearHint();
 
         SudokuCell cell = this.cells[row, col];
         this.selectedCell = cell;
         cell.SetSelected(true);
 
-        this.HighlightRelatedCells(row, col);
-        this.HighlightSameNumber(cell.Value);
+        if (this.highlightManager != null)
+        {
+            this.highlightManager.HighlightRelatedCells(row, col);
+            this.highlightManager.HighlightSameNumber(cell.Value);
+        }
 
-        // Show popup for non-clue cells
         if (!cell.IsClue)
         {
             this.ShowPopup(cell);
@@ -499,122 +426,18 @@ public class SudokuGridView : SaiBehaviour
     #region Popup
     private void ShowPopup(SudokuCell cell)
     {
-        this.popupContainer.Clear();
-        this.popupOverlay.RemoveFromClassList("popup-overlay--hidden");
-
-        // Position popup near the clicked cell
-        this.popupContainer.RegisterCallbackOnce<GeometryChangedEvent>(evt =>
-            this.PositionPopup(cell));
-
-        // === Fill row (large numbers) ===
-        VisualElement fillRow = new VisualElement();
-        fillRow.AddToClassList("popup-row");
-
-        for (int i = 1; i <= GRID_SIZE; i++)
+        if (this.popupHandler != null)
         {
-            int number = i;
-            VisualElement button = new VisualElement();
-            button.AddToClassList("popup-fill-button");
-
-            Label label = new Label(number.ToString());
-            label.AddToClassList("popup-fill-label");
-            button.Add(label);
-
-            button.RegisterCallback<ClickEvent>(evt =>
-            {
-                evt.StopPropagation();
-                this.OnFillNumber(number);
-            });
-
-            fillRow.Add(button);
+            this.popupHandler.ShowPopup(cell, this.OnFillNumber, this.OnToggleNote, this.OnErase);
         }
-
-        this.popupContainer.Add(fillRow);
-
-        // === Separator ===
-        VisualElement separator = new VisualElement();
-        separator.AddToClassList("popup-separator");
-        this.popupContainer.Add(separator);
-
-        // === Note row (small numbers) ===
-        VisualElement noteRow = new VisualElement();
-        noteRow.AddToClassList("popup-row");
-
-        for (int i = 1; i <= GRID_SIZE; i++)
-        {
-            int number = i;
-            VisualElement button = new VisualElement();
-            button.AddToClassList("popup-note-button");
-
-            // Mark active if note already exists
-            if (cell.HasNote(number))
-                button.AddToClassList("popup-note-button--active");
-
-            Label label = new Label(number.ToString());
-            label.AddToClassList("popup-note-label");
-            button.Add(label);
-
-            button.RegisterCallback<ClickEvent>(evt =>
-            {
-                evt.StopPropagation();
-                this.OnToggleNote(number, button);
-            });
-
-            noteRow.Add(button);
-        }
-
-        this.popupContainer.Add(noteRow);
-
-        // === Erase button ===
-        VisualElement eraseButton = new VisualElement();
-        eraseButton.AddToClassList("popup-erase-button");
-
-        Label eraseLabel = new Label("\uf12d");
-        eraseLabel.AddToClassList("popup-erase-label");
-        eraseButton.Add(eraseLabel);
-
-        eraseButton.RegisterCallback<ClickEvent>(evt =>
-        {
-            evt.StopPropagation();
-            this.OnErase();
-        });
-
-        this.popupContainer.Add(eraseButton);
-    }
-
-    private void PositionPopup(SudokuCell cell)
-    {
-        Rect cellBound = cell.Element.worldBound;
-        float popupWidth = this.popupContainer.resolvedStyle.width;
-        float popupHeight = this.popupContainer.resolvedStyle.height;
-        float rootWidth = this.root.resolvedStyle.width;
-        float rootHeight = this.root.resolvedStyle.height;
-
-        // Center horizontally on cell, apply X offset
-        float x = cellBound.center.x - popupWidth / 2f + this.popupOffset.x;
-
-        // Place popup above the cell top edge with Y offset as gap
-        float y = cellBound.yMin - popupHeight + this.popupOffset.y;
-
-        // If popup goes above screen, flip to below cell
-        if (y < 0)
-            y = cellBound.yMax - this.popupOffset.y;
-
-        // Clamp horizontal
-        if (x < 4f) x = 4f;
-        if (x + popupWidth > rootWidth - 4f) x = rootWidth - popupWidth - 4f;
-
-        // Clamp vertical
-        if (y + popupHeight > rootHeight - 4f) y = rootHeight - popupHeight - 4f;
-
-        this.popupContainer.style.left = x;
-        this.popupContainer.style.top = y;
     }
 
     private void HidePopup()
     {
-        this.popupOverlay.AddToClassList("popup-overlay--hidden");
-        this.popupContainer.Clear();
+        if (this.popupHandler != null)
+        {
+            this.popupHandler.HidePopup();
+        }
     }
 
     private void OnFillNumber(int number)
@@ -623,7 +446,6 @@ public class SudokuGridView : SaiBehaviour
 
         this.selectedCell.SetPlayerValue(number);
 
-        // Validate with cached solution
         bool isCorrect = this.cachedSolution != null &&
                          this.cachedSolution[this.selectedCell.Row, this.selectedCell.Col] == number;
         this.selectedCell.SetError(!isCorrect);
@@ -631,10 +453,9 @@ public class SudokuGridView : SaiBehaviour
         this.HidePopup();
         this.RefreshHighlights();
 
-        // Auto analyze after filling number
-        if (this.autoAnalyze)
+        if (this.autoAnalyze && this.analysisManager != null)
         {
-            this.AnalyzeCurrentState();
+            this.analysisManager.AnalyzeCurrentState(this.PlayVictoryEffect);
         }
     }
 
@@ -645,16 +466,14 @@ public class SudokuGridView : SaiBehaviour
         this.selectedCell.ToggleNote(number);
         this.selectedCell.SetError(false);
 
-        // Toggle active style on the button
         if (this.selectedCell.HasNote(number))
             button.AddToClassList("popup-note-button--active");
         else
             button.RemoveFromClassList("popup-note-button--active");
 
-        // Auto analyze patterns after note change
-        if (this.autoAnalyzePatterns)
+        if (this.autoAnalyzePatterns && this.analysisManager != null)
         {
-            this.AnalyzePatterns();
+            this.analysisManager.AnalyzePatterns();
         }
     }
 
@@ -667,10 +486,9 @@ public class SudokuGridView : SaiBehaviour
         this.HidePopup();
         this.RefreshHighlights();
 
-        // Auto analyze after erasing
-        if (this.autoAnalyze)
+        if (this.autoAnalyze && this.analysisManager != null)
         {
-            this.AnalyzeCurrentState();
+            this.analysisManager.AnalyzeCurrentState(this.PlayVictoryEffect);
         }
     }
     #endregion
@@ -678,60 +496,17 @@ public class SudokuGridView : SaiBehaviour
     #region Highlights
     private void RefreshHighlights()
     {
-        this.ClearAllHighlights();
-        if (this.selectedCell != null)
+        if (this.highlightManager != null)
         {
-            this.selectedCell.SetSelected(true);
-            this.HighlightRelatedCells(this.selectedCell.Row, this.selectedCell.Col);
-            this.HighlightSameNumber(this.selectedCell.Value);
-        }
-    }
-
-    private void HighlightRelatedCells(int row, int col)
-    {
-        for (int i = 0; i < GRID_SIZE; i++)
-        {
-            if (i != col) this.cells[row, i].SetHighlighted(true);
-            if (i != row) this.cells[i, col].SetHighlighted(true);
-        }
-
-        int startRow = (row / BOX_SIZE) * BOX_SIZE;
-        int startCol = (col / BOX_SIZE) * BOX_SIZE;
-
-        for (int r = startRow; r < startRow + BOX_SIZE; r++)
-        {
-            for (int c = startCol; c < startCol + BOX_SIZE; c++)
-            {
-                if (r != row || c != col)
-                    this.cells[r, c].SetHighlighted(true);
-            }
-        }
-    }
-
-    private void HighlightSameNumber(int number)
-    {
-        if (number == 0) return;
-
-        for (int row = 0; row < GRID_SIZE; row++)
-        {
-            for (int col = 0; col < GRID_SIZE; col++)
-            {
-                if (this.cells[row, col].Value == number && this.cells[row, col] != this.selectedCell)
-                {
-                    this.cells[row, col].SetSameNumber(true);
-                }
-            }
+            this.highlightManager.RefreshHighlights(this.selectedCell);
         }
     }
 
     private void ClearAllHighlights()
     {
-        for (int row = 0; row < GRID_SIZE; row++)
+        if (this.highlightManager != null)
         {
-            for (int col = 0; col < GRID_SIZE; col++)
-            {
-                this.cells[row, col].ClearHighlights();
-            }
+            this.highlightManager.ClearAllHighlights();
         }
     }
     #endregion
@@ -762,12 +537,6 @@ public class SudokuGridView : SaiBehaviour
         this.HidePopup();
         this.ClearAllHighlights();
         this.LoadPuzzle();
-
-        // Reset analysis stats
-        this.completionPercentage = 0f;
-        this.correctCells = 0;
-        this.incorrectCells = 0;
-        this.currentResult = SudokuResultAnalyzer.GameResult.NotCompleted;
     }
 
     /// <summary>
@@ -851,104 +620,11 @@ public class SudokuGridView : SaiBehaviour
 
     #region Result Analysis
     /// <summary>
-    /// Automatically analyze current puzzle state
-    /// </summary>
-    private void AnalyzeCurrentState()
-    {
-        if (this.resultAnalyzer == null || this.cachedSolution == null) return;
-
-        int[,] userPuzzle = this.GetCurrentUserPuzzle();
-        int[,] solution = this.cachedSolution;
-
-        // Submit for analysis
-        SudokuResultAnalyzer.GameResult result = this.resultAnalyzer.SubmitSolution(
-            userPuzzle,
-            solution,
-            gameTime: Time.time, // Can track actual game time
-            hints: 0 // Can track hints used
-        );
-
-        // Update stats for inspector visibility
-        this.currentResult = result;
-        this.completionPercentage = this.resultAnalyzer.GetCompletionPercentage();
-
-        // Count correct and incorrect cells
-        this.correctCells = 0;
-        this.incorrectCells = 0;
-        for (int row = 0; row < GRID_SIZE; row++)
-        {
-            for (int col = 0; col < GRID_SIZE; col++)
-            {
-                int userValue = userPuzzle[row, col];
-                if (userValue != 0)
-                {
-                    if (userValue == solution[row, col])
-                        this.correctCells++;
-                    else
-                        this.incorrectCells++;
-                }
-            }
-        }
-
-        // Log result if victory or defeat
-        if (result == SudokuResultAnalyzer.GameResult.Victory)
-        {
-            Debug.Log("<color=green>VICTORY!</color> Puzzle solved correctly!");
-            Debug.Log(this.resultAnalyzer.GetAnalysisReport());
-            this.PlayVictoryEffect();
-        }
-        else if (result == SudokuResultAnalyzer.GameResult.Defeat)
-        {
-            Debug.Log($"<color=yellow>Errors detected:</color> {this.incorrectCells} incorrect cells");
-        }
-
-        // Update preview for inspector
-        this.userPuzzlePreview = this.GetUserPuzzlePreview(userPuzzle, solution);
-    }
-
-    /// <summary>
-    /// Generate visual preview of user's puzzle with error indicators
-    /// </summary>
-    private string GetUserPuzzlePreview(int[,] userPuzzle, int[,] solution)
-    {
-        System.Text.StringBuilder sb = new System.Text.StringBuilder();
-
-        for (int i = 0; i < GRID_SIZE; i++)
-        {
-            if (i % BOX_SIZE == 0 && i != 0)
-                sb.AppendLine("------+-------+------");
-
-            for (int j = 0; j < GRID_SIZE; j++)
-            {
-                if (j % BOX_SIZE == 0 && j != 0)
-                    sb.Append("| ");
-
-                int userValue = userPuzzle[i, j];
-                if (userValue == 0)
-                {
-                    sb.Append("· ");
-                }
-                else if (userValue == solution[i, j])
-                {
-                    sb.Append(userValue + " ");
-                }
-                else
-                {
-                    sb.Append("X ");  // Mark errors with X
-                }
-            }
-            sb.AppendLine();
-        }
-
-        return sb.ToString();
-    }
-
-    /// <summary>
     /// Get current game result
     /// </summary>
     public SudokuResultAnalyzer.GameResult GetCurrentResult()
     {
-        return this.currentResult;
+        return this.analysisManager != null ? this.analysisManager.CurrentResult : SudokuResultAnalyzer.GameResult.NotCompleted;
     }
 
     /// <summary>
@@ -956,13 +632,13 @@ public class SudokuGridView : SaiBehaviour
     /// </summary>
     public float GetCompletionPercentage()
     {
-        return this.completionPercentage;
+        return this.analysisManager != null ? this.analysisManager.CompletionPercentage : 0f;
     }
 
     /// <summary>
-    /// Get all cell notes for pattern analysis
+    /// Get all cell notes (public for external access)
     /// </summary>
-    private List<int>[,] GetAllCellNotes()
+    public List<int>[,] GetCellNotes()
     {
         List<int>[,] allNotes = new List<int>[GRID_SIZE, GRID_SIZE];
 
@@ -982,27 +658,6 @@ public class SudokuGridView : SaiBehaviour
         }
 
         return allNotes;
-    }
-
-    /// <summary>
-    /// Analyze patterns based on current notes
-    /// </summary>
-    private void AnalyzePatterns()
-    {
-        if (this.patternAnalyzer == null) return;
-
-        int[,] currentPuzzle = this.GetCurrentUserPuzzle();
-        List<int>[,] allNotes = this.GetAllCellNotes();
-
-        this.patternAnalyzer.AnalyzePatterns(currentPuzzle, allNotes);
-    }
-
-    /// <summary>
-    /// Get all cell notes (public for external access)
-    /// </summary>
-    public List<int>[,] GetCellNotes()
-    {
-        return this.GetAllCellNotes();
     }
 
     /// <summary>
@@ -1028,7 +683,6 @@ public class SudokuGridView : SaiBehaviour
             isClue = cell.IsClue
         };
 
-        // Temporary debug for problematic cells
         if (row == 0 && col == 0)
         {
             Debug.Log($"GetCellData[{row},{col}]: value={data.value}, isClue={data.isClue}");
@@ -1048,29 +702,30 @@ public class SudokuGridView : SaiBehaviour
         SudokuCell cell = this.cells[row, col];
         if (cell.IsClue) return;
 
-        // Clear current selection and highlights
         this.ClearAllHighlights();
 
-        // Select the cell
         this.selectedCell = cell;
         cell.SetSelected(true);
-        this.HighlightRelatedCells(row, col);
+        
+        if (this.highlightManager != null)
+        {
+            this.highlightManager.HighlightRelatedCells(row, col);
+        }
 
-        // Fill with number
         cell.SetPlayerValue(number);
 
-        // Validate with cached solution
         bool isCorrect = this.cachedSolution != null &&
                          this.cachedSolution[row, col] == number;
         cell.SetError(!isCorrect);
 
-        // Refresh highlights
-        this.HighlightSameNumber(number);
-
-        // Auto analyze if enabled
-        if (this.autoAnalyze)
+        if (this.highlightManager != null)
         {
-            this.AnalyzeCurrentState();
+            this.highlightManager.HighlightSameNumber(number);
+        }
+
+        if (this.autoAnalyze && this.analysisManager != null)
+        {
+            this.analysisManager.AnalyzeCurrentState(this.PlayVictoryEffect);
         }
     }
 
@@ -1085,7 +740,6 @@ public class SudokuGridView : SaiBehaviour
         SudokuCell cell = this.cells[row, col];
         if (cell.IsClue || cell.Value != 0) return;
 
-        // Add note if not already present
         if (!cell.HasNote(number))
         {
             cell.ToggleNote(number);
@@ -1102,7 +756,6 @@ public class SudokuGridView : SaiBehaviour
 
         SudokuCell cell = this.cells[row, col];
 
-        // Remove note if present
         if (cell.HasNote(number))
         {
             cell.ToggleNote(number);
@@ -1126,15 +779,6 @@ public class SudokuGridView : SaiBehaviour
 
         return puzzle;
     }
-
-    /// <summary>
-    /// Cell data structure for external access
-    /// </summary>
-    public struct CellData
-    {
-        public int value;
-        public bool isClue;
-    }
     #endregion
 
     #region Hint System
@@ -1144,25 +788,16 @@ public class SudokuGridView : SaiBehaviour
     /// </summary>
     private void OnHintButtonClicked()
     {
-        if (this.hintSystem == null)
+        if (this.hintManager == null)
         {
-            Debug.LogWarning("Hint System is not available");
+            Debug.LogWarning("Hint Manager is not available");
             return;
         }
 
         int[,] currentPuzzle = this.GetCurrentUserPuzzle();
-        List<int>[,] cellNotes = this.GetAllCellNotes();
+        List<int>[,] cellNotes = this.GetCellNotes();
 
-        HintResult result = this.hintSystem.GetHint(currentPuzzle, cellNotes);
-
-        if (result.success)
-        {
-            this.ShowHint(result);
-        }
-        else
-        {
-            this.ShowNoHintMessage(result.message);
-        }
+        this.hintManager.RequestHint(currentPuzzle, cellNotes);
     }
 
     private void OnAutoNotesButtonClicked()
@@ -1173,10 +808,8 @@ public class SudokuGridView : SaiBehaviour
             return;
         }
 
-        // Clear all existing notes before auto filling
         this.ClearAllNotes();
         
-        // Use the existing SudokuAutoNotes component
         this.autoNotes.StartAutoNotes();
     }
 
@@ -1197,77 +830,14 @@ public class SudokuGridView : SaiBehaviour
     }
 
     /// <summary>
-    /// Show hint with visual feedback
-    /// </summary>
-    private void ShowHint(HintResult result)
-    {
-        if (result.patternInfo == null) return;
-
-        this.currentHintPattern = result.patternInfo;
-
-        // Update pattern display label
-        if (this.patternNameLabel != null)
-        {
-            this.patternNameLabel.text = $"{result.patternInfo.type.ToString()}";
-        }
-
-        this.ClearAllHighlights();
-
-        if (result.patternInfo.affectedCells != null && result.patternInfo.affectedCells.Count > 0)
-        {
-            foreach (var cellPos in result.patternInfo.affectedCells)
-            {
-                if (cellPos.row >= 0 && cellPos.row < GRID_SIZE && cellPos.col >= 0 && cellPos.col < GRID_SIZE)
-                {
-                    this.cells[cellPos.row, cellPos.col].SetHint(true);
-                }
-            }
-
-            var firstCell = result.patternInfo.affectedCells[0];
-            this.selectedCell = this.cells[firstCell.row, firstCell.col];
-            this.selectedCell.SetSelected(true);
-        }
-
-        Debug.Log($"<color=cyan>Hint:</color> {result.message}");
-    }
-
-    /// <summary>
-    /// Show message when no hint is available
-    /// </summary>
-    private void ShowNoHintMessage(string message)
-    {
-        // Update pattern display label
-        if (this.patternNameLabel != null)
-        {
-            this.patternNameLabel.text = "No hint available";
-        }
-
-        Debug.Log($"<color=yellow>No Hint Available:</color> {message}");
-    }
-
-    /// <summary>
     /// Clear hint highlighting
     /// </summary>
     public void ClearHint()
     {
-        // Clear pattern display label
-        if (this.patternNameLabel != null)
+        if (this.hintManager != null)
         {
-            this.patternNameLabel.text = "";
+            this.hintManager.ClearHint();
         }
-
-        if (this.currentHintPattern != null && this.currentHintPattern.affectedCells != null)
-        {
-            foreach (var cellPos in this.currentHintPattern.affectedCells)
-            {
-                if (cellPos.row >= 0 && cellPos.row < GRID_SIZE && cellPos.col >= 0 && cellPos.col < GRID_SIZE)
-                {
-                    this.cells[cellPos.row, cellPos.col].SetHint(false);
-                }
-            }
-        }
-
-        this.currentHintPattern = null;
     }
 
     #endregion

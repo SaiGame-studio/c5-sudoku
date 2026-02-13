@@ -202,7 +202,7 @@ public class SudokuAutoPlayer : SaiBehaviour
         {
             for (int col = 0; col < GRID_SIZE; col++)
             {
-                SudokuGridView.CellData cellData = this.targetGridView.GetCellData(row, col);
+                CellData cellData = this.targetGridView.GetCellData(row, col);
                 if (!cellData.isClue && cellData.value == 0)
                 {
                     emptyCells.Add((row, col));
