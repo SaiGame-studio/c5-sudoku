@@ -70,6 +70,16 @@ public class GameManager : SaiSingleton<GameManager>
     }
     #endregion
 
+    #region Version
+    /// <summary>
+    /// Returns the application version from Project Settings
+    /// </summary>
+    public string GetVersion()
+    {
+        return $"v{Application.version}";
+    }
+    #endregion
+
     #region Game Control
     /// <summary>
     /// Quit Game
@@ -78,8 +88,6 @@ public class GameManager : SaiSingleton<GameManager>
     [ProButton]
     public void QuitGame()
     {
-        Debug.Log("Quitting Game...");
-        
         #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
         #else

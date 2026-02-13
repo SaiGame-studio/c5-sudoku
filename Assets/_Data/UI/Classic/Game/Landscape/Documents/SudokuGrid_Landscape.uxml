@@ -373,6 +373,7 @@
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
+    <ui:Label name="version-label" text="v0.0.1" class="version-label"/>
     <ui:VisualElement name="popup-overlay" class="popup-overlay popup-overlay--hidden">
         <ui:VisualElement name="popup-container" class="popup-container"/>
     </ui:VisualElement>

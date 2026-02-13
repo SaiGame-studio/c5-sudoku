@@ -96,8 +96,7 @@
                 </ui:VisualElement>
             </ui:ScrollView>
             <ui:VisualElement class="home-footer">
-                <ui:Button name="back-button" text="" class="back-button"/>
-            </ui:VisualElement>
+                <ui:Button name="back-button" text="" class="back-button"/>                <ui:Label name="version-label" text="v0.0.1" class="version-label"/>            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

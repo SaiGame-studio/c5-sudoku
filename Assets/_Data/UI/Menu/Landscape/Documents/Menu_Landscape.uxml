@@ -20,7 +20,7 @@
                 <ui:Button name="quit-button" class="menu-button quit-button">
                     <ui:Label text="Quit" class="menu-button-label"/>
                 </ui:Button>
-                <ui:Label text="v0.0.1" class="menu-version"/>
+                <ui:Label name="version-label" text="v0.0.0" class="menu-version"/>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
