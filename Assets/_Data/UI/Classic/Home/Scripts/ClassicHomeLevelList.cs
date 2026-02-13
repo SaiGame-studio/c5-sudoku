@@ -223,31 +223,14 @@ public class ClassicHomeLevelList : SaiBehaviour
     {
         if (GameProgress.Instance == null) return;
 
-        // Check levels 1-21 (difficulties 0-6)
-        for (int diff = 0; diff < 7; diff++)
+        // Check all levels 1-23 with simplified loop
+        for (int levelNumber = 1; levelNumber <= 23; levelNumber++)
         {
-            for (int subLevel = 1; subLevel <= GameData.LEVELS_PER_DIFFICULTY; subLevel++)
+            if (GameProgress.Instance.IsLevelCompleted(levelNumber))
             {
-                int levelNumber = diff * 3 + subLevel;
-                string levelName = "level-" + levelNumber;
-                
-                if (GameProgress.Instance.IsLevelCompleted(diff, subLevel))
-                {
-                    this.MarkLevelAsCompleted(levelName);
-                }
+                string levelName = $"level-{levelNumber}";
+                this.MarkLevelAsCompleted(levelName);
             }
-        }
-
-        // Check level-22 (Extreme)
-        if (GameProgress.Instance.IsLevelCompleted(7, 1))
-        {
-            this.MarkLevelAsCompleted("level-22");
-        }
-
-        // Check level-23 (Legendary)
-        if (GameProgress.Instance.IsLevelCompleted(8, 1))
-        {
-            this.MarkLevelAsCompleted("level-23");
         }
     }
 

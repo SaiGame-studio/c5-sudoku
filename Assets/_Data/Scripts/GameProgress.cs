@@ -74,25 +74,26 @@ public class GameProgress : SaiSingleton<GameProgress>
         
         foreach (var kvp in this.completedLevels)
         {
+            // Extract level number from key (e.g., "level_15" -> 15)
             string[] parts = kvp.Key.Split('_');
-            this.completedLevelsList.Add(new LevelCompletionData
+            if (parts.Length == 2 && int.TryParse(parts[1], out int levelNumber))
             {
-                difficulty = int.Parse(parts[0]),
-                level = int.Parse(parts[1]),
-                stars = kvp.Value,
-                difficultyName = GameData.DIFFICULTY_NAMES[int.Parse(parts[0])]
-            });
-            this.totalStars += kvp.Value;
+                int difficulty = this.GetDifficultyFromLevelNumber(levelNumber);
+                this.completedLevelsList.Add(new LevelCompletionData
+                {
+                    level = levelNumber,
+                    difficulty = difficulty,
+                    stars = kvp.Value,
+                    difficultyName = GameData.DIFFICULTY_NAMES[difficulty]
+                });
+                this.totalStars += kvp.Value;
+            }
         }
         
         this.completedLevelCount = this.completedLevels.Count;
         
-        // Sort by difficulty then level for better Inspector view
-        this.completedLevelsList.Sort((a, b) =>
-        {
-            int diffCompare = a.difficulty.CompareTo(b.difficulty);
-            return diffCompare != 0 ? diffCompare : a.level.CompareTo(b.level);
-        });
+        // Sort by level number for better Inspector view
+        this.completedLevelsList.Sort((a, b) => a.level.CompareTo(b.level));
     }
     
     /// <summary>
@@ -110,9 +111,17 @@ public class GameProgress : SaiSingleton<GameProgress>
     /// <summary>
     /// Mark a level as completed and award stars
     /// </summary>
-    public void CompleteLevel(int difficulty, int level)
+    /// <param name="levelNumber">Global level number (1-23)</param>
+    public void CompleteLevel(int levelNumber)
     {
-        string key = this.GetLevelKey(difficulty, level);
+        if (levelNumber < 1 || levelNumber > 23)
+        {
+            Debug.LogError($"[GameProgress] Invalid level number: {levelNumber}. Must be between 1 and 23.");
+            return;
+        }
+        
+        string key = this.GetLevelKey(levelNumber);
+        int difficulty = this.GetDifficultyFromLevelNumber(levelNumber);
         int stars = GetStarsForDifficulty(difficulty);
         
         bool isNewCompletion = !this.completedLevels.ContainsKey(key);
@@ -121,7 +130,7 @@ public class GameProgress : SaiSingleton<GameProgress>
         if (isNewCompletion)
         {
             this.completedLevels[key] = stars;
-            Debug.Log($"[GameProgress] Level completed! Difficulty: {difficulty} ({GameData.DIFFICULTY_NAMES[difficulty]}), Level: {level}, Stars: {stars}");
+            Debug.Log($"[GameProgress] Level {levelNumber} completed! Difficulty: {GameData.DIFFICULTY_NAMES[difficulty]}, Stars: {stars}");
         }
         else
         {
@@ -130,7 +139,7 @@ public class GameProgress : SaiSingleton<GameProgress>
             this.completedLevels[key] = Mathf.Max(oldStars, stars);
             if (this.completedLevels[key] > oldStars)
             {
-                Debug.Log($"[GameProgress] Level improved! Difficulty: {difficulty}, Level: {level}, Stars: {oldStars} -> {this.completedLevels[key]}");
+                Debug.Log($"[GameProgress] Level {levelNumber} improved! Stars: {oldStars} -> {this.completedLevels[key]}");
             }
         }
         
@@ -141,18 +150,24 @@ public class GameProgress : SaiSingleton<GameProgress>
     /// <summary>
     /// Check if a level has been completed
     /// </summary>
-    public bool IsLevelCompleted(int difficulty, int level)
+    /// <param name="levelNumber">Global level number (1-23)</param>
+    public bool IsLevelCompleted(int levelNumber)
     {
-        string key = this.GetLevelKey(difficulty, level);
+        if (levelNumber < 1 || levelNumber > 23) return false;
+        
+        string key = this.GetLevelKey(levelNumber);
         return this.completedLevels.ContainsKey(key);
     }
     
     /// <summary>
     /// Get stars earned for a specific level
     /// </summary>
-    public int GetLevelStars(int difficulty, int level)
+    /// <param name="levelNumber">Global level number (1-23)</param>
+    public int GetLevelStars(int levelNumber)
     {
-        string key = this.GetLevelKey(difficulty, level);
+        if (levelNumber < 1 || levelNumber > 23) return 0;
+        
+        string key = this.GetLevelKey(levelNumber);
         return this.completedLevels.ContainsKey(key) ? this.completedLevels[key] : 0;
     }
     
@@ -181,25 +196,19 @@ public class GameProgress : SaiSingleton<GameProgress>
     /// Check if a level is unlocked (for sequential unlocking)
     /// First level is always unlocked, others unlock after completing previous level
     /// </summary>
-    public bool IsLevelUnlocked(int difficulty, int level)
+    /// <param name="levelNumber">Global level number (1-23)</param>
+    public bool IsLevelUnlocked(int levelNumber)
     {
-        // First level of first difficulty is always unlocked
-        if (difficulty == 0 && level == 0)
+        if (levelNumber < 1 || levelNumber > 23) return false;
+        
+        // First level is always unlocked
+        if (levelNumber == 1)
         {
             return true;
         }
         
         // Check if previous level is completed
-        if (level > 0)
-        {
-            // Check previous level in same difficulty
-            return this.IsLevelCompleted(difficulty, level - 1);
-        }
-        else
-        {
-            // First level of this difficulty - check if last level of previous difficulty is completed
-            return this.IsLevelCompleted(difficulty - 1, GameData.LEVELS_PER_DIFFICULTY - 1);
-        }
+        return this.IsLevelCompleted(levelNumber - 1);
     }
     
     /// <summary>
@@ -232,13 +241,16 @@ public class GameProgress : SaiSingleton<GameProgress>
             
             foreach (var kvp in this.completedLevels)
             {
+                // Extract level number from key (e.g., "level_15" -> 15)
                 string[] parts = kvp.Key.Split('_');
-                saveData.completedLevels.Add(new LevelData
+                if (parts.Length == 2 && int.TryParse(parts[1], out int levelNumber))
                 {
-                    difficulty = int.Parse(parts[0]),
-                    level = int.Parse(parts[1]),
-                    stars = kvp.Value
-                });
+                    saveData.completedLevels.Add(new LevelData
+                    {
+                        level = levelNumber,
+                        stars = kvp.Value
+                    });
+                }
             }
             
             string json = JsonUtility.ToJson(saveData);
@@ -268,8 +280,34 @@ public class GameProgress : SaiSingleton<GameProgress>
                 this.completedLevels.Clear();
                 foreach (var levelData in saveData.completedLevels)
                 {
-                    string key = this.GetLevelKey(levelData.difficulty, levelData.level);
-                    this.completedLevels[key] = levelData.stars;
+                    // New format: level number directly stored
+                    if (levelData.level > 0)
+                    {
+                        string key = this.GetLevelKey(levelData.level);
+                        this.completedLevels[key] = levelData.stars;
+                    }
+                    // Backward compatibility: convert old (difficulty, level) format
+                    else if (levelData.difficulty >= 0)
+                    {
+                        // Calculate global level number from old format
+                        int globalLevel;
+                        if (levelData.difficulty <= 6)
+                        {
+                            globalLevel = levelData.difficulty * 3 + levelData.level;
+                        }
+                        else if (levelData.difficulty == 7)
+                        {
+                            globalLevel = 22; // Extreme
+                        }
+                        else
+                        {
+                            globalLevel = 23; // Legendary
+                        }
+                        
+                        string key = this.GetLevelKey(globalLevel);
+                        this.completedLevels[key] = levelData.stars;
+                        Debug.Log($"[GameProgress] Converted old format: Difficulty {levelData.difficulty}, SubLevel {levelData.level} -> Level {globalLevel}");
+                    }
                 }
                 
                 this.UpdateInspectorData();
@@ -290,11 +328,54 @@ public class GameProgress : SaiSingleton<GameProgress>
     }
     
     /// <summary>
-    /// Generate unique key for difficulty and level combination
+    /// Generate unique key for level number
     /// </summary>
-    private string GetLevelKey(int difficulty, int level)
+    /// <param name="levelNumber">Global level number (1-23)</param>
+    private string GetLevelKey(int levelNumber)
     {
-        return $"{difficulty}_{level}";
+        return $"level_{levelNumber}";
+    }
+    
+    /// <summary>
+    /// Get difficulty index from global level number
+    /// </summary>
+    /// <param name="levelNumber">Global level number (1-23)</param>
+    /// <returns>Difficulty index (0-8)</returns>
+    private int GetDifficultyFromLevelNumber(int levelNumber)
+    {
+        // Levels 1-21: 3 levels per difficulty (0-6)
+        // Level 22: Extreme (difficulty 7)
+        // Level 23: Legendary (difficulty 8)
+        if (levelNumber >= 1 && levelNumber <= 21)
+        {
+            return (levelNumber - 1) / 3;
+        }
+        else if (levelNumber == 22)
+        {
+            return 7; // Extreme
+        }
+        else if (levelNumber == 23)
+        {
+            return 8; // Legendary
+        }
+        
+        return 0; // Default to Very Easy
+    }
+    
+    /// <summary>
+    /// Extract level number from level name (e.g., "level-15" -> 15)
+    /// </summary>
+    public static int ParseLevelName(string levelName)
+    {
+        if (string.IsNullOrEmpty(levelName)) return 1;
+        
+        string[] parts = levelName.Split('-');
+        if (parts.Length == 2 && int.TryParse(parts[1], out int levelNumber))
+        {
+            return Mathf.Clamp(levelNumber, 1, 23);
+        }
+        
+        return 1; // Default to level 1
     }
     
     #region Debug & Utility Methods
@@ -368,9 +449,9 @@ public class GameProgress : SaiSingleton<GameProgress>
     [Serializable]
     public class LevelCompletionData
     {
-        public int difficulty;
+        public int level;           // Global level number (1-23)
+        public int difficulty;      // Difficulty index (0-8) - calculated from level
         public string difficultyName;
-        public int level;
         public int stars;
     }
     
@@ -383,8 +464,8 @@ public class GameProgress : SaiSingleton<GameProgress>
     [Serializable]
     private class LevelData
     {
-        public int difficulty;
-        public int level;
+        public int level;       // Global level number (1-23)
+        public int difficulty;  // Kept for backward compatibility (not used in new format)
         public int stars;
     }
     #endregion
