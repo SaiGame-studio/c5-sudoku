@@ -73,3 +73,7 @@ crashlytics-build.properties
 .vsconfig
 .idea
 .vs
+
+# Platform-specific Unity files
+# Note: Use lock-android-settings.bat to prevent platform switching when pulling from PC
+# EditorBuildSettings.asset and ProjectSettings.asset are tracked but can be locked locally

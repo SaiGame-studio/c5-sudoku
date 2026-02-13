@@ -1,0 +1,8 @@
+G:/Projects/ss/c5/c5-sudoku - Android/.utmp/Debug/b4y5g2b2/arm64-v8a/CMakeFiles/edit_cache.dir
+G:/Projects/ss/c5/c5-sudoku - Android/.utmp/Debug/b4y5g2b2/arm64-v8a/CMakeFiles/rebuild_cache.dir
+G:/Projects/ss/c5/c5-sudoku - Android/.utmp/Debug/b4y5g2b2/arm64-v8a/GameActivity/CMakeFiles/game.dir
+G:/Projects/ss/c5/c5-sudoku - Android/.utmp/Debug/b4y5g2b2/arm64-v8a/GameActivity/CMakeFiles/edit_cache.dir
+G:/Projects/ss/c5/c5-sudoku - Android/.utmp/Debug/b4y5g2b2/arm64-v8a/GameActivity/CMakeFiles/rebuild_cache.dir
+G:/Projects/ss/c5/c5-sudoku - Android/.utmp/Debug/b4y5g2b2/arm64-v8a/FramePacing/CMakeFiles/swappywrapper.dir
+G:/Projects/ss/c5/c5-sudoku - Android/.utmp/Debug/b4y5g2b2/arm64-v8a/FramePacing/CMakeFiles/edit_cache.dir
+G:/Projects/ss/c5/c5-sudoku - Android/.utmp/Debug/b4y5g2b2/arm64-v8a/FramePacing/CMakeFiles/rebuild_cache.dir
