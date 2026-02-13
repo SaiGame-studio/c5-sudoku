@@ -87,9 +87,14 @@
                             </ui:VisualElement>
                         </ui:VisualElement>
                         <ui:VisualElement style="flex-grow: 1; position: relative; left: auto; bottom: auto; width: 100%;">
-                            <ui:Button name="back-button" text="" class="back-button" style="left: 0; position: absolute;"/>                            <ui:Label name="version-label" text="v0.0.1" class="version-label"/>                        </ui:VisualElement>
+                            <ui:Button name="back-button" text="" class="back-button" style="left: 0; position: absolute;"/>
+                            <ui:Label name="version-label" text="v0.0.1" class="version-label"/>
+                        </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:ScrollView>
+            </ui:VisualElement>
+            <ui:VisualElement name="theme-toggle" class="theme-toggle" style="position: absolute; align-items: stretch; align-self: flex-end; width: 48px; right: 150px;">
+                <ui:Label name="theme-toggle-label" text="☾" class="theme-toggle-label"/>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

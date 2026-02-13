@@ -6,6 +6,9 @@
                 <ui:Label text="SUDOKU" class="menu-title"/>
                 <ui:Label text="Challenge Your Mind" class="menu-subtitle"/>
             </ui:VisualElement>
+            <ui:VisualElement name="theme-toggle" class="theme-toggle">
+                <ui:Label name="theme-toggle-label" text="☾" class="theme-toggle-label"/>
+            </ui:VisualElement>
             <ui:VisualElement class="menu-buttons">
                 <ui:Button name="classic-button" class="menu-button classic-button">
                     <ui:Label text="Classic Mode" class="menu-button-label"/>

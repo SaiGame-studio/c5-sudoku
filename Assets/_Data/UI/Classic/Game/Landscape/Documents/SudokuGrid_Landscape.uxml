@@ -341,9 +341,6 @@
                     </ui:VisualElement>
                 </ui:VisualElement>
                 <ui:VisualElement name="grid-bottom-bar" class="grid-bottom-bar">
-                    <ui:VisualElement name="theme-toggle" class="theme-toggle">
-                        <ui:Label name="theme-toggle-label" text="☾" class="theme-toggle-label"/>
-                    </ui:VisualElement>
                     <ui:Button name="back-button" text="" class="back-button" style="left: 0; position: absolute;"/>
                 </ui:VisualElement>
                 <ui:VisualElement name="debug-buttons" class="difficulty-top-row" style="margin-bottom: 15px; margin-top: 15px;">
@@ -371,6 +368,9 @@
                     <ui:Button name="auto-notes-button" text="" class="auto-notes-button"/>
                 </ui:VisualElement>
             </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="theme-toggle" class="theme-toggle" style="position: absolute; top: 20px; right: 20px;">
+            <ui:Label name="theme-toggle-label" text="☾" class="theme-toggle-label"/>
         </ui:VisualElement>
     </ui:VisualElement>
     <ui:Label name="version-label" text="v0.0.1" class="version-label"/>

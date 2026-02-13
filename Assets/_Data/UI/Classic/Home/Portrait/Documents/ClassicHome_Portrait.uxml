@@ -5,6 +5,9 @@
             <ui:VisualElement class="home-header" style="margin-top: 20px;">
                 <ui:Label text="SUDOKU" class="home-title"/>
                 <ui:Label text="Classic Mode" class="home-subtitle"/>
+                <ui:VisualElement name="theme-toggle" class="theme-toggle">
+                    <ui:Label name="theme-toggle-label" text="☾" class="theme-toggle-label"/>
+                </ui:VisualElement>
             </ui:VisualElement>
             <ui:ScrollView name="level-scroll" class="level-scroll">
                 <ui:VisualElement name="level-list-container" class="level-list-container">

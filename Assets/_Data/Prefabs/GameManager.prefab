@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8292984400632937015}
   - component: {fileID: 6255500851066813758}
   - component: {fileID: 4676443951157944214}
+  - component: {fileID: 2906024432080822569}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -64,3 +65,16 @@ MonoBehaviour:
   totalStars: 0
   completedLevelCount: 0
   completedLevelsList: []
+--- !u!114 &2906024432080822569
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8551753066643602254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65c8ddf4e3b5e484d844a38d869b44e9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ThemeManager
+  isLightMode: 0

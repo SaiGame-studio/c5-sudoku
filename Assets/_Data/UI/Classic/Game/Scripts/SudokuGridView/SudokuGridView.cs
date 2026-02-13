@@ -51,7 +51,6 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private Label patternNameLabel;
     [SerializeField] private SudokuCell[,] cells;
     [SerializeField] private SudokuCell selectedCell;
-    [SerializeField] private bool isLightMode;
     [SerializeField] private int[,] cachedSolution;
     [SerializeField] private VisualElement mainContainer;
     [SerializeField] private VictoryEffect victoryEffect;
@@ -259,6 +258,8 @@ public class SudokuGridView : SaiBehaviour
                 this.ToggleTheme();
             });
         }
+
+        this.ApplyTheme();
 
         if (this.hintButton != null)
         {
@@ -646,17 +647,26 @@ public class SudokuGridView : SaiBehaviour
 
     public void ToggleTheme()
     {
-        this.isLightMode = !this.isLightMode;
+        ThemeManager.Instance.ToggleTheme();
+        this.ApplyTheme();
+    }
 
-        if (this.isLightMode)
+    private void ApplyTheme()
+    {
+        if (this.root == null) return;
+
+        if (ThemeManager.Instance.IsLightMode)
         {
             this.root.AddToClassList("light-mode");
-            this.themeToggleLabel.text = "\u2600"; // Sun
         }
         else
         {
             this.root.RemoveFromClassList("light-mode");
-            this.themeToggleLabel.text = "\u263E"; // Moon
+        }
+
+        if (this.themeToggleLabel != null)
+        {
+            this.themeToggleLabel.text = ThemeManager.Instance.GetThemeIcon();
         }
     }
 

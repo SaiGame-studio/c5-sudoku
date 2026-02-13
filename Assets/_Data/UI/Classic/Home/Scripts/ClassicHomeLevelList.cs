@@ -17,6 +17,8 @@ public class ClassicHomeLevelList : SaiBehaviour
     [Header("Visual Elements")]
     [SerializeField] private VisualElement root;
     [SerializeField] private VisualElement homeContainer;
+    [SerializeField] private VisualElement themeToggle;
+    [SerializeField] private Label themeToggleLabel;
 
     private void OnRootGeometryChanged(GeometryChangedEvent evt)
     {
@@ -45,6 +47,8 @@ public class ClassicHomeLevelList : SaiBehaviour
         if (this.root == null) return;
 
         this.homeContainer = this.root.Q<VisualElement>(className: "home-container");
+        this.themeToggle = this.root.Q<VisualElement>("theme-toggle");
+        this.themeToggleLabel = this.root.Q<Label>("theme-toggle-label");
     }
 
     protected override void Start()
@@ -70,8 +74,10 @@ public class ClassicHomeLevelList : SaiBehaviour
 
         this.RegisterCardCallbacks();
         this.RegisterBackButton();
+        this.RegisterThemeToggle();
         this.UpdateLockedLevels();
         this.UpdateCompletedLevels();
+        this.ApplyTheme();
     }
 
     [ProButton]
@@ -286,6 +292,37 @@ public class ClassicHomeLevelList : SaiBehaviour
         if (card != null && !card.ClassListContains("level-completed"))
         {
             card.AddToClassList("level-completed");
+        }
+    }
+
+    private void RegisterThemeToggle()
+    {
+        if (this.themeToggle == null) return;
+
+        this.themeToggle.RegisterCallback<ClickEvent>(evt =>
+        {
+            evt.StopPropagation();
+            ThemeManager.Instance.ToggleTheme();
+            this.ApplyTheme();
+        });
+    }
+
+    private void ApplyTheme()
+    {
+        if (this.root == null) return;
+
+        if (ThemeManager.Instance.IsLightMode)
+        {
+            this.root.AddToClassList("light-mode");
+        }
+        else
+        {
+            this.root.RemoveFromClassList("light-mode");
+        }
+
+        if (this.themeToggleLabel != null)
+        {
+            this.themeToggleLabel.text = ThemeManager.Instance.GetThemeIcon();
         }
     }
 }
