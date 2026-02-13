@@ -292,7 +292,6 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1140839727}
   - {fileID: 2115771376}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -331,8 +330,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenu
   mainMenuSceneName: main_menu
-  classicSceneName: classic_home
-  adventureSceneName: adventure_home
+  classicHomeSceneName: classic_home
+  classicGameSceneName: classic_game
+  storySceneName: story_home
 --- !u!4 &350969554
 Transform:
   m_ObjectHideFlags: 0
@@ -362,6 +362,7 @@ GameObject:
   - component: {fileID: 393123383}
   - component: {fileID: 393123382}
   - component: {fileID: 393123384}
+  - component: {fileID: 393123385}
   m_Layer: 0
   m_Name: SudokuGenerator
   m_TagString: Untagged
@@ -398,13 +399,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SudokuGenerator
   currentDifficulty: 0
   isPuzzleGenerated: 1
-  totalClues: 17
-  emptyCells: 64
+  totalClues: 53
+  emptyCells: 28
   summary: 
-  puzzlePreview: "x 6 x | x x 4 | x x x \r\nx x 1 | x 8 x | 9 x x \r\nx 5 x | 3 7
-    x | x x 4 \r\n------+-------+------\r\nx x x | x x x | x x x \r\nx x x | x x
-    x | x 9 x \r\nx x x | x x x | x 4 x \r\n------+-------+------\r\nx 3 x | x 4
-    x | x x 9 \r\nx x x | x x x | x x 5 \r\nx 7 x | x x x | x x 8 \r\n"
+  puzzlePreview: "6 4 x | 9 7 x | 5 3 8 \r\n7 x 3 | 2 5 4 | x 6 x \r\nx 1 5 | 8 6
+    3 | 4 7 2 \r\n------+-------+------\r\nx 9 7 | 1 x x | 8 x 5 \r\n3 x 8 | 4 9
+    x | x 2 6 \r\n1 6 4 | 5 8 x | 3 9 7 \r\n------+-------+------\r\n8 x 6 | x 4
+    5 | x 1 9 \r\n5 x x | 7 2 9 | 6 x x \r\nx x x | 6 x x | x x 3 \r\n"
 --- !u!114 &393123381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -418,14 +419,41 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SudokuResultAnalyzer
   currentResult: 0
-  isAnalyzed: 0
-  totalMoves: 0
-  correctCells: 0
+  isAnalyzed: 1
+  totalMoves: 53
+  correctCells: 53
   incorrectCells: 0
-  completionPercentage: 0
-  timeTaken: 0
+  completionPercentage: 65.4321
+  timeTaken: 2.2738814
   hintsUsed: 0
-  analysisReport: 
+  analysisReport: '=== SUDOKU RESULT ANALYSIS ===
+
+
+
+    Final Result: Puzzle not
+    completed yet.
+
+    Completion: 65.4%
+
+    Time Taken: 00:34
+
+    Hints Used:
+    0
+
+
+
+    --- Cell Statistics ---
+
+    Total Moves: 53
+
+    Correct Cells: 53
+
+    Incorrect
+    Cells: 0
+
+
+
+'
 --- !u!114 &393123382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -438,7 +466,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d171e5f7c2335d458b0fe767f619de9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SudokuAutoPlayer
-  autoPlayDelay: 0.5
+  autoPlayDelay: 0.2
   isAutoPlaying: 0
   sudokuGenerator: {fileID: 393123380}
   resultAnalyzer: {fileID: 393123381}
@@ -459,16 +487,68 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SudokuPatternAnalyzer
   autoAnalyze: 1
   showDetailedLog: 0
-  patternsFoundCount: 0
-  patternsReport: 
-  fullHouseCount: 0
-  nakedSingleCount: 0
-  hiddenSingleCount: 0
-  nakedPairCount: 0
-  hiddenPairCount: 0
-  pointingPairCount: 0
-  xWingCount: 0
-  advancedPatternCount: 0
+  patternsFoundCount: 4
+  patternsReport: "=== SUDOKU PATTERN ANALYSIS ===\n\r\nTotal Patterns Found: 4\n\r\n---
+    FullHouse (4) ---\r\n  \u2022 Row 3: Cell [3,1] must be 9\r\n  \u2022 Row 6:
+    Cell [6,6] must be 2\r\n  \u2022 Column 4: Cell [7,4] must be 3\r\n  \u2022 Box
+    (1,2): Cell [1,6] must be 1\r\n\r\n"
+  patternStatistics:
+  - patternName: FullHouse
+    count: 4
+  - patternName: NakedSingle
+    count: 0
+  - patternName: HiddenSingle
+    count: 0
+  - patternName: NakedPair
+    count: 0
+  - patternName: NakedTriple
+    count: 0
+  - patternName: NakedQuad
+    count: 0
+  - patternName: HiddenPair
+    count: 0
+  - patternName: HiddenTriple
+    count: 0
+  - patternName: HiddenQuad
+    count: 0
+  - patternName: PointingPair
+    count: 0
+  - patternName: BoxLineReduction
+    count: 0
+  - patternName: XWing
+    count: 0
+  - patternName: Swordfish
+    count: 0
+  - patternName: Jellyfish
+    count: 0
+  - patternName: FinnedFish
+    count: 0
+  - patternName: SashimiFish
+    count: 0
+  - patternName: XYWing
+    count: 0
+  - patternName: XYZWing
+    count: 0
+  - patternName: WWing
+    count: 0
+  - patternName: SimpleColors
+    count: 0
+  - patternName: XChain
+    count: 0
+  - patternName: XYChain
+    count: 0
+  - patternName: UniqueRectangle
+    count: 0
+  - patternName: BBUG
+    count: 0
+  - patternName: EmptyRectangle
+    count: 0
+  - patternName: SueDeCoq
+    count: 0
+  - patternName: Medusa3D
+    count: 0
+  - patternName: ALS
+    count: 0
 --- !u!114 &393123384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -489,6 +569,23 @@ MonoBehaviour:
   totalCells: 0
   cellsProcessed: 0
   totalNotesAdded: 0
+--- !u!114 &393123385
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 393123378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SudokuHintSystem
+  patternAnalyzer: {fileID: 393123383}
+  prioritizeSimplePatterns: 1
+  showHintDescription: 1
+  currentHintMessage: 
+  hintsGivenCount: 0
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -710,280 +807,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &960835121
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 960835122}
-  - component: {fileID: 960835124}
-  - component: {fileID: 960835123}
-  m_Layer: 5
-  m_Name: SceneName
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &960835122
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 960835121}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1596259707}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 213, y: 34}
-  m_SizeDelta: {x: 400, y: 50}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &960835123
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 960835121}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_text: Landscape
-  m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
-  m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
-  m_fontColor32:
-    serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
-  m_enableVertexGradient: 0
-  m_colorMode: 3
-  m_fontColorGradient:
-    topLeft: {r: 1, g: 1, b: 1, a: 1}
-    topRight: {r: 1, g: 1, b: 1, a: 1}
-    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
-    bottomRight: {r: 1, g: 1, b: 1, a: 1}
-  m_fontColorGradientPreset: {fileID: 0}
-  m_spriteAsset: {fileID: 0}
-  m_tintAllSprites: 0
-  m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: -1183493901
-  m_overrideHtmlColors: 0
-  m_faceColor:
-    serializedVersion: 2
-    rgba: 4294967295
-  m_fontSize: 20
-  m_fontSizeBase: 20
-  m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
-  m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
-  m_textAlignment: 65535
-  m_characterSpacing: 0
-  m_characterHorizontalScale: 1
-  m_wordSpacing: 0
-  m_lineSpacing: 0
-  m_lineSpacingMax: 0
-  m_paragraphSpacing: 0
-  m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
-  m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 0}
-  parentLinkedComponent: {fileID: 0}
-  m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
-  m_enableExtraPadding: 0
-  checkPaddingRequired: 0
-  m_isRichText: 1
-  m_EmojiFallbackSupport: 1
-  m_parseCtrlCharacters: 1
-  m_isOrthographic: 1
-  m_isCullingEnabled: 0
-  m_horizontalMapping: 0
-  m_verticalMapping: 0
-  m_uvLineOffset: 0
-  m_geometrySortingOrder: 0
-  m_IsTextObjectScaleStatic: 0
-  m_VertexBufferAutoSizeReduction: 0
-  m_useMaxVisibleDescender: 1
-  m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
-  m_isUsingLegacyAnimationComponent: 0
-  m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
-  m_baseMaterial: {fileID: 0}
-  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!222 &960835124
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 960835121}
-  m_CullTransparentMesh: 1
---- !u!1 &1140839726
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1140839727}
-  - component: {fileID: 1140839729}
-  - component: {fileID: 1140839728}
-  m_Layer: 5
-  m_Name: SceneName
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1140839727
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1140839726}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 321554613}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 209, y: 4}
-  m_SizeDelta: {x: 400, y: 50}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1140839728
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1140839726}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_text: Class Game
-  m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
-  m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
-  m_fontColor32:
-    serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
-  m_enableVertexGradient: 0
-  m_colorMode: 3
-  m_fontColorGradient:
-    topLeft: {r: 1, g: 1, b: 1, a: 1}
-    topRight: {r: 1, g: 1, b: 1, a: 1}
-    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
-    bottomRight: {r: 1, g: 1, b: 1, a: 1}
-  m_fontColorGradientPreset: {fileID: 0}
-  m_spriteAsset: {fileID: 0}
-  m_tintAllSprites: 0
-  m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: -1183493901
-  m_overrideHtmlColors: 0
-  m_faceColor:
-    serializedVersion: 2
-    rgba: 4294967295
-  m_fontSize: 20
-  m_fontSizeBase: 20
-  m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
-  m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
-  m_textAlignment: 65535
-  m_characterSpacing: 0
-  m_characterHorizontalScale: 1
-  m_wordSpacing: 0
-  m_lineSpacing: 0
-  m_lineSpacingMax: 0
-  m_paragraphSpacing: 0
-  m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
-  m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 0}
-  parentLinkedComponent: {fileID: 0}
-  m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
-  m_enableExtraPadding: 0
-  checkPaddingRequired: 0
-  m_isRichText: 1
-  m_EmojiFallbackSupport: 1
-  m_parseCtrlCharacters: 1
-  m_isOrthographic: 1
-  m_isCullingEnabled: 0
-  m_horizontalMapping: 0
-  m_verticalMapping: 0
-  m_uvLineOffset: 0
-  m_geometrySortingOrder: 0
-  m_IsTextObjectScaleStatic: 0
-  m_VertexBufferAutoSizeReduction: 0
-  m_useMaxVisibleDescender: 1
-  m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
-  m_isUsingLegacyAnimationComponent: 0
-  m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
-  m_baseMaterial: {fileID: 0}
-  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!222 &1140839729
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1140839726}
-  m_CullTransparentMesh: 1
 --- !u!1 &1197444008
 GameObject:
   m_ObjectHideFlags: 0
@@ -999,7 +822,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1197444009
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1012,7 +835,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1986091624}
   - {fileID: 8027504349224823920}
   m_Father: {fileID: 2115771376}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1036,7 +858,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1596259707
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1049,7 +871,6 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 960835122}
   - {fileID: 5723614773211522038}
   m_Father: {fileID: 2115771376}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1058,143 +879,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1986091623
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1986091624}
-  - component: {fileID: 1986091626}
-  - component: {fileID: 1986091625}
-  m_Layer: 5
-  m_Name: SceneName
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1986091624
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1986091623}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1197444009}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 203, y: 30}
-  m_SizeDelta: {x: 400, y: 50}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1986091625
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1986091623}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_text: Portrait
-  m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_fontSharedMaterials: []
-  m_fontMaterial: {fileID: 0}
-  m_fontMaterials: []
-  m_fontColor32:
-    serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
-  m_enableVertexGradient: 0
-  m_colorMode: 3
-  m_fontColorGradient:
-    topLeft: {r: 1, g: 1, b: 1, a: 1}
-    topRight: {r: 1, g: 1, b: 1, a: 1}
-    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
-    bottomRight: {r: 1, g: 1, b: 1, a: 1}
-  m_fontColorGradientPreset: {fileID: 0}
-  m_spriteAsset: {fileID: 0}
-  m_tintAllSprites: 0
-  m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: -1183493901
-  m_overrideHtmlColors: 0
-  m_faceColor:
-    serializedVersion: 2
-    rgba: 4294967295
-  m_fontSize: 20
-  m_fontSizeBase: 20
-  m_fontWeight: 400
-  m_enableAutoSizing: 0
-  m_fontSizeMin: 18
-  m_fontSizeMax: 72
-  m_fontStyle: 0
-  m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
-  m_textAlignment: 65535
-  m_characterSpacing: 0
-  m_characterHorizontalScale: 1
-  m_wordSpacing: 0
-  m_lineSpacing: 0
-  m_lineSpacingMax: 0
-  m_paragraphSpacing: 0
-  m_charWidthMaxAdj: 0
-  m_TextWrappingMode: 1
-  m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
-  m_linkedTextComponent: {fileID: 0}
-  parentLinkedComponent: {fileID: 0}
-  m_enableKerning: 0
-  m_ActiveFontFeatures: 6e72656b
-  m_enableExtraPadding: 0
-  checkPaddingRequired: 0
-  m_isRichText: 1
-  m_EmojiFallbackSupport: 1
-  m_parseCtrlCharacters: 1
-  m_isOrthographic: 1
-  m_isCullingEnabled: 0
-  m_horizontalMapping: 0
-  m_verticalMapping: 0
-  m_uvLineOffset: 0
-  m_geometrySortingOrder: 0
-  m_IsTextObjectScaleStatic: 0
-  m_VertexBufferAutoSizeReduction: 0
-  m_useMaxVisibleDescender: 1
-  m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
-  m_isUsingLegacyAnimationComponent: 0
-  m_isVolumetricText: 0
-  m_hasFontAssetChanged: 0
-  m_baseMaterial: {fileID: 0}
-  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!222 &1986091626
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1986091623}
-  m_CullTransparentMesh: 1
 --- !u!1 &2115771375
 GameObject:
   m_ObjectHideFlags: 0
@@ -1259,7 +943,7 @@ MonoBehaviour:
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: e8856d158d32eef4abe4a32fd9d3d7e6, type: 2}
+  m_PanelSettings: {fileID: 11400000, guid: f29bca7bc07fda34c8c502b974eff0a2, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 9bbaaffbe9dc326428f829c6578c4b7e, type: 3}
   m_SortingOrder: 0
@@ -1281,6 +965,7 @@ GameObject:
   - component: {fileID: 5723614773211522038}
   - component: {fileID: 4861749548441042308}
   - component: {fileID: 8143833361491433006}
+  - component: {fileID: 8143833361491433007}
   m_Layer: 5
   m_Name: SudokuGridLanscape
   m_TagString: Untagged
@@ -1317,8 +1002,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SudokuGridView
   uiDocument: {fileID: 7165603691242713602}
   sudokuGenerator: {fileID: 393123380}
-  resultAnalyzer: {fileID: 0}
-  patternAnalyzer: {fileID: 0}
+  resultAnalyzer: {fileID: 393123381}
+  patternAnalyzer: {fileID: 393123383}
+  hintSystem: {fileID: 393123385}
+  autoNotes: {fileID: 393123384}
   popupOffset: {x: 0, y: -10}
   autoAnalyze: 1
   autoAnalyzePatterns: 1
@@ -1327,6 +1014,14 @@ MonoBehaviour:
   incorrectCells: 0
   currentResult: 0
   userPuzzlePreview: 
+  addLandscapeScale: 0
+  addPortraitScale: 1.2
+  showVisualElements: 0
+  isLightMode: 0
+  currentHintPattern:
+    type: 0
+    description: 
+    suggestedValue: 0
 --- !u!114 &7165603691242713602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1339,7 +1034,7 @@ MonoBehaviour:
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: e8856d158d32eef4abe4a32fd9d3d7e6, type: 2}
+  m_PanelSettings: {fileID: 11400000, guid: b03bd34471bc7a74483bebcb9cff6786, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 665e0e7ba9e46704e9a51788b8b3e1fd, type: 3}
   m_SortingOrder: 0
@@ -1361,6 +1056,7 @@ GameObject:
   - component: {fileID: 8027504349224823920}
   - component: {fileID: 7165603691242713602}
   - component: {fileID: 5840470150497540520}
+  - component: {fileID: 8027504349224823921}
   m_Layer: 5
   m_Name: SudokuGridPortrait
   m_TagString: Untagged
@@ -1383,6 +1079,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1197444009}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8027504349224823921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7966923949765095201}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97a63a1181d96f049b04e25cbd2d8e3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SudokuDifficultyPanel
+  uiDocument: {fileID: 7165603691242713602}
+  sudokuGenerator: {fileID: 393123380}
+  gridView: {fileID: 5840470150497540520}
 --- !u!114 &8143833361491433006
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1398,15 +1109,44 @@ MonoBehaviour:
   uiDocument: {fileID: 4861749548441042308}
   sudokuGenerator: {fileID: 393123380}
   resultAnalyzer: {fileID: 393123381}
-  patternAnalyzer: {fileID: 0}
+  patternAnalyzer: {fileID: 393123383}
+  hintSystem: {fileID: 393123385}
+  autoNotes: {fileID: 393123384}
   popupOffset: {x: 0, y: -10}
   autoAnalyze: 1
   autoAnalyzePatterns: 1
-  completionPercentage: 0
-  correctCells: 0
+  completionPercentage: 65.4321
+  correctCells: 51
   incorrectCells: 0
   currentResult: 0
-  userPuzzlePreview: 
+  userPuzzlePreview: "7 \xB7 \xB7 | 6 5 3 | 1 \xB7 9 \r\n\xB7 9 2 | \xB7 8 \xB7 |
+    6 4 5 \r\n6 5 \xB7 | \xB7 2 \xB7 | 7 \xB7 8 \r\n------+-------+------\r\n2 1
+    9 | 5 \xB7 6 | \xB7 \xB7 4 \r\n5 3 7 | 8 \xB7 9 | \xB7 \xB7 1 \r\n\xB7 \xB7 \xB7
+    | 2 7 1 | \xB7 5 3 \r\n------+-------+------\r\n9 2 6 | 4 1 \xB7 | 3 \xB7 \xB7
+    \r\n4 \xB7 3 | 7 9 2 | 5 1 6 \r\n1 \xB7 \xB7 | 3 \xB7 \xB7 | \xB7 \xB7 2 \r\n"
+  addLandscapeScale: 0
+  addPortraitScale: 1.5
+  showVisualElements: 0
+  isLightMode: 0
+  currentHintPattern:
+    type: 0
+    description: 
+    suggestedValue: 0
+--- !u!114 &8143833361491433007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5663561288124293287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97a63a1181d96f049b04e25cbd2d8e3a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SudokuDifficultyPanel
+  uiDocument: {fileID: 4861749548441042308}
+  sudokuGenerator: {fileID: 393123380}
+  gridView: {fileID: 8143833361491433006}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -19,7 +19,6 @@ public class OrientationCanvasManager : SaiBehaviour
         this.LoadLandscapeCanvas();
         this.LoadPortraitCanvas();
         this.EvaluateOrientation();
-
     }
 
     private void LoadLandscapeCanvas()
@@ -44,10 +43,6 @@ public class OrientationCanvasManager : SaiBehaviour
         this.portraitCanvas.SetActive(true);
 
         bool currentIsLandscape = this.GetIsLandscape();
-
-        if (currentIsLandscape == this.isLandscape
-            && this.landscapeCanvas.activeSelf == currentIsLandscape)
-            return;
 
         this.isLandscape = currentIsLandscape;
         Debug.Log("Screen: " + this.GetScreenWidth() + "x" + this.GetScreenHeight() + " => isLandscape: " + this.isLandscape);

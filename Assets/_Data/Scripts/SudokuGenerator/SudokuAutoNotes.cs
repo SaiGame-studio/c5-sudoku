@@ -138,7 +138,7 @@ public class SudokuAutoNotes : SaiBehaviour
         {
             for (int col = 0; col < GRID_SIZE; col++)
             {
-                SudokuGridView.CellData cellData = this.targetGridView.GetCellData(row, col);
+                CellData cellData = this.targetGridView.GetCellData(row, col);
                 if (!cellData.isClue && cellData.value == 0)
                 {
                     // Clear all notes by removing them one by one
@@ -217,7 +217,7 @@ public class SudokuAutoNotes : SaiBehaviour
         {
             for (int col = 0; col < GRID_SIZE; col++)
             {
-                SudokuGridView.CellData cellData = this.targetGridView.GetCellData(row, col);
+                CellData cellData = this.targetGridView.GetCellData(row, col);
                 if (!cellData.isClue && cellData.value == 0)
                 {
                     emptyCells.Add((row, col));

@@ -63,24 +63,35 @@ public class SudokuPatternAnalyzer : SaiBehaviour
         this.InitializeStatistics();
     }
 
+    [ProButton]
     /// <summary>
     /// Initialize pattern statistics list with all pattern types
     /// </summary>
-    private void InitializeStatistics()
+    public void InitializeStatistics()
     {
+        if (this.patternStatistics == null)
+        {
+            this.patternStatistics = new List<PatternStatistic>();
+        }
+
+        if (this.patternCounts == null)
+        {
+            this.patternCounts = new Dictionary<PatternType, int>();
+        }
+
         this.patternStatistics.Clear();
-        
+
         // Add all pattern types (skip None)
         foreach (PatternType type in System.Enum.GetValues(typeof(PatternType)))
         {
             if (type == PatternType.None) continue;
-            
+
             this.patternStatistics.Add(new PatternStatistic
             {
                 patternName = type.ToString(),
                 count = 0
             });
-            
+
             this.patternCounts[type] = 0;
         }
     }
@@ -91,14 +102,24 @@ public class SudokuPatternAnalyzer : SaiBehaviour
     private void IncrementPatternCount(PatternType type)
     {
         if (type == PatternType.None) return;
-        
+
+        if (this.patternCounts == null)
+        {
+            this.patternCounts = new Dictionary<PatternType, int>();
+        }
+
+        if (this.patternStatistics == null)
+        {
+            this.patternStatistics = new List<PatternStatistic>();
+        }
+
         if (!this.patternCounts.ContainsKey(type))
         {
             this.patternCounts[type] = 0;
         }
-        
+
         this.patternCounts[type]++;
-        
+
         // Update display list
         int index = this.patternStatistics.FindIndex(s => s.patternName == type.ToString());
         if (index >= 0)
@@ -114,6 +135,17 @@ public class SudokuPatternAnalyzer : SaiBehaviour
     /// </summary>
     public void AnalyzePatterns(int[,] currentPuzzle, List<int>[,] cellNotes)
     {
+        if (this.detectedPatterns == null)
+        {
+            this.detectedPatterns = new List<PatternInfo>();
+        }
+
+        if (this.patternCounts == null)
+        {
+            this.patternCounts = new Dictionary<PatternType, int>();
+            this.InitializeStatistics();
+        }
+
         this.detectedPatterns.Clear();
         this.ResetStatistics();
 
@@ -364,7 +396,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
         {
             int r = row >= 0 ? row : i;
             int c = col >= 0 ? col : i;
-            
+
             if (notes[r, c] != null && notes[r, c].Count >= 2 && notes[r, c].Count <= 4)
             {
                 cells.Add((r, c, notes[r, c]));
@@ -423,7 +455,7 @@ public class SudokuPatternAnalyzer : SaiBehaviour
                 for (int num = 1; num <= GRID_SIZE; num++)
                 {
                     List<(int r, int c)> positions = new List<(int, int)>();
-                    
+
                     for (int r = 0; r < BOX_SIZE; r++)
                     {
                         for (int c = 0; c < BOX_SIZE; c++)
@@ -616,11 +648,26 @@ public class SudokuPatternAnalyzer : SaiBehaviour
 
     private void ResetStatistics()
     {
+        if (this.patternCounts == null)
+        {
+            this.patternCounts = new Dictionary<PatternType, int>();
+        }
+
+        if (this.detectedPatterns == null)
+        {
+            this.detectedPatterns = new List<PatternInfo>();
+        }
+
+        if (this.patternStatistics == null)
+        {
+            this.patternStatistics = new List<PatternStatistic>();
+        }
+
         foreach (PatternType type in this.patternCounts.Keys.ToList())
         {
             this.patternCounts[type] = 0;
         }
-        
+
         for (int i = 0; i < this.patternStatistics.Count; i++)
         {
             PatternStatistic stat = this.patternStatistics[i];

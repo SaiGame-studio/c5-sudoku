@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-public class SudokuResultAnalyzer : SaiSingleton<SudokuResultAnalyzer>
+public class SudokuResultAnalyzer : SaiBehaviour
 {
     public enum GameResult
     {
@@ -43,6 +43,11 @@ public class SudokuResultAnalyzer : SaiSingleton<SudokuResultAnalyzer>
     /// </summary>
     public GameResult SubmitSolution(int[,] userPuzzle, int[,] solution, float gameTime = 0f, int hints = 0)
     {
+        if (!Application.isPlaying || userPuzzle == null || solution == null)
+        {
+            return GameResult.NotCompleted;
+        }
+
         this.userSolution = (int[,])userPuzzle.Clone();
         this.correctSolution = (int[,])solution.Clone();
         this.timeTaken = gameTime;
@@ -59,6 +64,16 @@ public class SudokuResultAnalyzer : SaiSingleton<SudokuResultAnalyzer>
     /// </summary>
     private void AnalyzeSolution()
     {
+        if (!Application.isPlaying || this.correctSolution == null || this.userSolution == null)
+        {
+            return;
+        }
+
+        if (this.errors == null)
+        {
+            this.errors = new List<CellError>();
+        }
+
         this.errors.Clear();
         this.correctCells = 0;
         this.incorrectCells = 0;

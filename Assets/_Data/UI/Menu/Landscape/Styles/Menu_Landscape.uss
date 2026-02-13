@@ -1,0 +1,193 @@
+/* ===== Menu - Landscape ===== */
+
+.menu-root {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: rgb(22, 22, 30);
+    padding: 20px;
+}
+
+.menu-container {
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    max-width: 800px;
+    flex-grow: 1;
+}
+
+/* ===== Header ===== */
+.menu-header {
+    align-items: center;
+    margin-bottom: 40px;
+}
+
+.menu-title {
+    font-size: 64px;
+    color: rgb(255, 215, 0);
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    letter-spacing: 12px;
+    margin-bottom: 8px;
+}
+
+.menu-subtitle {
+    font-size: 20px;
+    color: rgb(160, 175, 210);
+    -unity-text-align: middle-center;
+    -unity-font-style: italic;
+}
+
+/* ===== Buttons ===== */
+.menu-buttons {
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.menu-button {
+    width: 220px;
+    min-height: 90px;
+    margin: 10px;
+    padding: 16px 24px;
+    background-color: rgb(38, 42, 56);
+    border-width: 2px;
+    border-color: rgb(70, 80, 110);
+    border-radius: 14px;
+    align-items: center;
+    justify-content: center;
+    transition-duration: 0.15s;
+}
+
+.menu-button:hover {
+    background-color: rgb(50, 58, 80);
+    scale: 1.06;
+}
+
+.menu-button:active {
+    background-color: rgb(40, 50, 70);
+    scale: 0.96;
+}
+
+.menu-button-label {
+    font-size: 24px;
+    color: rgb(230, 235, 250);
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    margin-bottom: 4px;
+}
+
+.menu-button-desc {
+    font-size: 14px;
+    color: rgb(140, 155, 190);
+    -unity-text-align: middle-center;
+    -unity-font-style: italic;
+}
+
+/* ===== Button Variants ===== */
+.classic-button {
+    border-color: rgb(80, 180, 120);
+}
+
+.classic-button:hover {
+    border-color: rgb(100, 220, 150);
+}
+
+.classic-button .menu-button-label {
+    color: rgb(140, 230, 170);
+}
+
+.story-button {
+    border-color: rgb(80, 160, 200);
+}
+
+.story-button:hover {
+    border-color: rgb(100, 190, 240);
+}
+
+.story-button .menu-button-label {
+    color: rgb(130, 200, 240);
+}
+
+.quit-button {
+    width: 160px;
+    min-height: 60px;
+    margin-top: 20px;
+    border-color: rgb(200, 80, 80);
+    background-color: rgba(180, 40, 40, 0.1);
+}
+
+.quit-button:hover {
+    border-color: rgb(240, 110, 110);
+    background-color: rgba(200, 50, 50, 0.2);
+}
+
+.quit-button .menu-button-label {
+    color: rgb(240, 130, 130);
+    font-size: 20px;
+}
+
+/* ===== Disabled State ===== */
+.menu-button:disabled {
+    opacity: 0.4;
+    background-color: rgb(30, 32, 42);
+    border-color: rgb(55, 60, 75);
+}
+
+/* ===== Footer ===== */
+.menu-footer {
+    margin-top: auto;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.menu-version {
+    font-size: 12px;
+    color: rgb(80, 90, 110);
+    -unity-text-align: middle-center;
+}
+
+/* ===== Light Mode ===== */
+.light-mode .menu-root {
+    background-color: rgb(240, 242, 248);
+}
+
+.light-mode .menu-title {
+    color: rgb(50, 60, 100);
+}
+
+.light-mode .menu-subtitle {
+    color: rgb(100, 110, 140);
+}
+
+.light-mode .menu-button {
+    background-color: rgb(255, 255, 255);
+    border-color: rgb(190, 200, 220);
+}
+
+.light-mode .menu-button:hover {
+    background-color: rgb(240, 245, 255);
+}
+
+.light-mode .menu-button-label {
+    color: rgb(50, 60, 80);
+}
+
+.light-mode .menu-button-desc {
+    color: rgb(120, 130, 160);
+}
+
+.light-mode .quit-button {
+    background-color: rgba(200, 50, 50, 0.05);
+    border-color: rgb(200, 100, 100);
+}
+
+.light-mode .quit-button .menu-button-label {
+    color: rgb(180, 60, 60);
+}
+
+.light-mode .menu-version {
+    color: rgb(170, 180, 200);
+}

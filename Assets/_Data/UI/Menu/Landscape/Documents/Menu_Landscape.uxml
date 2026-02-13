@@ -1,0 +1,27 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/_Data/UI/Menu/Landscape/Styles/Menu_Landscape.uss?fileID=7433441132597879392&amp;guid=372af6732a44b214ebe309c03a3bf178&amp;type=3#Menu_Landscape"/>
+    <ui:VisualElement class="menu-root">
+        <ui:VisualElement class="menu-container">
+            <ui:VisualElement class="menu-header">
+                <ui:Label text="SUDOKU" class="menu-title"/>
+                <ui:Label text="Challenge Your Mind" class="menu-subtitle"/>
+            </ui:VisualElement>
+            <ui:VisualElement class="menu-buttons">
+                <ui:Button name="classic-button" class="menu-button classic-button">
+                    <ui:Label text="Classic Mode" class="menu-button-label"/>
+                    <ui:Label text="9 difficulty levels" class="menu-button-desc"/>
+                </ui:Button>
+                <ui:Button name="story-button" enabled="false" class="menu-button story-button">
+                    <ui:Label text="Story Mode" class="menu-button-label"/>
+                    <ui:Label text="Comming soon" class="menu-button-desc"/>
+                </ui:Button>
+            </ui:VisualElement>
+            <ui:VisualElement style="flex-grow: 1;">
+                <ui:Button name="quit-button" class="menu-button quit-button">
+                    <ui:Label text="Quit" class="menu-button-label"/>
+                </ui:Button>
+                <ui:Label text="v0.0.1" class="menu-version"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
