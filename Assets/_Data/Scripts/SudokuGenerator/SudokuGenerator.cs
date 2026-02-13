@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using com.cyborgAssets.inspectorButtonPro;
 
-public class SudokuGenerator : SaiSingleton<SudokuGenerator>
+public class SudokuGenerator : SaiBehaviour
 {
     public enum DifficultyLevel
     {

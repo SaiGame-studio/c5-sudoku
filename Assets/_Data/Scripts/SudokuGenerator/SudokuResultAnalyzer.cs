@@ -2,7 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections.Generic;
 
-public class SudokuResultAnalyzer : SaiSingleton<SudokuResultAnalyzer>
+public class SudokuResultAnalyzer : SaiBehaviour
 {
     public enum GameResult
     {
