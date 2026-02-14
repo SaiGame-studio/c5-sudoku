@@ -3,7 +3,6 @@
     <Style src="project://database/Assets/_Data/UI/Styles/ThemeToggle.uss?fileID=7433441132597879392&amp;guid=bfa19512b5ae6d54bae198db679fb34b&amp;type=3#ThemeToggle"/>
     <Style src="project://database/Assets/_Data/UI/Styles/VersionLabel.uss?fileID=7433441132597879392&amp;guid=656b7a98457ea5045b9ce786d56712c5&amp;type=3#VersionLabel"/>
     <ui:VisualElement class="menu-root">
-        <ThemeToggle style="position: absolute; top: 50px; right: 50px;"/>
         <ui:VisualElement class="menu-container" style="align-items: center; align-content: stretch;">
             <ui:VisualElement class="menu-header">
                 <ui:Label text="SUDOKU" class="menu-title"/>
@@ -23,6 +22,7 @@
                 </ui:Button>
             </ui:VisualElement>
         </ui:VisualElement>
+        <ThemeToggle style="position: absolute; top: 50px; right: 50px; width: 90px; height: 90px; border-radius: 45px; font-size: 65px;"/>
         <VersionLabel/>
     </ui:VisualElement>
 </ui:UXML>
