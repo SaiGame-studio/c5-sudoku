@@ -83,12 +83,6 @@ public class VictoryEffect
         title.pickingMode = PickingMode.Ignore;
         banner.Add(title);
 
-        // Subtitle
-        Label subtitle = new Label("Puzzle Completed!");
-        subtitle.AddToClassList(CLASS_VICTORY_SUBTITLE);
-        subtitle.pickingMode = PickingMode.Ignore;
-        banner.Add(subtitle);
-
         this.victoryOverlay.Add(banner);
         this.root.Add(this.victoryOverlay);
 

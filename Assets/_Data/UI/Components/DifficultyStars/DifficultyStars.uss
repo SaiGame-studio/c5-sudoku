@@ -1,0 +1,38 @@
+/* ===== DifficultyStars Component Styles ===== */
+
+/* Dark mode (default) */
+.difficulty-stars {
+    align-self: center;
+    flex-direction: row;
+    margin-top: 0;
+    padding: 7px 16px;
+    border-radius: 10px;
+    background-color: rgb(55, 58, 70);
+    border-width: 1px;
+    border-color: rgb(100, 100, 120);
+}
+
+.difficulty-star {
+    font-size: 30px;
+    color: rgb(70, 70, 80);
+    -unity-text-align: middle-center;
+    margin: 0 2px;
+}
+
+.difficulty-star--active {
+    color: rgb(255, 210, 50);
+}
+
+/* Light mode */
+.light-mode .difficulty-stars {
+    background-color: rgb(240, 240, 245);
+    border-color: rgb(180, 180, 200);
+}
+
+.light-mode .difficulty-star {
+    color: rgb(200, 200, 210);
+}
+
+.light-mode .difficulty-star--active {
+    color: rgb(220, 170, 0);
+}
