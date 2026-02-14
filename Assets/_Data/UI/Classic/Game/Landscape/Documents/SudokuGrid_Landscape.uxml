@@ -3,7 +3,6 @@
     <Style src="project://database/Assets/_Data/UI/Styles/ThemeToggle.uss?fileID=7433441132597879392&amp;guid=bfa19512b5ae6d54bae198db679fb34b&amp;type=3#ThemeToggle"/>
     <Style src="project://database/Assets/_Data/UI/Styles/VersionLabel.uss"/>
     <ui:VisualElement class="sudoku-grid-root">
-        <ThemeToggle style="position: absolute; top: 50px; right: 50px;"/>
         <ui:VisualElement name="sudoku-main-container" class="sudoku-main-container">
             <ui:VisualElement class="sudoku-left-container">
                 <ui:VisualElement name="grid-top-bar" class="grid-top-bar" style="justify-content: flex-start;">
@@ -374,6 +373,7 @@
         </ui:VisualElement>
     </ui:VisualElement>
     <VersionLabel/>
+    <ThemeToggle style="position: absolute; top: 50px; right: 50px;"/>
     <ui:VisualElement name="popup-overlay" class="popup-overlay popup-overlay--hidden">
         <ui:VisualElement name="popup-container" class="popup-container"/>
     </ui:VisualElement>
