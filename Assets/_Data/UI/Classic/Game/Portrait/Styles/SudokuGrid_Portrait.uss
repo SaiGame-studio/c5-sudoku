@@ -3,6 +3,7 @@
     align-items: center;
     justify-content: flex-start;
     padding: 8px;
+    background-color: rgb(22, 22, 30);
 }
 
 .sudoku-main-container {
@@ -447,6 +448,10 @@
     width: 100%;
     margin-top: 8px;
     padding-right: 5px;
+}
+
+.light-mode .sudoku-grid-root {
+    background-color: rgb(240, 242, 248);
 }
 
 .light-mode .sudoku-grid {
