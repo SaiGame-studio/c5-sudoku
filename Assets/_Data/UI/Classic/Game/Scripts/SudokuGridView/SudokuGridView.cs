@@ -18,6 +18,7 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private SudokuPatternAnalyzer patternAnalyzer;
     [SerializeField] private SudokuHintSystem hintSystem;
     [SerializeField] private SudokuAutoNotes autoNotes;
+    [SerializeField] private SudokuAutoPlayer autoPlayer;
 
     [Header("Popup Settings")]
     [SerializeField] private Vector2 popupOffset = new Vector2(0f, -10f);
@@ -25,6 +26,9 @@ public class SudokuGridView : SaiBehaviour
     [Header("Live Analysis")]
     [SerializeField] private bool autoAnalyze = true;
     [SerializeField] private bool autoAnalyzePatterns = true;
+    
+    [Header("Debug/Testing")]
+    [SerializeField] private bool showDebugButtons = false;
 
     [Header("Scale Setting")]
     [SerializeField] private float addLandscapeScale = 0f;
@@ -36,18 +40,21 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private VisualElement gridContainer;
     [SerializeField] private VisualElement popupOverlay;
     [SerializeField] private VisualElement popupContainer;
-    [SerializeField] private VisualElement themeToggle;
-    [SerializeField] private Label themeToggleLabel;
     [SerializeField] private VisualElement difficultyStarsContainer;
+    [SerializeField] private Label levelNameLabel;
     [SerializeField] private Button hintButton;
     [SerializeField] private Button autoNotesButton;
+    [SerializeField] private Button clearNotesButton;
+    [SerializeField] private VisualElement debugButtonsContainer;
+    [SerializeField] private Button autoPlayButton;
     [SerializeField] private Label patternNameLabel;
+    [SerializeField] private Label patternNameLabel2;
     [SerializeField] private SudokuCell[,] cells;
     [SerializeField] private SudokuCell selectedCell;
-    [SerializeField] private bool isLightMode;
     [SerializeField] private int[,] cachedSolution;
     [SerializeField] private VisualElement mainContainer;
     [SerializeField] private VictoryEffect victoryEffect;
+    private ScrollView scrollView;
 
     private SudokuGridViewScaleManager scaleManager;
     private SudokuGridViewPopupHandler popupHandler;
@@ -73,6 +80,7 @@ public class SudokuGridView : SaiBehaviour
         this.LoadPatternAnalyzer();
         this.LoadHintSystem();
         this.LoadAutoNotes();
+        this.LoadAutoPlayer();
     }
 
     private void LoadUIDocument()
@@ -103,12 +111,25 @@ public class SudokuGridView : SaiBehaviour
         this.gridContainer = this.root.Q<VisualElement>("sudoku-grid");
         this.popupOverlay = this.root.Q<VisualElement>("popup-overlay");
         this.popupContainer = this.root.Q<VisualElement>("popup-container");
-        this.themeToggle = this.root.Q<VisualElement>("theme-toggle");
-        this.themeToggleLabel = this.root.Q<Label>("theme-toggle-label");
         this.difficultyStarsContainer = this.root.Q<VisualElement>("difficulty-stars");
+        this.levelNameLabel = this.root.Q<Label>("level-name-label");
         this.hintButton = this.root.Q<Button>("hint-button");
         this.autoNotesButton = this.root.Q<Button>("auto-notes-button");
+        this.clearNotesButton = this.root.Q<Button>("clear-notes-button");
+        this.debugButtonsContainer = this.root.Q<VisualElement>("debug-buttons");
+        this.autoPlayButton = this.root.Q<Button>("auto-play-button");
         this.patternNameLabel = this.root.Q<Label>("pattern-name-label");
+        this.patternNameLabel2 = this.root.Q<Label>("pattern-name-label-2");
+
+        // Fix ScrollView content container styles (USS #unity-content-container may not apply reliably)
+        this.scrollView = this.root.Q<ScrollView>("sudoku-scroll-view");
+        if (this.scrollView != null)
+        {
+            this.scrollView.contentContainer.style.flexGrow = 0;
+            this.scrollView.contentContainer.style.flexShrink = 0;
+            this.scrollView.contentContainer.style.justifyContent = Justify.FlexStart;
+            this.scrollView.contentContainer.style.alignItems = Align.Center;
+        }
 
         Debug.Log(transform.name + ": LoadUIElements - MainContainer=" + (this.mainContainer != null ? "OK" : "NULL"), gameObject);
     }
@@ -147,11 +168,35 @@ public class SudokuGridView : SaiBehaviour
         this.autoNotes = FindFirstObjectByType<SudokuAutoNotes>();
         Debug.Log(transform.name + ": LoadAutoNotes", gameObject);
     }
+    
+    private void LoadAutoPlayer()
+    {
+        if (this.autoPlayer != null) return;
+        this.autoPlayer = FindFirstObjectByType<SudokuAutoPlayer>();
+        Debug.Log(transform.name + ": LoadAutoPlayer", gameObject);
+    }
 
     protected override void Start()
     {
         base.Start();
         this.InitializeGrid();
+    }
+
+    private void ResetScrollPosition()
+    {
+        if (this.scrollView == null) return;
+        StartCoroutine(this.ResetScrollCoroutine());
+    }
+
+    private IEnumerator ResetScrollCoroutine()
+    {
+        // Wait 2 frames to ensure all layout passes and scale changes are finalized
+        yield return null;
+        yield return null;
+        if (this.scrollView != null)
+        {
+            this.scrollView.scrollOffset = Vector2.zero;
+        }
     }
 
     [ProButton]
@@ -202,16 +247,8 @@ public class SudokuGridView : SaiBehaviour
         {
             this.root.UnregisterCallback<GeometryChangedEvent>(this.OnRootGeometryChanged);
             this.ApplyResponsiveScale();
+            this.ResetScrollPosition();
         });
-
-        if (this.themeToggle != null)
-        {
-            this.themeToggle.RegisterCallback<ClickEvent>(evt =>
-            {
-                evt.StopPropagation();
-                this.ToggleTheme();
-            });
-        }
 
         if (this.hintButton != null)
         {
@@ -223,6 +260,17 @@ public class SudokuGridView : SaiBehaviour
             this.autoNotesButton.clicked += this.OnAutoNotesButtonClicked;
         }
 
+        if (this.clearNotesButton != null)
+        {
+            this.clearNotesButton.clicked += this.OnClearNotesButtonClicked;
+        }
+        
+        if (this.autoPlayButton != null)
+        {
+            this.autoPlayButton.clicked += this.OnAutoPlayButtonClicked;
+            this.UpdateAutoPlayButtonVisibility();
+        }
+
         if (this.popupOverlay != null)
         {
             this.popupOverlay.RegisterCallback<ClickEvent>(evt =>
@@ -231,8 +279,6 @@ public class SudokuGridView : SaiBehaviour
                     this.HidePopup();
             });
         }
-
-        this.RegisterBackButton();
 
         this.root.RegisterCallback<KeyDownEvent>(this.OnKeyDown);
         this.root.focusable = true;
@@ -243,6 +289,7 @@ public class SudokuGridView : SaiBehaviour
         this.ClearAllNotes();
         this.LoadPuzzle();
         this.RefreshDifficultyStars();
+        this.UpdateLevelNameDisplay();
 
         this.victoryEffect = new VictoryEffect(this.cells, this.root);
     }
@@ -275,7 +322,8 @@ public class SudokuGridView : SaiBehaviour
         this.hintManager = new SudokuGridViewHintManager(
             this.hintSystem, 
             this.cells, 
-            this.patternNameLabel
+            this.patternNameLabel,
+            this.patternNameLabel2
         );
     }
 
@@ -511,21 +559,6 @@ public class SudokuGridView : SaiBehaviour
     }
     #endregion
 
-    #region Back Button
-    private void RegisterBackButton()
-    {
-        Button backButton = this.root.Q<Button>("back-button");
-        if (backButton == null) return;
-
-        backButton.clicked += this.OnBackButtonClicked;
-    }
-
-    private void OnBackButtonClicked()
-    {
-        GameManager.Instance.LoadClassicHome();
-    }
-    #endregion
-
     #region Public Methods
     /// <summary>
     /// Reload puzzle with a new generated board
@@ -569,19 +602,24 @@ public class SudokuGridView : SaiBehaviour
         }
     }
 
-    public void ToggleTheme()
+    /// <summary>
+    /// Update level name display from GameData
+    /// </summary>
+    private void UpdateLevelNameDisplay()
     {
-        this.isLightMode = !this.isLightMode;
+        if (this.levelNameLabel == null) return;
 
-        if (this.isLightMode)
+        string levelName = GameData.SelectedLevelName;
+        
+        // Format the display: "Level 1" instead of "level-1"
+        if (levelName.StartsWith("level-"))
         {
-            this.root.AddToClassList("light-mode");
-            this.themeToggleLabel.text = "\u2600"; // Sun
+            string levelNumber = levelName.Replace("level-", "");
+            this.levelNameLabel.text = "Level " + levelNumber;
         }
         else
         {
-            this.root.RemoveFromClassList("light-mode");
-            this.themeToggleLabel.text = "\u263E"; // Moon
+            this.levelNameLabel.text = levelName;
         }
     }
 
@@ -811,6 +849,45 @@ public class SudokuGridView : SaiBehaviour
         this.ClearAllNotes();
         
         this.autoNotes.StartAutoNotes();
+    }
+
+    private void OnClearNotesButtonClicked()
+    {
+        this.ClearAllNotes();
+    }
+    
+    /// <summary>
+    /// Handle auto play button click - uses SudokuAutoPlayer to solve puzzle
+    /// </summary>
+    private void OnAutoPlayButtonClicked()
+    {
+        if (this.autoPlayer == null)
+        {
+            Debug.LogWarning("[SudokuGridView] AutoPlayer is not available");
+            return;
+        }
+        
+        Debug.Log("[SudokuGridView] Starting auto-play via SudokuAutoPlayer...");
+        
+        // Use the auto player to solve the puzzle
+        this.autoPlayer.StartAutoPlayOnGridView(this);
+    }
+    
+    /// <summary>
+    /// Update debug buttons visibility based on inspector setting
+    /// </summary>
+    private void UpdateAutoPlayButtonVisibility()
+    {
+        // If debug-buttons container exists (Landscape), hide/show the entire container
+        if (this.debugButtonsContainer != null)
+        {
+            this.debugButtonsContainer.style.display = this.showDebugButtons ? DisplayStyle.Flex : DisplayStyle.None;
+        }
+        // Otherwise, control individual auto-play button (Portrait)
+        else if (this.autoPlayButton != null)
+        {
+            this.autoPlayButton.style.display = this.showDebugButtons ? DisplayStyle.Flex : DisplayStyle.None;
+        }
     }
 
     private void ClearAllNotes()

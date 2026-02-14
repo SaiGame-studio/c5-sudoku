@@ -1,0 +1,13 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <ui:VisualElement name="difficulty-stars" class="difficulty-stars">
+        <ui:Label name="star-1" text="★" class="difficulty-star"/>
+        <ui:Label name="star-2" text="★" class="difficulty-star"/>
+        <ui:Label name="star-3" text="★" class="difficulty-star"/>
+        <ui:Label name="star-4" text="★" class="difficulty-star"/>
+        <ui:Label name="star-5" text="★" class="difficulty-star"/>
+        <ui:Label name="star-6" text="★" class="difficulty-star"/>
+        <ui:Label name="star-7" text="★" class="difficulty-star"/>
+        <ui:Label name="star-8" text="★" class="difficulty-star"/>
+        <ui:Label name="star-9" text="★" class="difficulty-star"/>
+    </ui:VisualElement>
+</ui:UXML>

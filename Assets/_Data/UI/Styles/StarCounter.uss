@@ -1,0 +1,35 @@
+/* ===== Star Counter Component ===== */
+.star-counter {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 14px;
+    border-radius: 16px;
+    background-color: rgba(55, 58, 70, 0.85);
+    border-width: 1px;
+    border-color: rgb(100, 100, 120);
+}
+
+.star-counter-icon {
+    font-size: 20px;
+    color: rgb(255, 215, 0);
+    -unity-text-align: middle-center;
+    margin-right: 6px;
+}
+
+.star-counter-text {
+    font-size: 16px;
+    color: rgb(220, 220, 220);
+    -unity-text-align: middle-center;
+    -unity-font-style: bold;
+}
+
+/* ===== Light Mode Overrides ===== */
+.light-mode .star-counter {
+    background-color: rgba(235, 235, 245, 0.9);
+    border-color: rgb(170, 170, 190);
+}
+
+.light-mode .star-counter-text {
+    color: rgb(40, 40, 50);
+}

@@ -3,6 +3,7 @@
     align-items: center;
     justify-content: center;
     padding: 15px;
+    background-color: rgb(22, 22, 30);
 }
 
 .sudoku-main-container {
@@ -404,7 +405,22 @@
     justify-content: center;
     align-items: center;
     width: 100%;
-    min-height: 0;
+    min-height: 40px;
+    margin-bottom: 8px;
+}
+
+.level-name-label {
+    font-size: 18px;
+    color: rgb(255, 215, 0);
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.light-mode .level-name-label {
+    color: rgb(200, 150, 0);
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.3);
 }
 
 .grid-bottom-bar {
@@ -416,32 +432,11 @@
     padding-right: 5px;
 }
 
-.theme-toggle {
-    margin-left: auto;
-    width: 50px;
-    height: 50px;
-    border-radius: 20px;
-    padding: 0 0 3px 3px;
-    align-items: center;
-    justify-content: center;
-    background-color: rgb(55, 58, 70);
-    border-width: 1px;
-    border-color: rgb(100, 100, 120);
-    transition-duration: 0.2s;
-}
-
-.theme-toggle:hover {
-    background-color: rgb(70, 75, 95);
-    border-color: rgb(130, 130, 160);
-}
-
-.theme-toggle-label {
-    font-size: 30px;
-    color: rgb(220, 220, 220);
-    -unity-text-align: middle-center;
-}
-
 /* ===== Light Mode ===== */
+.light-mode .sudoku-grid-root {
+    background-color: rgb(240, 242, 248);
+}
+
 .light-mode .sudoku-grid {
     background-color: rgb(230, 230, 235);
     border-color: rgb(60, 60, 60);
@@ -608,19 +603,6 @@
     color: rgb(220, 170, 0);
 }
 
-.light-mode .theme-toggle {
-    background-color: rgb(235, 235, 245);
-    border-color: rgb(170, 170, 190);
-}
-
-.light-mode .theme-toggle:hover {
-    background-color: rgb(215, 215, 230);
-}
-
-.light-mode .theme-toggle-label {
-    color: rgb(40, 40, 50);
-}
-
 /* Difficulty Control Panel */
 .difficulty-control-panel {
     flex-direction: column;
@@ -731,6 +713,24 @@
     -unity-font-definition: url("project://database/Assets/_Data/Fonts/fa-solid-900.ttf");
 }
 
+.auto-play-button {
+    background-color: rgb(200, 80, 60);
+    border-color: rgb(220, 100, 80);
+    border-width: 3px;
+    border-radius: 8px;
+    padding: 16px 34px;
+    color: rgb(255, 245, 240);
+    font-size: 22px;
+    -unity-font-style: bold;
+    transition-duration: 0.15s;
+    flex-grow: 1;
+    margin-left: 8px;
+    min-width: 50px;
+    min-height: 50px;
+    max-width: 60px;
+    -unity-font-definition: url("project://database/Assets/_Data/Fonts/fa-solid-900.ttf");
+}
+
 .hint-button:hover {
     background-color: rgb(60, 160, 100);
     border-color: rgb(80, 180, 120);
@@ -747,6 +747,15 @@
 
 .auto-notes-button:active {
     background-color: rgb(100, 60, 150);
+}
+
+.auto-play-button:hover {
+    background-color: rgb(220, 100, 80);
+    border-color: rgb(240, 120, 100);
+}
+
+.auto-play-button:active {
+    background-color: rgb(180, 60, 40);
 }
 
 .pattern-display {
@@ -834,6 +843,21 @@
 
 .light-mode .auto-notes-button:active {
     background-color: rgb(120, 90, 200);
+}
+
+.light-mode .auto-play-button {
+    background-color: rgb(230, 100, 80);
+    border-color: rgb(210, 80, 60);
+    color: rgb(255, 255, 255);
+}
+
+.light-mode .auto-play-button:hover {
+    background-color: rgb(250, 120, 100);
+    border-color: rgb(230, 100, 80);
+}
+
+.light-mode .auto-play-button:active {
+    background-color: rgb(210, 80, 60);
 }
 
 .light-mode .pattern-display {

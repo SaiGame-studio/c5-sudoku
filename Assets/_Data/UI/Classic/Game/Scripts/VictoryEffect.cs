@@ -72,19 +72,16 @@ public class VictoryEffect
         this.particleLayer.pickingMode = PickingMode.Ignore;
         this.victoryOverlay.Add(this.particleLayer);
 
-        // Banner container
+        // Banner container (pickingMode Ignore to prevent blocking grid clicks when invisible)
         VisualElement banner = new VisualElement();
         banner.AddToClassList(CLASS_VICTORY_BANNER);
+        banner.pickingMode = PickingMode.Ignore;
 
         // Title
         Label title = new Label("\u2605 VICTORY \u2605");
         title.AddToClassList(CLASS_VICTORY_TITLE);
+        title.pickingMode = PickingMode.Ignore;
         banner.Add(title);
-
-        // Subtitle
-        Label subtitle = new Label("Puzzle Completed!");
-        subtitle.AddToClassList(CLASS_VICTORY_SUBTITLE);
-        banner.Add(subtitle);
 
         this.victoryOverlay.Add(banner);
         this.root.Add(this.victoryOverlay);

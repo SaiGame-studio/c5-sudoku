@@ -300,54 +300,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1 &350969552
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 350969554}
-  - component: {fileID: 350969553}
-  m_Layer: 0
-  m_Name: GameManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &350969553
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 350969552}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b197650e20458b5479fbf8e755d7b24f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MainMenu
-  mainMenuSceneName: main_menu
-  classicHomeSceneName: classic_home
-  classicGameSceneName: classic_game
-  storySceneName: story_home
---- !u!4 &350969554
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 350969552}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 273.15305, y: 83.89359, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &393123378
 GameObject:
   m_ObjectHideFlags: 0
@@ -399,13 +351,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SudokuGenerator
   currentDifficulty: 0
   isPuzzleGenerated: 1
-  totalClues: 53
-  emptyCells: 28
+  totalClues: 54
+  emptyCells: 27
   summary: 
-  puzzlePreview: "6 4 x | 9 7 x | 5 3 8 \r\n7 x 3 | 2 5 4 | x 6 x \r\nx 1 5 | 8 6
-    3 | 4 7 2 \r\n------+-------+------\r\nx 9 7 | 1 x x | 8 x 5 \r\n3 x 8 | 4 9
-    x | x 2 6 \r\n1 6 4 | 5 8 x | 3 9 7 \r\n------+-------+------\r\n8 x 6 | x 4
-    5 | x 1 9 \r\n5 x x | 7 2 9 | 6 x x \r\nx x x | 6 x x | x x 3 \r\n"
+  puzzlePreview: "1 4 6 | x 5 9 | 2 8 3 \r\nx x x | 2 8 4 | 1 5 6 \r\nx x 5 | 3 1
+    6 | 9 7 4 \r\n------+-------+------\r\n3 7 9 | x x x | x 4 5 \r\nx x 2 | x x
+    8 | 7 x 9 \r\n5 x 8 | 9 4 7 | x 3 2 \r\n------+-------+------\r\nx 9 4 | x x
+    x | 5 2 1 \r\n6 5 1 | x x 2 | x 9 8 \r\nx 8 x | 1 x 5 | 4 6 7 \r\n"
 --- !u!114 &393123381
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -466,7 +418,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d171e5f7c2335d458b0fe767f619de9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SudokuAutoPlayer
-  autoPlayDelay: 0.2
+  autoPlayDelay: 0.1
   isAutoPlaying: 0
   sudokuGenerator: {fileID: 393123380}
   resultAnalyzer: {fileID: 393123381}
@@ -489,9 +441,9 @@ MonoBehaviour:
   showDetailedLog: 0
   patternsFoundCount: 4
   patternsReport: "=== SUDOKU PATTERN ANALYSIS ===\n\r\nTotal Patterns Found: 4\n\r\n---
-    FullHouse (4) ---\r\n  \u2022 Row 3: Cell [3,1] must be 9\r\n  \u2022 Row 6:
-    Cell [6,6] must be 2\r\n  \u2022 Column 4: Cell [7,4] must be 3\r\n  \u2022 Box
-    (1,2): Cell [1,6] must be 1\r\n\r\n"
+    FullHouse (4) ---\r\n  \u2022 Row 1: Cell [1,4] must be 7\r\n  \u2022 Column
+    8: Cell [5,8] must be 1\r\n  \u2022 Box (1,2): Cell [1,4] must be 7\r\n  \u2022
+    Box (3,3): Cell [8,7] must be 3\r\n\r\n"
   patternStatistics:
   - patternName: FullHouse
     count: 4
@@ -667,7 +619,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.3679245, g: 0.3679245, b: 0.3679245, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -843,6 +795,63 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1001 &1461163966
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 8292984400632937015, guid: 0f578c7d5f473524791b58b16b8597bb, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8292984400632937015, guid: 0f578c7d5f473524791b58b16b8597bb, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8292984400632937015, guid: 0f578c7d5f473524791b58b16b8597bb, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8292984400632937015, guid: 0f578c7d5f473524791b58b16b8597bb, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8292984400632937015, guid: 0f578c7d5f473524791b58b16b8597bb, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8292984400632937015, guid: 0f578c7d5f473524791b58b16b8597bb, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8292984400632937015, guid: 0f578c7d5f473524791b58b16b8597bb, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8292984400632937015, guid: 0f578c7d5f473524791b58b16b8597bb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8292984400632937015, guid: 0f578c7d5f473524791b58b16b8597bb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8292984400632937015, guid: 0f578c7d5f473524791b58b16b8597bb, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8551753066643602254, guid: 0f578c7d5f473524791b58b16b8597bb, type: 3}
+      propertyPath: m_Name
+      value: GameManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0f578c7d5f473524791b58b16b8597bb, type: 3}
 --- !u!1 &1596259706
 GameObject:
   m_ObjectHideFlags: 0
@@ -1006,22 +1015,14 @@ MonoBehaviour:
   patternAnalyzer: {fileID: 393123383}
   hintSystem: {fileID: 393123385}
   autoNotes: {fileID: 393123384}
+  autoPlayer: {fileID: 393123382}
   popupOffset: {x: 0, y: -10}
   autoAnalyze: 1
   autoAnalyzePatterns: 1
-  completionPercentage: 0
-  correctCells: 0
-  incorrectCells: 0
-  currentResult: 0
-  userPuzzlePreview: 
+  showDebugButtons: 1
   addLandscapeScale: 0
   addPortraitScale: 1.2
   showVisualElements: 0
-  isLightMode: 0
-  currentHintPattern:
-    type: 0
-    description: 
-    suggestedValue: 0
 --- !u!114 &7165603691242713602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1112,26 +1113,14 @@ MonoBehaviour:
   patternAnalyzer: {fileID: 393123383}
   hintSystem: {fileID: 393123385}
   autoNotes: {fileID: 393123384}
+  autoPlayer: {fileID: 393123382}
   popupOffset: {x: 0, y: -10}
   autoAnalyze: 1
   autoAnalyzePatterns: 1
-  completionPercentage: 65.4321
-  correctCells: 51
-  incorrectCells: 0
-  currentResult: 0
-  userPuzzlePreview: "7 \xB7 \xB7 | 6 5 3 | 1 \xB7 9 \r\n\xB7 9 2 | \xB7 8 \xB7 |
-    6 4 5 \r\n6 5 \xB7 | \xB7 2 \xB7 | 7 \xB7 8 \r\n------+-------+------\r\n2 1
-    9 | 5 \xB7 6 | \xB7 \xB7 4 \r\n5 3 7 | 8 \xB7 9 | \xB7 \xB7 1 \r\n\xB7 \xB7 \xB7
-    | 2 7 1 | \xB7 5 3 \r\n------+-------+------\r\n9 2 6 | 4 1 \xB7 | 3 \xB7 \xB7
-    \r\n4 \xB7 3 | 7 9 2 | 5 1 6 \r\n1 \xB7 \xB7 | 3 \xB7 \xB7 | \xB7 \xB7 2 \r\n"
+  showDebugButtons: 1
   addLandscapeScale: 0
-  addPortraitScale: 1.5
+  addPortraitScale: 1.2
   showVisualElements: 0
-  isLightMode: 0
-  currentHintPattern:
-    type: 0
-    description: 
-    suggestedValue: 0
 --- !u!114 &8143833361491433007
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1153,7 +1142,7 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 619394802}
-  - {fileID: 350969554}
   - {fileID: 321554613}
   - {fileID: 257255272}
   - {fileID: 393123379}
+  - {fileID: 1461163966}

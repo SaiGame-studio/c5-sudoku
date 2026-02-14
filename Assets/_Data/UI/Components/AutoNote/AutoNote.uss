@@ -1,0 +1,122 @@
+/* Auto Note Component */
+
+.auto-note-container {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+}
+
+.auto-note-btn {
+    border-width: 3px;
+    border-radius: 8px;
+    padding: 12px 18px;
+    font-size: 16px;
+    -unity-font-style: bold;
+    transition-duration: 0.15s;
+    flex-grow: 1;
+    min-height: 44px;
+    margin-right: 4px;
+    margin-left: 4px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.auto-note-btn-icon {
+    -unity-font-definition: url("project://database/Assets/_Data/Fonts/fa-solid-900.ttf?fileID=12800000&guid=512de696859bfa941b17280a6ca5b068&type=3#fa-solid-900");
+    font-size: 18px;
+    margin-right: 8px;
+    padding: 0;
+}
+
+.auto-note-btn-text {
+    font-size: 16px;
+    -unity-font-style: bold;
+    padding: 0;
+}
+
+/* Dark mode text colors */
+.auto-note-btn--purple .auto-note-btn-icon,
+.auto-note-btn--purple .auto-note-btn-text {
+    color: rgb(245, 240, 255);
+}
+
+.auto-note-btn--gray .auto-note-btn-icon,
+.auto-note-btn--gray .auto-note-btn-text {
+    color: rgb(220, 225, 235);
+}
+
+/* Auto Note - purple */
+.auto-note-btn--purple {
+    background-color: rgb(120, 80, 180);
+    border-color: rgb(140, 100, 200);
+    color: rgb(245, 240, 255);
+}
+
+.auto-note-btn--purple:hover {
+    background-color: rgb(140, 100, 200);
+    border-color: rgb(160, 120, 220);
+}
+
+.auto-note-btn--purple:active {
+    background-color: rgb(100, 60, 150);
+}
+
+/* Clear Notes - neutral gray */
+.auto-note-btn--gray {
+    background-color: rgb(80, 85, 95);
+    border-color: rgb(100, 105, 115);
+    color: rgb(220, 225, 235);
+}
+
+.auto-note-btn--gray:hover {
+    background-color: rgb(100, 105, 115);
+    border-color: rgb(120, 125, 135);
+}
+
+.auto-note-btn--gray:active {
+    background-color: rgb(60, 65, 75);
+}
+
+/* Light Mode */
+
+.light-mode .auto-note-btn--purple {
+    background-color: rgb(140, 100, 210);
+    border-color: rgb(120, 80, 190);
+    color: rgb(255, 255, 255);
+}
+
+.light-mode .auto-note-btn--purple .auto-note-btn-icon,
+.light-mode .auto-note-btn--purple .auto-note-btn-text {
+    color: rgb(255, 255, 255);
+}
+
+.light-mode .auto-note-btn--purple:hover {
+    background-color: rgb(160, 120, 230);
+    border-color: rgb(140, 100, 210);
+}
+
+.light-mode .auto-note-btn--purple:active {
+    background-color: rgb(120, 80, 190);
+}
+
+.light-mode .auto-note-btn--gray {
+    background-color: rgb(160, 165, 175);
+    border-color: rgb(140, 145, 155);
+    color: rgb(50, 50, 60);
+}
+
+.light-mode .auto-note-btn--gray .auto-note-btn-icon,
+.light-mode .auto-note-btn--gray .auto-note-btn-text {
+    color: rgb(50, 50, 60);
+}
+
+.light-mode .auto-note-btn--gray:hover {
+    background-color: rgb(180, 185, 195);
+    border-color: rgb(160, 165, 175);
+}
+
+.light-mode .auto-note-btn--gray:active {
+    background-color: rgb(140, 145, 155);
+}

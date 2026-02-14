@@ -12,7 +12,7 @@ public class ClassicHomeLevelList : SaiBehaviour
 
     [Header("Scale Setting")]
     [SerializeField] private float addLandscapeScale = 1f;
-    [SerializeField] private float addPortraitScale = 2f;
+    [SerializeField] private float addPortraitScale = 1f;
 
     [Header("Visual Elements")]
     [SerializeField] private VisualElement root;
@@ -69,7 +69,8 @@ public class ClassicHomeLevelList : SaiBehaviour
         });
 
         this.RegisterCardCallbacks();
-        this.RegisterBackButton();
+        this.UpdateLockedLevels();
+        this.UpdateCompletedLevels();
     }
 
     [ProButton]
@@ -158,55 +159,114 @@ public class ClassicHomeLevelList : SaiBehaviour
 
     private void RegisterCardCallbacks()
     {
-        // Rows 1-3: cards named "card-{row}-{difficulty}" for difficulties 0-6
-        for (int row = 0; row < GameData.LEVELS_PER_DIFFICULTY; row++)
+        // Register level-1 to level-21 (difficulties 0-6, 3 levels each)
+        for (int diff = 0; diff < 7; diff++)
         {
-            for (int diff = 0; diff < 7; diff++)
+            for (int subLevel = 1; subLevel <= GameData.LEVELS_PER_DIFFICULTY; subLevel++)
             {
-                this.RegisterCard("card-" + row + "-" + diff, row + 1, diff);
+                int levelNumber = diff * 3 + subLevel;
+                string levelName = "level-" + levelNumber;
+                this.RegisterCard(levelName, subLevel, diff, levelName);
             }
         }
 
-        // Row 4: single cards for Extreme (7) and Legendary (8)
-        this.RegisterCard("card-3-7", 1, 7);
-        this.RegisterCard("card-3-8", 1, 8);
+        // Register level-22 (Extreme - difficulty 7)
+        this.RegisterCard("level-22", 1, 7, "level-22");
+        
+        // Register level-23 (Legendary - difficulty 8)
+        this.RegisterCard("level-23", 1, 8, "level-23");
     }
 
-    private void RegisterCard(string cardName, int level, int difficulty)
+    private void RegisterCard(string cardName, int level, int difficulty, string levelName)
     {
         VisualElement card = this.root.Q<VisualElement>(cardName);
         if (card == null) return;
 
         int capturedLevel = level;
         int capturedDifficulty = difficulty;
+        string capturedLevelName = levelName;
 
         card.RegisterCallback<ClickEvent>(evt =>
         {
             evt.StopPropagation();
-            this.OnLevelSelected(capturedLevel, capturedDifficulty);
+            
+            // Extract global level number from levelName
+            int levelNumber = GameProgress.ParseLevelName(capturedLevelName);
+            
+            // Check if level is unlocked before allowing selection
+            if (GameProgress.Instance != null && !GameProgress.Instance.IsLevelUnlocked(levelNumber))
+            {
+                Debug.Log($"[ClassicHomeLevelList] Level {levelNumber} is locked! Complete previous levels first.");
+                return;
+            }
+            
+            this.OnLevelSelected(capturedLevel, capturedDifficulty, capturedLevelName);
         });
     }
 
-    private void RegisterBackButton()
+    private void OnLevelSelected(int level, int difficulty, string levelName)
     {
-        Button backButton = this.root.Q<Button>("back-button");
-        if (backButton == null)
+        GameManager.Instance.LoadClassicGame(level, difficulty, levelName);
+    }
+
+    /// <summary>
+    /// Update UI to show which levels are locked/unlocked
+    /// </summary>
+    private void UpdateLockedLevels()
+    {
+        if (GameProgress.Instance == null) return;
+
+        // Check all levels 1-23
+        for (int levelNumber = 1; levelNumber <= 23; levelNumber++)
         {
-            Debug.LogWarning("Back button not found in " + gameObject.name);
-            return;
+            string levelName = $"level-{levelNumber}";
+            
+            if (!GameProgress.Instance.IsLevelUnlocked(levelNumber))
+            {
+                this.MarkLevelAsLocked(levelName);
+            }
         }
+    }
+    
+    /// <summary>
+    /// Update UI to show which levels have been completed
+    /// </summary>
+    private void UpdateCompletedLevels()
+    {
+        if (GameProgress.Instance == null) return;
 
-        backButton.clicked += this.OnBackButtonClicked;
-        Debug.Log("Back button registered in " + gameObject.name);
+        // Check all levels 1-23 with simplified loop
+        for (int levelNumber = 1; levelNumber <= 23; levelNumber++)
+        {
+            if (GameProgress.Instance.IsLevelCompleted(levelNumber))
+            {
+                string levelName = $"level-{levelNumber}";
+                this.MarkLevelAsCompleted(levelName);
+            }
+        }
     }
 
-    private void OnLevelSelected(int level, int difficulty)
+    /// <summary>
+    /// Add CSS class to mark a level card as locked
+    /// </summary>
+    private void MarkLevelAsLocked(string levelName)
     {
-        GameManager.Instance.LoadClassicGame(level, difficulty);
+        VisualElement card = this.root.Q<VisualElement>(levelName);
+        if (card != null && !card.ClassListContains("level-locked"))
+        {
+            card.AddToClassList("level-locked");
+        }
     }
-
-    private void OnBackButtonClicked()
+    
+    /// <summary>
+    /// Add CSS class to mark a level card as completed
+    /// </summary>
+    private void MarkLevelAsCompleted(string levelName)
     {
-        GameManager.Instance.LoadMainMenu();
+        VisualElement card = this.root.Q<VisualElement>(levelName);
+        if (card != null && !card.ClassListContains("level-completed"))
+        {
+            card.AddToClassList("level-completed");
+        }
     }
 }

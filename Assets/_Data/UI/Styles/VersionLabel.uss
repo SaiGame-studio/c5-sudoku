@@ -1,0 +1,14 @@
+/* ===== Version Label Component ===== */
+.version-label {
+    position: absolute;
+    bottom: 50px;
+    right: 50px;
+    font-size: 12px;
+    color: rgba(80, 90, 110, 0.5);
+    -unity-text-align: lower-right;
+}
+
+/* ===== Light Mode Override ===== */
+.light-mode .version-label {
+    color: rgba(170, 180, 200, 0.5);
+}

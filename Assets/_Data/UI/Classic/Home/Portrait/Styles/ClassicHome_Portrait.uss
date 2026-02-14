@@ -205,19 +205,19 @@
 .difficulty-8 {
     height: 56px;
     border-width: 3px;
-    border-color: rgb(240, 200, 50);
-    background-color: rgba(200, 170, 30, 0.15);
+    border-color: rgb(255, 60, 150);
+    background-color: rgba(200, 40, 120, 0.15);
     border-radius: 14px;
 }
 
 .difficulty-8:hover {
-    border-color: rgb(255, 225, 80);
-    background-color: rgba(220, 190, 40, 0.25);
+    border-color: rgb(255, 100, 180);
+    background-color: rgba(220, 50, 140, 0.25);
 }
 
 .difficulty-8 .level-card-stars {
     font-size: 15px;
-    color: rgb(255, 220, 80);
+    color: rgb(255, 120, 180);
 }
 
 .home-footer {
@@ -283,4 +283,49 @@
 .light-mode .back-button:hover {
     background-color: rgb(220, 225, 240);
     border-color: rgb(120, 140, 180);
+}
+
+/* ===== Completed Level Indicator ===== */
+.level-completed {
+    border-width: 3px;
+    border-color: rgb(255, 215, 0);
+    background-color: rgba(60, 50, 10, 0.6);
+}
+
+.level-completed .level-card-stars {
+    color: rgb(255, 223, 100);
+}
+
+.level-completed:hover {
+    background-color: rgba(80, 65, 10, 0.7);
+}
+
+.light-mode .level-completed {
+    border-color: rgb(200, 160, 0);
+    background-color: rgba(255, 248, 200, 0.6);
+}
+
+.light-mode .level-completed .level-card-stars {
+    color: rgb(150, 120, 0);
+}
+
+.light-mode .level-completed:hover {
+    background-color: rgba(255, 248, 200, 0.8);
+}
+
+/* ===== Locked Level Indicator ===== */
+.level-locked {
+    opacity: 0.4;
+    background-color: rgba(50, 50, 50, 0.4);
+    border-color: rgb(80, 80, 80);
+}
+
+.level-locked:hover {
+    background-color: rgba(50, 50, 50, 0.4);
+    scale: 1;
+    cursor: default;
+}
+
+.level-locked:active {
+    scale: 1;
 }
