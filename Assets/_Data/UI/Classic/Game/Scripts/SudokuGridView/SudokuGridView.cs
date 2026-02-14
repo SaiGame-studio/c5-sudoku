@@ -40,8 +40,6 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private VisualElement gridContainer;
     [SerializeField] private VisualElement popupOverlay;
     [SerializeField] private VisualElement popupContainer;
-    [SerializeField] private VisualElement themeToggle;
-    [SerializeField] private Label themeToggleLabel;
     [SerializeField] private VisualElement difficultyStarsContainer;
     [SerializeField] private Label levelNameLabel;
     [SerializeField] private Button hintButton;
@@ -111,8 +109,6 @@ public class SudokuGridView : SaiBehaviour
         this.gridContainer = this.root.Q<VisualElement>("sudoku-grid");
         this.popupOverlay = this.root.Q<VisualElement>("popup-overlay");
         this.popupContainer = this.root.Q<VisualElement>("popup-container");
-        this.themeToggle = this.root.Q<VisualElement>("theme-toggle");
-        this.themeToggleLabel = this.root.Q<Label>("theme-toggle-label");
         this.difficultyStarsContainer = this.root.Q<VisualElement>("difficulty-stars");
         this.levelNameLabel = this.root.Q<Label>("level-name-label");
         this.hintButton = this.root.Q<Button>("hint-button");
@@ -249,17 +245,6 @@ public class SudokuGridView : SaiBehaviour
             this.ApplyResponsiveScale();
             this.ResetScrollPosition();
         });
-
-        if (this.themeToggle != null)
-        {
-            this.themeToggle.RegisterCallback<ClickEvent>(evt =>
-            {
-                evt.StopPropagation();
-                this.ToggleTheme();
-            });
-        }
-
-        this.ApplyTheme();
 
         if (this.hintButton != null)
         {
@@ -642,31 +627,6 @@ public class SudokuGridView : SaiBehaviour
         else
         {
             this.levelNameLabel.text = levelName;
-        }
-    }
-
-    public void ToggleTheme()
-    {
-        ThemeManager.Instance.ToggleTheme();
-        this.ApplyTheme();
-    }
-
-    private void ApplyTheme()
-    {
-        if (this.root == null) return;
-
-        if (ThemeManager.Instance.IsLightMode)
-        {
-            this.root.AddToClassList("light-mode");
-        }
-        else
-        {
-            this.root.RemoveFromClassList("light-mode");
-        }
-
-        if (this.themeToggleLabel != null)
-        {
-            this.themeToggleLabel.text = ThemeManager.Instance.GetThemeIcon();
         }
     }
 

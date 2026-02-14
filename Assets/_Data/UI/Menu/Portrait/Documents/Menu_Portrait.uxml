@@ -1,13 +1,12 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/_Data/UI/Menu/Portrait/Styles/Menu_Portrait.uss?fileID=7433441132597879392&amp;guid=e8acf611de44f5142879a2c490ca1ed6&amp;type=3#Menu_Portrait"/>
+    <Style src="project://database/Assets/_Data/UI/Styles/ThemeToggle.uss?fileID=7433441132597879392&amp;guid=bfa19512b5ae6d54bae198db679fb34b&amp;type=3#ThemeToggle"/>
     <ui:VisualElement class="menu-root">
         <ui:VisualElement class="menu-container" style="align-items: center; align-content: stretch;">
+            <ThemeToggle style="position: absolute; top: 50px; right: 50px;"/>
             <ui:VisualElement class="menu-header">
                 <ui:Label text="SUDOKU" class="menu-title"/>
                 <ui:Label text="Challenge Your Mind" class="menu-subtitle"/>
-            </ui:VisualElement>
-            <ui:VisualElement name="theme-toggle" class="theme-toggle">
-                <ui:Label name="theme-toggle-label" text="☾" class="theme-toggle-label"/>
             </ui:VisualElement>
             <ui:VisualElement class="menu-buttons">
                 <ui:Button name="classic-button" class="menu-button classic-button">

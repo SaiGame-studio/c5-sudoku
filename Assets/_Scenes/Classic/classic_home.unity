@@ -729,7 +729,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ClassicHomeLevelList
   uiDocument: {fileID: 1410745335}
   addLandscapeScale: 1
-  addPortraitScale: 2
+  addPortraitScale: 1
 --- !u!114 &1410745338
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,14 +1,13 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/_Data/UI/Classic/Game/Portrait/Styles/SudokuGrid_Portrait.uss?fileID=7433441132597879392&amp;guid=9563333652293dc4e8afe22c72fb15c7&amp;type=3#SudokuGrid_Portrait"/>
+    <Style src="project://database/Assets/_Data/UI/Styles/ThemeToggle.uss"/>
     <ui:VisualElement class="sudoku-grid-root">
         <ui:ScrollView name="sudoku-scroll-view" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden" class="sudoku-scroll-view" style="align-items: stretch; justify-content: flex-start; flex-direction: column; align-self: flex-end;">
             <ui:VisualElement name="sudoku-main-container" class="sudoku-main-container" style="flex-grow: 1; margin-top: 40px;">
                 <ui:VisualElement class="sudoku-top-container">
                     <ui:VisualElement name="grid-top-bar" class="grid-top-bar">
                         <ui:Label name="level-name-label" text="Level 1" class="level-name-label" style="font-size: 25px;"/>
-                        <ui:VisualElement name="theme-toggle" class="theme-toggle" style="margin-bottom: 5px;">
-                            <ui:Label name="theme-toggle-label" text="☾" class="theme-toggle-label"/>
-                        </ui:VisualElement>
+                        <ThemeToggle style="margin-bottom: 5px;"/>
                     </ui:VisualElement>
                     <ui:VisualElement name="sudoku-grid" class="sudoku-grid">
                         <ui:VisualElement class="sudoku-band">
