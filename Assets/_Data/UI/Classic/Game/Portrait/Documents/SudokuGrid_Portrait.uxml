@@ -6,6 +6,7 @@
     <Style src="project://database/Assets/_Data/UI/Components/AutoNote/AutoNote.uss?fileID=7433441132597879392&amp;guid=0443a54366f343a4794753d18cafcdcb&amp;type=3#AutoNote"/>
     <Style src="project://database/Assets/_Data/UI/Components/HintPanel/HintPanel.uss?fileID=7433441132597879392&amp;guid=ce0757dbf941c784fbd2585367691dd3&amp;type=3#HintPanel"/>
     <Style src="project://database/Assets/_Data/UI/Components/DifficultyStars/DifficultyStars.uss?fileID=7433441132597879392&amp;guid=cdf4efe3825141668758dec718b40e66&amp;type=3#DifficultyStars"/>
+    <Style src="project://database/Assets/_Data/UI/Components/StarCounter/StarCounter.uss?fileID=7433441132597879392&amp;guid=5e65c2e64b66c7e4eadee6b26d152823&amp;type=3#StarCounter"/>
     <Style src="project://database/Assets/_Data/UI/Styles/ThemeToggle.uss?fileID=7433441132597879392&amp;guid=bfa19512b5ae6d54bae198db679fb34b&amp;type=3#ThemeToggle"/>
     <Style src="project://database/Assets/_Data/UI/Styles/VersionLabel.uss?fileID=7433441132597879392&amp;guid=656b7a98457ea5045b9ce786d56712c5&amp;type=3#VersionLabel"/>
     <ui:VisualElement class="sudoku-grid-root">
@@ -14,6 +15,7 @@
                 <ui:VisualElement class="sudoku-top-container">
                     <ui:VisualElement name="grid-top-bar" class="grid-top-bar">
                         <ui:Label name="level-name-label" text="Level 1" class="level-name-label" style="font-size: 25px;"/>
+                        <StarCounter style="margin-left: auto;"/>
                     </ui:VisualElement>
                     <ui:VisualElement name="sudoku-grid" class="sudoku-grid">
                         <ui:VisualElement class="sudoku-band">
