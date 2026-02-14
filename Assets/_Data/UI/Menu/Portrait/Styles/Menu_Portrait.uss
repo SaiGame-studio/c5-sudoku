@@ -141,12 +141,6 @@
     align-items: center;
 }
 
-.menu-version {
-    font-size: 12px;
-    color: rgb(80, 90, 110);
-    -unity-text-align: middle-center;
-}
-
 /* ===== Light Mode ===== */
 .light-mode .menu-root {
     background-color: rgb(240, 242, 248);
@@ -184,8 +178,4 @@
 
 .light-mode .quit-button .menu-button-label {
     color: rgb(180, 60, 60);
-}
-
-.light-mode .menu-version {
-    color: rgb(170, 180, 200);
 }

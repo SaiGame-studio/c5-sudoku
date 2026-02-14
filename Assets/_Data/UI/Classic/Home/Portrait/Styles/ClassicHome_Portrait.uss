@@ -329,16 +329,3 @@
 .level-locked:active {
     scale: 1;
 }
-
-.version-label {
-    font-size: 12px;
-    color: rgba(80, 90, 110, 0.5);
-    -unity-text-align: lower-right;
-    position: absolute;
-    right: 10px;
-    bottom: 10px;
-}
-
-.light-mode .version-label {
-    color: rgba(170, 180, 200, 0.5);
-}

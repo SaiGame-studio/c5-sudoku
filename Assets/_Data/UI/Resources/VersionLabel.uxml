@@ -1,0 +1,3 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:Label name="version-label-text" class="version-label" text="v0.0.0" />
+</ui:UXML>

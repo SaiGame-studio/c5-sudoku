@@ -584,7 +584,6 @@ GameObject:
   - component: {fileID: 1393854815}
   - component: {fileID: 1393854817}
   - component: {fileID: 1393854816}
-  - component: {fileID: 1393854818}
   m_Layer: 5
   m_Name: ClassicHomePortrait
   m_TagString: Untagged
@@ -645,19 +644,6 @@ MonoBehaviour:
   m_PivotReferenceSize: 0
   m_Pivot: 0
   m_WorldSpaceCollider: {fileID: 0}
---- !u!114 &1393854818
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1393854814}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e97b76ba44b7006478b02bc7da5a5c01, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VersionDisplay
-  uiDocument: {fileID: 1393854817}
 --- !u!1 &1410745334
 GameObject:
   m_ObjectHideFlags: 0
@@ -669,7 +655,6 @@ GameObject:
   - component: {fileID: 1410745336}
   - component: {fileID: 1410745335}
   - component: {fileID: 1410745337}
-  - component: {fileID: 1410745338}
   m_Layer: 5
   m_Name: ClassicHomeLanscape
   m_TagString: Untagged
@@ -730,19 +715,6 @@ MonoBehaviour:
   uiDocument: {fileID: 1410745335}
   addLandscapeScale: 1
   addPortraitScale: 1
---- !u!114 &1410745338
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1410745334}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e97b76ba44b7006478b02bc7da5a5c01, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::VersionDisplay
-  uiDocument: {fileID: 1410745335}
 --- !u!1 &1457944208
 GameObject:
   m_ObjectHideFlags: 0

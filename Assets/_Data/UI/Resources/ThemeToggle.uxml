@@ -1,0 +1,3 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:Label name="theme-toggle-label" class="theme-toggle-label" text="&#x263E;" />
+</ui:UXML>

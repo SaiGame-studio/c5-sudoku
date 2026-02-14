@@ -1,6 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/_Data/UI/Classic/Home/Portrait/Styles/ClassicHome_Portrait.uss?fileID=7433441132597879392&amp;guid=4a4ceb6be770066419227f8c0a774dc4&amp;type=3#ClassicHome_Portrait"/>
     <Style src="project://database/Assets/_Data/UI/Styles/ThemeToggle.uss"/>
+    <Style src="project://database/Assets/_Data/UI/Styles/VersionLabel.uss"/>
     <ui:VisualElement class="home-root">
         <ui:VisualElement name="home-container" class="home-container">
             <ui:VisualElement class="home-header" style="margin-top: 20px;">
@@ -98,7 +99,9 @@
                 </ui:VisualElement>
             </ui:ScrollView>
             <ui:VisualElement class="home-footer">
-                <ui:Button name="back-button" text="" class="back-button"/>                <ui:Label name="version-label" text="v0.0.1" class="version-label"/>            </ui:VisualElement>
+                <ui:Button name="back-button" text="" class="back-button"/>
+            </ui:VisualElement>
         </ui:VisualElement>
+        <VersionLabel/>
     </ui:VisualElement>
 </ui:UXML>

@@ -1,6 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <Style src="project://database/Assets/_Data/UI/Classic/Game/Portrait/Styles/SudokuGrid_Portrait.uss?fileID=7433441132597879392&amp;guid=9563333652293dc4e8afe22c72fb15c7&amp;type=3#SudokuGrid_Portrait"/>
     <Style src="project://database/Assets/_Data/UI/Styles/ThemeToggle.uss"/>
+    <Style src="project://database/Assets/_Data/UI/Styles/VersionLabel.uss"/>
     <ui:VisualElement class="sudoku-grid-root">
         <ui:ScrollView name="sudoku-scroll-view" mode="Vertical" horizontal-scroller-visibility="Hidden" vertical-scroller-visibility="Hidden" class="sudoku-scroll-view" style="align-items: stretch; justify-content: flex-start; flex-direction: column; align-self: flex-end;">
             <ui:VisualElement name="sudoku-main-container" class="sudoku-main-container" style="flex-grow: 1; margin-top: 40px;">
@@ -378,7 +379,7 @@
             </ui:VisualElement>
         </ui:ScrollView>
     </ui:VisualElement>
-    <ui:Label name="version-label" text="v0.0.1" class="version-label"/>
+    <VersionLabel/>
     <ui:VisualElement name="popup-overlay" class="popup-overlay popup-overlay--hidden">
         <ui:VisualElement name="popup-container" class="popup-container"/>
     </ui:VisualElement>

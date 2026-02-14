@@ -16,11 +16,11 @@ public class ThemeToggle : VisualElement
         this.name = "theme-toggle";
         this.AddToClassList("theme-toggle");
 
-        this.iconLabel = new Label();
-        this.iconLabel.name = "theme-toggle-label";
-        this.iconLabel.AddToClassList("theme-toggle-label");
-        this.iconLabel.text = "\u263E";
-        this.Add(this.iconLabel);
+        // Load internal markup from UXML template
+        var template = Resources.Load<VisualTreeAsset>("ThemeToggle");
+        if (template != null) template.CloneTree(this);
+
+        this.iconLabel = this.Q<Label>("theme-toggle-label");
 
         this.RegisterCallback<AttachToPanelEvent>(this.OnAttachToPanel);
         this.RegisterCallback<ClickEvent>(this.OnClick);

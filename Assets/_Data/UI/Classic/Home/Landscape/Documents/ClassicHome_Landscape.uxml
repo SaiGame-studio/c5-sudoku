@@ -1,6 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/_Data/UI/Classic/Home/Landscape/Styles/ClassicHome_Landscape.uss?fileID=7433441132597879392&amp;guid=5b116c858b5de2f4fb52fc6af9f06e7d&amp;type=3#ClassicHome_Landscape"/>
     <Style src="project://database/Assets/_Data/UI/Styles/ThemeToggle.uss?fileID=7433441132597879392&amp;guid=bfa19512b5ae6d54bae198db679fb34b&amp;type=3#ThemeToggle"/>
+    <Style src="project://database/Assets/_Data/UI/Styles/VersionLabel.uss"/>
     <ui:VisualElement class="home-root">
         <ThemeToggle style="position: absolute; right: 50px; top: 50px;"/>
         <ui:VisualElement class="home-container">
@@ -90,11 +91,12 @@
                         </ui:VisualElement>
                         <ui:VisualElement style="flex-grow: 1; position: relative; left: auto; bottom: auto; width: 100%;">
                             <ui:Button name="back-button" text="" class="back-button" style="left: 0; position: absolute;"/>
-                            <ui:Label name="version-label" text="v0.0.1" class="version-label"/>
+
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:ScrollView>
             </ui:VisualElement>
         </ui:VisualElement>
+        <VersionLabel/>
     </ui:VisualElement>
 </ui:UXML>
