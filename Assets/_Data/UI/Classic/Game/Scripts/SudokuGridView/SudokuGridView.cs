@@ -271,8 +271,6 @@ public class SudokuGridView : SaiBehaviour
             });
         }
 
-        this.RegisterBackButton();
-
         this.root.RegisterCallback<KeyDownEvent>(this.OnKeyDown);
         this.root.focusable = true;
         this.root.Focus();
@@ -548,21 +546,6 @@ public class SudokuGridView : SaiBehaviour
         {
             this.highlightManager.ClearAllHighlights();
         }
-    }
-    #endregion
-
-    #region Back Button
-    private void RegisterBackButton()
-    {
-        Button backButton = this.root.Q<Button>("back-button");
-        if (backButton == null) return;
-
-        backButton.clicked += this.OnBackButtonClicked;
-    }
-
-    private void OnBackButtonClicked()
-    {
-        GameManager.Instance.LoadClassicHome();
     }
     #endregion
 

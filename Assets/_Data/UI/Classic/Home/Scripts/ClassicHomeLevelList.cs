@@ -69,7 +69,6 @@ public class ClassicHomeLevelList : SaiBehaviour
         });
 
         this.RegisterCardCallbacks();
-        this.RegisterBackButton();
         this.UpdateLockedLevels();
         this.UpdateCompletedLevels();
     }
@@ -205,27 +204,9 @@ public class ClassicHomeLevelList : SaiBehaviour
         });
     }
 
-    private void RegisterBackButton()
-    {
-        Button backButton = this.root.Q<Button>("back-button");
-        if (backButton == null)
-        {
-            Debug.LogWarning("Back button not found in " + gameObject.name);
-            return;
-        }
-
-        backButton.clicked += this.OnBackButtonClicked;
-        Debug.Log("Back button registered in " + gameObject.name);
-    }
-
     private void OnLevelSelected(int level, int difficulty, string levelName)
     {
         GameManager.Instance.LoadClassicGame(level, difficulty, levelName);
-    }
-
-    private void OnBackButtonClicked()
-    {
-        GameManager.Instance.LoadMainMenu();
     }
 
     /// <summary>

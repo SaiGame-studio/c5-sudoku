@@ -90,7 +90,7 @@
                             </ui:VisualElement>
                         </ui:VisualElement>
                         <ui:VisualElement style="flex-grow: 1; position: relative; left: auto; bottom: auto; width: 100%;">
-                            <ui:Button name="back-button" text="" class="back-button" style="left: 0; position: absolute;"/>
+                            <BackButton target="main-menu" style="left: 0; position: absolute;"/>
                         </ui:VisualElement>
                         <StarCounter style="margin-top: 10px; position: absolute; top: auto; right: 15px; bottom: 30px;"/>
                     </ui:VisualElement>

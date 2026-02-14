@@ -343,7 +343,7 @@
                     </ui:VisualElement>
                 </ui:VisualElement>
                 <ui:VisualElement name="grid-bottom-bar" class="grid-bottom-bar" style="height: 70px;">
-                    <ui:Button name="back-button" text="" class="back-button" style="left: 0; position: absolute;"/>
+                    <BackButton target="classic-home" style="left: 0; position: absolute;"/>
                 </ui:VisualElement>
                 <ui:VisualElement name="debug-buttons" class="difficulty-top-row" style="margin-bottom: 15px; margin-top: 15px;">
                     <ui:VisualElement name="difficulty-dropdown" class="difficulty-dropdown-stars">

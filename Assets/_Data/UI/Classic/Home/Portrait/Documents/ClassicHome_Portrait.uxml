@@ -2,13 +2,11 @@
     <Style src="project://database/Assets/_Data/UI/Classic/Home/Portrait/Styles/ClassicHome_Portrait.uss?fileID=7433441132597879392&amp;guid=4a4ceb6be770066419227f8c0a774dc4&amp;type=3#ClassicHome_Portrait"/>
     <Style src="project://database/Assets/_Data/UI/Styles/ThemeToggle.uss?fileID=7433441132597879392&amp;guid=bfa19512b5ae6d54bae198db679fb34b&amp;type=3#ThemeToggle"/>
     <Style src="project://database/Assets/_Data/UI/Styles/VersionLabel.uss?fileID=7433441132597879392&amp;guid=656b7a98457ea5045b9ce786d56712c5&amp;type=3#VersionLabel"/>
-    <Style src="project://database/Assets/_Data/UI/Styles/StarCounter.uss"/>
+    <Style src="project://database/Assets/_Data/UI/Styles/StarCounter.uss?fileID=7433441132597879392&amp;guid=ff49f0b03a54e5a499a6e1ce2bf877e3&amp;type=3#StarCounter"/>
     <ui:VisualElement class="home-root">
         <ui:VisualElement name="home-container" class="home-container">
             <ui:VisualElement class="home-header" style="margin-top: 20px;">
                 <ui:Label text="SUDOKU" class="home-title"/>
-                <ui:Label text="Classic Mode" class="home-subtitle"/>
-                <StarCounter style="margin-top: 10px;"/>
             </ui:VisualElement>
             <ui:ScrollView name="level-scroll" class="level-scroll">
                 <ui:VisualElement name="level-list-container" class="level-list-container">
@@ -99,8 +97,9 @@
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:ScrollView>
-            <ui:VisualElement class="home-footer">
-                <ui:Button name="back-button" text="" class="back-button"/>
+            <ui:VisualElement class="home-footer" style="width: 264px; flex-direction: row;">
+                <BackButton target="main-menu"/>
+                <StarCounter style="margin-top: 10px; flex-direction: row; align-items: auto; justify-content: flex-end; align-self: flex-start; position: absolute; right: 0; bottom: 0; padding-top: 0; padding-bottom: 0; margin-bottom: 10px;"/>
             </ui:VisualElement>
         </ui:VisualElement>
         <ThemeToggle style="position: absolute; top: 50px; right: 50px; width: 90px; height: 90px; border-radius: 45px; font-size: 65px;"/>
