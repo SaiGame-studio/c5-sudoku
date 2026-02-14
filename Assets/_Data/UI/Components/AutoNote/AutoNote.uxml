@@ -1,11 +1,12 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements">
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/_Data/UI/Components/AutoNote/AutoNote.uss?fileID=7433441132597879392&amp;guid=0443a54366f343a4794753d18cafcdcb&amp;type=3#AutoNote"/>
     <ui:VisualElement class="auto-note-container">
-        <ui:Button name="auto-notes-button" class="auto-note-btn auto-note-btn--purple">
-            <ui:Label text="&#xf15c;" class="auto-note-btn-icon"/>
+        <ui:Button name="auto-notes-button" class="auto-note-btn auto-note-btn--purple" style="margin-right: 10px;">
+            <ui:Label text="" class="auto-note-btn-icon"/>
             <ui:Label text="Auto Note" class="auto-note-btn-text"/>
         </ui:Button>
-        <ui:Button name="clear-notes-button" class="auto-note-btn auto-note-btn--gray">
-            <ui:Label text="&#xf12d;" class="auto-note-btn-icon"/>
+        <ui:Button name="clear-notes-button" class="auto-note-btn auto-note-btn--gray" style="margin-left: 10px;">
+            <ui:Label text="" class="auto-note-btn-icon"/>
             <ui:Label text="Clear Notes" class="auto-note-btn-text"/>
         </ui:Button>
     </ui:VisualElement>

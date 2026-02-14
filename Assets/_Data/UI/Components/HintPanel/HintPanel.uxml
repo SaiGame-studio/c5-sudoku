@@ -1,6 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/_Data/UI/Components/HintPanel/HintPanel.uss?fileID=7433441132597879392&amp;guid=ce0757dbf941c784fbd2585367691dd3&amp;type=3#HintPanel"/>
     <ui:VisualElement class="hint-panel">
-        <ui:VisualElement name="pattern-display" class="pattern-display" style="padding-top: 12px; padding-right: 18px; padding-bottom: 12px; padding-left: 18px; margin-top: 15px; margin-right: 4px; margin-bottom: 10px; margin-left: 4px; height: 60px;">
+        <ui:VisualElement name="pattern-display" class="pattern-display" style="padding-top: 12px; padding-right: 18px; padding-bottom: 12px; padding-left: 18px; margin-top: 15px; margin-right: 10px; margin-bottom: 10px; margin-left: 4px; height: 60px;">
             <ui:Label name="pattern-name-label" text="" class="pattern-name-label"/>
         </ui:VisualElement>
         <ui:Button name="hint-button" class="hint-panel-btn" style="margin-top: 5px;">
