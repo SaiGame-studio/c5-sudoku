@@ -14,8 +14,10 @@ public class GameProgress : SaiSingleton<GameProgress>
     private static readonly int[] STARS_PER_DIFFICULTY = { 1, 2, 3, 4, 3, 3, 4, 8, 9 };
     
     [Header("Progress Data")]
-    [SerializeField] private int totalStars = 0;
+    [SerializeField] private int totalStars = 0; // Cumulative stars earned (cap at 99)
     [SerializeField] private int completedLevelCount = 0;
+    
+    private const int MAX_STARS = 99; // Maximum total stars
     
     [Header("Completed Levels")]
     [SerializeField] private List<LevelCompletionData> completedLevelsList = new List<LevelCompletionData>();
@@ -70,7 +72,6 @@ public class GameProgress : SaiSingleton<GameProgress>
     private void UpdateInspectorData()
     {
         this.completedLevelsList.Clear();
-        this.totalStars = 0;
         
         foreach (var kvp in this.completedLevels)
         {
@@ -86,7 +87,6 @@ public class GameProgress : SaiSingleton<GameProgress>
                     stars = kvp.Value,
                     difficultyName = GameData.DIFFICULTY_NAMES[difficulty]
                 });
-                this.totalStars += kvp.Value;
             }
         }
         
@@ -110,6 +110,7 @@ public class GameProgress : SaiSingleton<GameProgress>
     
     /// <summary>
     /// Mark a level as completed and award stars
+    /// Stars are awarded EVERY time level is won, even if already completed
     /// </summary>
     /// <param name="levelNumber">Global level number (1-23)</param>
     public void CompleteLevel(int levelNumber)
@@ -122,25 +123,34 @@ public class GameProgress : SaiSingleton<GameProgress>
         
         string key = this.GetLevelKey(levelNumber);
         int difficulty = this.GetDifficultyFromLevelNumber(levelNumber);
-        int stars = GetStarsForDifficulty(difficulty);
+        int starsToAward = GetStarsForDifficulty(difficulty);
         
         bool isNewCompletion = !this.completedLevels.ContainsKey(key);
         
-        // Store the stars earned for this level
+        // Mark level as completed (store stars for reference)
         if (isNewCompletion)
         {
-            this.completedLevels[key] = stars;
-            Debug.Log($"[GameProgress] Level {levelNumber} completed! Difficulty: {GameData.DIFFICULTY_NAMES[difficulty]}, Stars: {stars}");
+            this.completedLevels[key] = starsToAward;
         }
         else
         {
-            // Keep the existing stars (don't override)
+            // Keep the max stars for this specific level (for reference)
             int oldStars = this.completedLevels[key];
-            this.completedLevels[key] = Mathf.Max(oldStars, stars);
-            if (this.completedLevels[key] > oldStars)
-            {
-                Debug.Log($"[GameProgress] Level {levelNumber} improved! Stars: {oldStars} -> {this.completedLevels[key]}");
-            }
+            this.completedLevels[key] = Mathf.Max(oldStars, starsToAward);
+        }
+        
+        // Award stars EVERY time (even for replays), capped at MAX_STARS
+        int previousTotal = this.totalStars;
+        this.totalStars = Mathf.Min(this.totalStars + starsToAward, MAX_STARS);
+        int actualStarsAwarded = this.totalStars - previousTotal;
+        
+        if (actualStarsAwarded > 0)
+        {
+            Debug.Log($"[GameProgress] Level {levelNumber} won! Difficulty: {GameData.DIFFICULTY_NAMES[difficulty]}, Stars awarded: +{actualStarsAwarded} (Total: {this.totalStars}/{MAX_STARS})");
+        }
+        else
+        {
+            Debug.Log($"[GameProgress] Level {levelNumber} won! Max stars ({MAX_STARS}) already reached.");
         }
         
         this.UpdateInspectorData();
@@ -172,16 +182,19 @@ public class GameProgress : SaiSingleton<GameProgress>
     }
     
     /// <summary>
-    /// Get total stars earned across all levels
+    /// Get total cumulative stars earned (capped at 99)
     /// </summary>
     public int GetTotalStars()
     {
-        int total = 0;
-        foreach (var stars in this.completedLevels.Values)
-        {
-            total += stars;
-        }
-        return total;
+        return this.totalStars;
+    }
+    
+    /// <summary>
+    /// Get maximum possible stars
+    /// </summary>
+    public int GetMaxStars()
+    {
+        return MAX_STARS;
     }
     
     /// <summary>
@@ -221,6 +234,7 @@ public class GameProgress : SaiSingleton<GameProgress>
         int previousStars = this.totalStars;
         
         this.completedLevels.Clear();
+        this.totalStars = 0;
         this.UpdateInspectorData();
         this.Save();
         
@@ -236,6 +250,7 @@ public class GameProgress : SaiSingleton<GameProgress>
         {
             SaveData saveData = new SaveData
             {
+                totalStars = this.totalStars,
                 completedLevels = new List<LevelData>()
             };
             
@@ -277,6 +292,9 @@ public class GameProgress : SaiSingleton<GameProgress>
                 string json = PlayerPrefs.GetString(SAVE_KEY);
                 SaveData saveData = JsonUtility.FromJson<SaveData>(json);
                 
+                // Load total stars (cumulative)
+                this.totalStars = saveData.totalStars;
+                
                 this.completedLevels.Clear();
                 foreach (var levelData in saveData.completedLevels)
                 {
@@ -315,6 +333,7 @@ public class GameProgress : SaiSingleton<GameProgress>
             }
             else
             {
+                this.totalStars = 0;
                 this.UpdateInspectorData();
                 Debug.Log("[GameProgress] No saved data found, starting fresh");
             }
@@ -323,6 +342,7 @@ public class GameProgress : SaiSingleton<GameProgress>
         {
             Debug.LogError($"[GameProgress] Failed to load game progress: {e.Message}");
             this.completedLevels.Clear();
+            this.totalStars = 0;
             this.UpdateInspectorData();
         }
     }
@@ -458,6 +478,7 @@ public class GameProgress : SaiSingleton<GameProgress>
     [Serializable]
     private class SaveData
     {
+        public int totalStars; // Cumulative stars earned
         public List<LevelData> completedLevels;
     }
     

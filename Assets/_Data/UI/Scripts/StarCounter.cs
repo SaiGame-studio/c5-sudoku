@@ -35,41 +35,8 @@ public class StarCounter : VisualElement
         if (GameProgress.Instance == null) return;
 
         int collected = GameProgress.Instance.GetTotalStars();
-        int total = this.CalculateTotalMaxStars();
+        int total = GameProgress.Instance.GetMaxStars();
 
         this.textLabel.text = $"{collected} / {total}";
-    }
-
-    // Calculate the max possible stars across all 23 levels
-    private int CalculateTotalMaxStars()
-    {
-        int total = 0;
-
-        for (int level = 1; level <= 23; level++)
-        {
-            int difficulty = this.GetDifficultyFromLevel(level);
-            total += GameProgress.GetStarsForDifficulty(difficulty);
-        }
-
-        return total;
-    }
-
-    // Mirror GameProgress difficulty mapping
-    private int GetDifficultyFromLevel(int levelNumber)
-    {
-        if (levelNumber >= 1 && levelNumber <= 21)
-        {
-            return (levelNumber - 1) / 3;
-        }
-        else if (levelNumber == 22)
-        {
-            return 7;
-        }
-        else if (levelNumber == 23)
-        {
-            return 8;
-        }
-
-        return 0;
     }
 }
