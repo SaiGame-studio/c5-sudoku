@@ -193,6 +193,10 @@ public class SudokuDifficultyPanel : SaiBehaviour
         if (this.starToDifficultyMap.TryGetValue(starLevel, out SudokuGenerator.DifficultyLevel level))
         {
             this.sudokuGenerator.SetDifficulty(level);
+            
+            // Update GameData with current difficulty
+            GameData.SelectedDifficulty = (int)level;
+            
             Debug.Log($"Difficulty changed to: {level} ({starLevel} stars)");
         }
     }
@@ -205,6 +209,9 @@ public class SudokuDifficultyPanel : SaiBehaviour
         {
             this.sudokuGenerator.GeneratePuzzle(level);
             Debug.Log($"Generated new puzzle with difficulty: {level} ({this.currentStarLevel} stars)");
+            
+            // Update GameData with current difficulty for proper star tracking
+            GameData.SelectedDifficulty = (int)level;
 
             if (this.gridView != null)
             {

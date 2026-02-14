@@ -11,7 +11,8 @@ public class GameProgress : SaiSingleton<GameProgress>
     private const string SAVE_KEY = "GameProgress_Save";
     
     // Stars earned for each difficulty level (0-8)
-    private static readonly int[] STARS_PER_DIFFICULTY = { 1, 2, 3, 4, 3, 3, 4, 8, 9 };
+    // Maps directly to star display: difficulty 0 = 1 star, difficulty 1 = 2 stars, etc.
+    private static readonly int[] STARS_PER_DIFFICULTY = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
     
     [Header("Progress Data")]
     [SerializeField] private int totalStars = 0; // Cumulative stars earned (cap at 99)
@@ -113,7 +114,8 @@ public class GameProgress : SaiSingleton<GameProgress>
     /// Stars are awarded EVERY time level is won, even if already completed
     /// </summary>
     /// <param name="levelNumber">Global level number (1-23)</param>
-    public void CompleteLevel(int levelNumber)
+    /// <param name="difficulty">Actual difficulty played (0-8)</param>
+    public void CompleteLevel(int levelNumber, int difficulty)
     {
         if (levelNumber < 1 || levelNumber > 23)
         {
@@ -121,8 +123,13 @@ public class GameProgress : SaiSingleton<GameProgress>
             return;
         }
         
+        if (difficulty < 0 || difficulty > 8)
+        {
+            Debug.LogError($"[GameProgress] Invalid difficulty: {difficulty}. Must be between 0 and 8.");
+            return;
+        }
+        
         string key = this.GetLevelKey(levelNumber);
-        int difficulty = this.GetDifficultyFromLevelNumber(levelNumber);
         int starsToAward = GetStarsForDifficulty(difficulty);
         
         bool isNewCompletion = !this.completedLevels.ContainsKey(key);
@@ -139,22 +146,39 @@ public class GameProgress : SaiSingleton<GameProgress>
             this.completedLevels[key] = Mathf.Max(oldStars, starsToAward);
         }
         
-        // Award stars EVERY time (even for replays), capped at MAX_STARS
+        // Calculate how many stars can be awarded (don't increment yet - let animation do it)
         int previousTotal = this.totalStars;
-        this.totalStars = Mathf.Min(this.totalStars + starsToAward, MAX_STARS);
-        int actualStarsAwarded = this.totalStars - previousTotal;
+        int targetTotal = Mathf.Min(this.totalStars + starsToAward, MAX_STARS);
+        int actualStarsAwarded = targetTotal - previousTotal;
         
         if (actualStarsAwarded > 0)
         {
-            Debug.Log($"[GameProgress] Level {levelNumber} won! Difficulty: {GameData.DIFFICULTY_NAMES[difficulty]}, Stars awarded: +{actualStarsAwarded} (Total: {this.totalStars}/{MAX_STARS})");
+            Debug.Log($"[GameProgress] Level {levelNumber} won! Difficulty: {GameData.DIFFICULTY_NAMES[difficulty]}, Will award: +{actualStarsAwarded} stars (from {previousTotal} to {targetTotal}/{MAX_STARS})");
+            
+            // Trigger flying stars animation - it will increment stars as each one explodes
+            FlyingStarAnimation.PlayAnimation(actualStarsAwarded, previousTotal, targetTotal, MAX_STARS);
         }
         else
         {
             Debug.Log($"[GameProgress] Level {levelNumber} won! Max stars ({MAX_STARS}) already reached.");
+            this.UpdateInspectorData();
+            this.Save();
         }
+    }
+    
+    /// <summary>
+    /// Increment total stars by specified amount (called by animation system)
+    /// </summary>
+    public void IncrementTotalStars(int amount)
+    {
+        int oldValue = this.totalStars;
+        this.totalStars = Mathf.Min(this.totalStars + amount, MAX_STARS);
         
-        this.UpdateInspectorData();
-        this.Save();
+        if (this.totalStars != oldValue)
+        {
+            this.UpdateInspectorData();
+            this.Save();
+        }
     }
     
     /// <summary>
