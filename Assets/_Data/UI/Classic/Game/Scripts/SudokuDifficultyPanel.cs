@@ -175,6 +175,9 @@ public class SudokuDifficultyPanel : SaiBehaviour
         {
             if (this.difficultyStars[i] == null) continue;
 
+            // Reset opacity to ensure stars are visible after flying animation
+            this.difficultyStars[i].style.opacity = 1f;
+
             if (i < this.currentStarLevel)
             {
                 this.difficultyStars[i].AddToClassList("difficulty-dropdown-star--active");
@@ -212,6 +215,9 @@ public class SudokuDifficultyPanel : SaiBehaviour
             
             // Update GameData with current difficulty for proper star tracking
             GameData.SelectedDifficulty = (int)level;
+
+            // Reset star visuals to make them visible again after flying animation
+            this.UpdateStarVisuals();
 
             if (this.gridView != null)
             {

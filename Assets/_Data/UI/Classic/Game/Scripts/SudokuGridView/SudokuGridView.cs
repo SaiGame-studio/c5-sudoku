@@ -595,6 +595,9 @@ public class SudokuGridView : SaiBehaviour
             Label star = this.difficultyStarsContainer.Q<Label>("star-" + i);
             if (star == null) continue;
 
+            // Reset opacity to ensure stars are visible after flying animation
+            star.style.opacity = 1f;
+
             if (i <= activeCount)
                 star.AddToClassList("difficulty-star--active");
             else

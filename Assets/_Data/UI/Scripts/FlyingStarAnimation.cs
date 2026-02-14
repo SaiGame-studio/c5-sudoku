@@ -72,6 +72,12 @@ public class FlyingStarAnimation
         // Get source star positions
         var sourceStars = sourceStarsContainer.Query<Label>(className: "difficulty-star").ToList();
         
+        // Reset all stars to visible (in case they were hidden from previous animation)
+        foreach (var star in sourceStars)
+        {
+            star.style.opacity = 1f;
+        }
+        
         if (sourceStars.Count < this.starsToAnimate)
         {
             Debug.LogWarning($"[FlyingStarAnimation] Not enough source stars: {sourceStars.Count} < {this.starsToAnimate}");
@@ -115,14 +121,17 @@ public class FlyingStarAnimation
             sourceBounds.y + sourceBounds.height * 0.5f
         );
         
-        // Create flying star particle
+        // Hide source star immediately to create "fly away" effect
+        sourceStar.style.opacity = 0f;
+        
+        // Create flying star particle with same appearance as source
         var flyingStar = new Label("★");
         flyingStar.AddToClassList("flying-star");
         flyingStar.style.position = Position.Absolute;
         flyingStar.style.left = startPosition.x;
         flyingStar.style.top = startPosition.y;
-        flyingStar.style.fontSize = 28;
-        flyingStar.style.color = new Color(1f, 0.84f, 0f, 1f); // Gold
+        flyingStar.style.fontSize = sourceStar.resolvedStyle.fontSize;
+        flyingStar.style.color = sourceStar.resolvedStyle.color;
         flyingStar.style.unityTextAlign = TextAnchor.MiddleCenter;
         
         this.rootElement.Add(flyingStar);
