@@ -205,19 +205,19 @@
 .difficulty-8 {
     height: 56px;
     border-width: 3px;
-    border-color: rgb(240, 200, 50);
-    background-color: rgba(200, 170, 30, 0.15);
+    border-color: rgb(255, 60, 150);
+    background-color: rgba(200, 40, 120, 0.15);
     border-radius: 14px;
 }
 
 .difficulty-8:hover {
-    border-color: rgb(255, 225, 80);
-    background-color: rgba(220, 190, 40, 0.25);
+    border-color: rgb(255, 100, 180);
+    background-color: rgba(220, 50, 140, 0.25);
 }
 
 .difficulty-8 .level-card-stars {
     font-size: 15px;
-    color: rgb(255, 220, 80);
+    color: rgb(255, 120, 180);
 }
 
 .home-footer {
