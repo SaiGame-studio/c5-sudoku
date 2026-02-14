@@ -53,7 +53,7 @@ public class SudokuGridViewHintManager
 
         if (this.patternNameLabel2 != null)
         {
-            this.patternNameLabel2.text = $"{result.patternInfo.type.ToString()}";
+            this.patternNameLabel2.text = result.patternInfo.description;
         }
 
         if (result.patternInfo.affectedCells != null && result.patternInfo.affectedCells.Count > 0)
