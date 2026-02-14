@@ -1,0 +1,4 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:Label name="star-counter-icon" class="star-counter-icon" text="★" />
+    <ui:Label name="star-counter-text" class="star-counter-text" text="0 / 0" />
+</ui:UXML>
