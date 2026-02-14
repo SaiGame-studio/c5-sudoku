@@ -9,13 +9,15 @@ public class SudokuGridViewHintManager
     private SudokuHintSystem hintSystem;
     private SudokuCell[,] cells;
     private Label patternNameLabel;
+    private PatternDisplay patternDisplay;
     private PatternInfo currentHintPattern;
 
-    public SudokuGridViewHintManager(SudokuHintSystem hintSystem, SudokuCell[,] cells, Label patternNameLabel)
+    public SudokuGridViewHintManager(SudokuHintSystem hintSystem, SudokuCell[,] cells, Label patternNameLabel, PatternDisplay patternDisplay)
     {
         this.hintSystem = hintSystem;
         this.cells = cells;
         this.patternNameLabel = patternNameLabel;
+        this.patternDisplay = patternDisplay;
     }
 
     public void RequestHint(int[,] currentPuzzle, List<int>[,] cellNotes)
@@ -49,6 +51,11 @@ public class SudokuGridViewHintManager
             this.patternNameLabel.text = $"{result.patternInfo.type.ToString()}";
         }
 
+        if (this.patternDisplay != null)
+        {
+            this.patternDisplay.PatternName = $"{result.patternInfo.type.ToString()}";
+        }
+
         if (result.patternInfo.affectedCells != null && result.patternInfo.affectedCells.Count > 0)
         {
             foreach (var cellPos in result.patternInfo.affectedCells)
@@ -70,6 +77,11 @@ public class SudokuGridViewHintManager
             this.patternNameLabel.text = "No hint available";
         }
 
+        if (this.patternDisplay != null)
+        {
+            this.patternDisplay.PatternName = "No hint available";
+        }
+
         Debug.Log($"<color=yellow>No Hint Available:</color> {message}");
     }
 
@@ -78,6 +90,11 @@ public class SudokuGridViewHintManager
         if (this.patternNameLabel != null)
         {
             this.patternNameLabel.text = "";
+        }
+
+        if (this.patternDisplay != null)
+        {
+            this.patternDisplay.PatternName = "";
         }
 
         if (this.currentHintPattern != null && this.currentHintPattern.affectedCells != null)

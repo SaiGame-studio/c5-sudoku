@@ -47,6 +47,7 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private VisualElement debugButtonsContainer;
     [SerializeField] private Button autoPlayButton;
     [SerializeField] private Label patternNameLabel;
+    [SerializeField] private PatternDisplay patternDisplay;
     [SerializeField] private SudokuCell[,] cells;
     [SerializeField] private SudokuCell selectedCell;
     [SerializeField] private int[,] cachedSolution;
@@ -116,6 +117,7 @@ public class SudokuGridView : SaiBehaviour
         this.debugButtonsContainer = this.root.Q<VisualElement>("debug-buttons");
         this.autoPlayButton = this.root.Q<Button>("auto-play-button");
         this.patternNameLabel = this.root.Q<Label>("pattern-name-label");
+        this.patternDisplay = this.root.Q<PatternDisplay>("pattern-display-2");
 
         // Fix ScrollView content container styles (USS #unity-content-container may not apply reliably)
         this.scrollView = this.root.Q<ScrollView>("sudoku-scroll-view");
@@ -313,7 +315,8 @@ public class SudokuGridView : SaiBehaviour
         this.hintManager = new SudokuGridViewHintManager(
             this.hintSystem, 
             this.cells, 
-            this.patternNameLabel
+            this.patternNameLabel,
+            this.patternDisplay
         );
     }
 

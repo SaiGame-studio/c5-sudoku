@@ -1,0 +1,3 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:Label name="pattern-name-label-2" class="pattern-name-label" text="" style="padding-top: 12px; padding-right: 18px; padding-bottom: 12px; padding-left: 18px; margin-top: 2px; margin-right: 4px; margin-bottom: 2px; margin-left: 4px;"/>
+</ui:UXML>
