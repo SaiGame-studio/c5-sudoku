@@ -1,6 +1,8 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:Template name="PatternDisplay" src="project://database/Assets/_Data/UI/Components/PatternDisplay/PatternDisplay.uxml?fileID=9197481963319205126&amp;guid=56b57dd297071df4ea550a8cbed4c3cf&amp;type=3#PatternDisplay"/>
+    <ui:Template name="AutoNote" src="project://database/Assets/_Data/UI/Components/AutoNote/AutoNote.uxml"/>
     <Style src="project://database/Assets/_Data/UI/Classic/Game/Portrait/Styles/SudokuGrid_Portrait.uss?fileID=7433441132597879392&amp;guid=9563333652293dc4e8afe22c72fb15c7&amp;type=3#SudokuGrid_Portrait"/>
+    <Style src="project://database/Assets/_Data/UI/Components/AutoNote/AutoNote.uss"/>
     <Style src="project://database/Assets/_Data/UI/Styles/ThemeToggle.uss?fileID=7433441132597879392&amp;guid=bfa19512b5ae6d54bae198db679fb34b&amp;type=3#ThemeToggle"/>
     <Style src="project://database/Assets/_Data/UI/Styles/VersionLabel.uss?fileID=7433441132597879392&amp;guid=656b7a98457ea5045b9ce786d56712c5&amp;type=3#VersionLabel"/>
     <ui:VisualElement class="sudoku-grid-root">
@@ -354,7 +356,7 @@
                         </ui:VisualElement>
                         <ui:Instance template="PatternDisplay"/>
                         <ui:Button name="hint-button" text="" class="hint-button" style="max-width: 50px; padding-left: 34px; padding-right: 34px; padding-top: 10px; padding-bottom: 10px; margin-right: 7px; margin-left: 7px;"/>
-                        <ui:Button name="auto-notes-button" text="" class="auto-notes-button" style="padding-top: 10px; padding-bottom: 10px;"/>
+                        <ui:Instance template="AutoNote"/>
                     </ui:VisualElement>
                 </ui:VisualElement>
                 <ui:VisualElement name="VisualElement" style="margin-top: 10px; align-items: flex-start; align-self: flex-start; margin-left: 0;">

@@ -44,6 +44,7 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private Label levelNameLabel;
     [SerializeField] private Button hintButton;
     [SerializeField] private Button autoNotesButton;
+    [SerializeField] private Button clearNotesButton;
     [SerializeField] private VisualElement debugButtonsContainer;
     [SerializeField] private Button autoPlayButton;
     [SerializeField] private Label patternNameLabel;
@@ -114,6 +115,7 @@ public class SudokuGridView : SaiBehaviour
         this.levelNameLabel = this.root.Q<Label>("level-name-label");
         this.hintButton = this.root.Q<Button>("hint-button");
         this.autoNotesButton = this.root.Q<Button>("auto-notes-button");
+        this.clearNotesButton = this.root.Q<Button>("clear-notes-button");
         this.debugButtonsContainer = this.root.Q<VisualElement>("debug-buttons");
         this.autoPlayButton = this.root.Q<Button>("auto-play-button");
         this.patternNameLabel = this.root.Q<Label>("pattern-name-label");
@@ -256,6 +258,11 @@ public class SudokuGridView : SaiBehaviour
         if (this.autoNotesButton != null)
         {
             this.autoNotesButton.clicked += this.OnAutoNotesButtonClicked;
+        }
+
+        if (this.clearNotesButton != null)
+        {
+            this.clearNotesButton.clicked += this.OnClearNotesButtonClicked;
         }
         
         if (this.autoPlayButton != null)
@@ -842,6 +849,11 @@ public class SudokuGridView : SaiBehaviour
         this.ClearAllNotes();
         
         this.autoNotes.StartAutoNotes();
+    }
+
+    private void OnClearNotesButtonClicked()
+    {
+        this.ClearAllNotes();
     }
     
     /// <summary>

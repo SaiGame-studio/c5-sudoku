@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements">
+    <ui:VisualElement class="auto-note-container">
+        <ui:Button name="auto-notes-button" class="auto-note-btn auto-note-btn--purple">
+            <ui:Label text="&#xf15c;" class="auto-note-btn-icon"/>
+            <ui:Label text="Auto Note" class="auto-note-btn-text"/>
+        </ui:Button>
+        <ui:Button name="clear-notes-button" class="auto-note-btn auto-note-btn--gray">
+            <ui:Label text="&#xf12d;" class="auto-note-btn-icon"/>
+            <ui:Label text="Clear Notes" class="auto-note-btn-text"/>
+        </ui:Button>
+    </ui:VisualElement>
+</ui:UXML>

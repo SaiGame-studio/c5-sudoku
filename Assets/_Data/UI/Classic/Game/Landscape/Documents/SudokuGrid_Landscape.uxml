@@ -1,6 +1,8 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="AutoNote" src="project://database/Assets/_Data/UI/Components/AutoNote/AutoNote.uxml?fileID=9197481963319205126&amp;guid=5513c69c10b7777498c0bebd5e7d5643&amp;type=3#AutoNote"/>
     <ui:Template name="PatternDisplay" src="project://database/Assets/_Data/UI/Components/PatternDisplay/PatternDisplay.uxml?fileID=9197481963319205126&amp;guid=56b57dd297071df4ea550a8cbed4c3cf&amp;type=3#PatternDisplay"/>
     <Style src="project://database/Assets/_Data/UI/Classic/Game/Landscape/Styles/SudokuGrid_Landscape.uss?fileID=7433441132597879392&amp;guid=b2326dbb7b14a3b48abff5404a6d2524&amp;type=3#SudokuGrid_Landscape"/>
+    <Style src="project://database/Assets/_Data/UI/Components/AutoNote/AutoNote.uss?fileID=7433441132597879392&amp;guid=0443a54366f343a4794753d18cafcdcb&amp;type=3#AutoNote"/>
     <Style src="project://database/Assets/_Data/UI/Styles/ThemeToggle.uss?fileID=7433441132597879392&amp;guid=bfa19512b5ae6d54bae198db679fb34b&amp;type=3#ThemeToggle"/>
     <Style src="project://database/Assets/_Data/UI/Styles/VersionLabel.uss?fileID=7433441132597879392&amp;guid=656b7a98457ea5045b9ce786d56712c5&amp;type=3#VersionLabel"/>
     <ui:VisualElement class="sudoku-grid-root">
@@ -363,12 +365,12 @@
                 </ui:VisualElement>
             </ui:VisualElement>
             <ui:VisualElement name="difficulty-control-panel" class="difficulty-control-panel" style="width: 500px; margin-top: 35px;">
+                <ui:Instance template="AutoNote"/>
                 <ui:VisualElement class="button-row">
                     <ui:VisualElement name="pattern-display" class="pattern-display" style="padding-top: 12px; padding-right: 18px; padding-bottom: 12px; padding-left: 18px; margin-top: 2px; margin-right: 4px; margin-bottom: 2px; margin-left: 4px; height: 66px;">
                         <ui:Label name="pattern-name-label" text="" class="pattern-name-label"/>
                     </ui:VisualElement>
                     <ui:Button name="hint-button" text="" class="hint-button"/>
-                    <ui:Button name="auto-notes-button" text="" class="auto-notes-button"/>
                 </ui:VisualElement>
                 <ui:VisualElement style="flex-grow: 1;">
                     <ui:Instance template="PatternDisplay"/>
