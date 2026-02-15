@@ -52,6 +52,7 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private VisualElement autoNoteLockOverlay;
     [SerializeField] private VisualElement clearNoteLockOverlay;
     [SerializeField] private VisualElement hintLockOverlay;
+    [SerializeField] private VisualElement patternDisplayLockOverlay;
     [SerializeField] private VisualElement unlockConfirmOverlay;
     [SerializeField] private VisualElement unlockConfirmDialog;
     [SerializeField] private Button unlockConfirmBtn;
@@ -60,7 +61,7 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private Label unlockDialogStarCost;
     
     // Tracks which feature the confirm dialog is currently targeting
-    private enum UnlockTarget { None, AutoNote, ClearNotes, HintPanel }
+    private enum UnlockTarget { None, AutoNote, ClearNotes, HintPanel, PatternDisplay }
     private UnlockTarget activeUnlockTarget = UnlockTarget.None;
     [SerializeField] private SudokuCell[,] cells;
     [SerializeField] private SudokuCell selectedCell;
@@ -132,6 +133,7 @@ public class SudokuGridView : SaiBehaviour
         this.autoNoteLockOverlay = this.root.Q<VisualElement>("auto-note-lock-overlay");
         this.clearNoteLockOverlay = this.root.Q<VisualElement>("clear-note-lock-overlay");
         this.hintLockOverlay = this.root.Q<VisualElement>("hint-lock-overlay");
+        this.patternDisplayLockOverlay = this.root.Q<VisualElement>("pattern-display-lock-overlay");
         this.unlockConfirmOverlay = this.root.Q<VisualElement>("unlock-confirm-overlay");
         this.unlockConfirmDialog = this.root.Q<VisualElement>("unlock-confirm-dialog");
         this.unlockConfirmBtn = this.root.Q<Button>("unlock-confirm-btn");
@@ -298,6 +300,12 @@ public class SudokuGridView : SaiBehaviour
         {
             this.hintLockOverlay.RegisterCallback<ClickEvent>(this.OnHintLockClicked);
             this.UpdateHintLockState();
+        }
+
+        if (this.patternDisplayLockOverlay != null)
+        {
+            this.patternDisplayLockOverlay.RegisterCallback<ClickEvent>(this.OnPatternDisplayLockClicked);
+            this.UpdatePatternDisplayLockState();
         }
 
         if (this.unlockConfirmBtn != null)
@@ -994,6 +1002,27 @@ public class SudokuGridView : SaiBehaviour
         this.ShowUnlockConfirmDialog(UnlockTarget.HintPanel, "Unlock Hint?", GameProgress.Instance.GetHintPanelUnlockCost());
     }
     
+    private void OnPatternDisplayLockClicked(ClickEvent evt)
+    {
+        evt.StopPropagation();
+        
+        if (GameProgress.Instance == null) return;
+        
+        if (GameProgress.Instance.IsPatternDisplayUnlocked())
+        {
+            this.UpdatePatternDisplayLockState();
+            return;
+        }
+        
+        if (!GameProgress.Instance.CanAffordPatternDisplayUnlock())
+        {
+            this.PlayLockShake(this.patternDisplayLockOverlay);
+            return;
+        }
+        
+        this.ShowUnlockConfirmDialog(UnlockTarget.PatternDisplay, "Unlock Pattern?", GameProgress.Instance.GetPatternDisplayUnlockCost());
+    }
+    
     /// <summary>
     /// Show the unlock confirmation dialog with pop-in animation
     /// </summary>
@@ -1062,6 +1091,11 @@ public class SudokuGridView : SaiBehaviour
         {
             success = GameProgress.Instance.TryUnlockHintPanel();
             targetOverlay = this.hintLockOverlay;
+        }
+        else if (this.activeUnlockTarget == UnlockTarget.PatternDisplay)
+        {
+            success = GameProgress.Instance.TryUnlockPatternDisplay();
+            targetOverlay = this.patternDisplayLockOverlay;
         }
         
         if (success)
@@ -1166,12 +1200,38 @@ public class SudokuGridView : SaiBehaviour
         }
     }
     
+    private void UpdatePatternDisplayLockState()
+    {
+        if (this.patternDisplayLockOverlay == null) return;
+        
+        bool isUnlocked = GameProgress.Instance != null && GameProgress.Instance.IsPatternDisplayUnlocked();
+        
+        if (isUnlocked)
+        {
+            this.patternDisplayLockOverlay.AddToClassList("pattern-display-lock-overlay--hidden");
+        }
+        else
+        {
+            this.patternDisplayLockOverlay.RemoveFromClassList("pattern-display-lock-overlay--hidden");
+        }
+        
+        // Sync cost label on the lock overlay
+        if (GameProgress.Instance != null)
+        {
+            string costText = GameProgress.Instance.GetPatternDisplayUnlockCost().ToString();
+            
+            Label patternLockStarCost = this.root.Q<Label>("pattern-display-lock-star-cost");
+            if (patternLockStarCost != null) patternLockStarCost.text = costText;
+        }
+    }
+    
     /// <summary>
     /// Get the CSS class prefix for a given lock overlay element
     /// </summary>
     private string GetLockClassPrefix(VisualElement overlay)
     {
         if (overlay == this.hintLockOverlay) return "hint-lock-overlay";
+        if (overlay == this.patternDisplayLockOverlay) return "pattern-display-lock-overlay";
         return "auto-note-lock-overlay";
     }
     

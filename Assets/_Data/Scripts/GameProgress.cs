@@ -12,6 +12,7 @@ public class GameProgress : SaiSingleton<GameProgress>
     private const string AUTO_NOTE_UNLOCKED_KEY = "AutoNote_Unlocked";
     private const string CLEAR_NOTES_UNLOCKED_KEY = "ClearNotes_Unlocked";
     private const string HINT_PANEL_UNLOCKED_KEY = "HintPanel_Unlocked";
+    private const string PATTERN_DISPLAY_UNLOCKED_KEY = "PatternDisplay_Unlocked";
     
     // Stars earned for each difficulty level (0-8)
     // Maps directly to star display: difficulty 0 = 1 star, difficulty 1 = 2 stars, etc.
@@ -30,6 +31,8 @@ public class GameProgress : SaiSingleton<GameProgress>
     [SerializeField] private int autoNoteUnlockCost = 16;
     [SerializeField] private bool hintPanelUnlocked = false;
     [SerializeField] private int hintPanelUnlockCost = 50;
+    [SerializeField] private bool patternDisplayUnlocked = false;
+    [SerializeField] private int patternDisplayUnlockCost = 50;
     
     [Header("Completed Levels")]
     [SerializeField] private List<LevelCompletionData> completedLevelsList = new List<LevelCompletionData>();
@@ -45,6 +48,7 @@ public class GameProgress : SaiSingleton<GameProgress>
         this.autoNoteUnlocked = this.IsAutoNoteUnlocked();
         this.clearNotesUnlocked = this.IsClearNotesUnlocked();
         this.hintPanelUnlocked = this.IsHintPanelUnlocked();
+        this.patternDisplayUnlocked = this.IsPatternDisplayUnlocked();
         Debug.Log("[GameProgress] Initialized and loaded progress from PlayerPrefs");
     }
     
@@ -109,6 +113,7 @@ public class GameProgress : SaiSingleton<GameProgress>
         this.autoNoteUnlocked = this.IsAutoNoteUnlocked();
         this.clearNotesUnlocked = this.IsClearNotesUnlocked();
         this.hintPanelUnlocked = this.IsHintPanelUnlocked();
+        this.patternDisplayUnlocked = this.IsPatternDisplayUnlocked();
         
         // Sort by level number for better Inspector view
         this.completedLevelsList.Sort((a, b) => a.level.CompareTo(b.level));
@@ -580,6 +585,53 @@ public class GameProgress : SaiSingleton<GameProgress>
     
     #endregion
     
+    #region Pattern Display Unlock
+    
+    /// <summary>
+    /// Check if Pattern Display feature has been permanently unlocked
+    /// </summary>
+    public bool IsPatternDisplayUnlocked()
+    {
+        return PlayerPrefs.GetInt(PATTERN_DISPLAY_UNLOCKED_KEY, 0) == 1;
+    }
+    
+    /// <summary>
+    /// Get the star cost to unlock Pattern Display
+    /// </summary>
+    public int GetPatternDisplayUnlockCost()
+    {
+        return this.patternDisplayUnlockCost;
+    }
+    
+    /// <summary>
+    /// Attempt to unlock Pattern Display by spending stars. Returns true if successful.
+    /// </summary>
+    public bool TryUnlockPatternDisplay()
+    {
+        if (this.IsPatternDisplayUnlocked()) return true;
+        
+        if (this.totalStars < this.patternDisplayUnlockCost) return false;
+        
+        this.totalStars -= this.patternDisplayUnlockCost;
+        PlayerPrefs.SetInt(PATTERN_DISPLAY_UNLOCKED_KEY, 1);
+        this.patternDisplayUnlocked = true;
+        
+        this.UpdateInspectorData();
+        this.Save();
+        
+        return true;
+    }
+    
+    /// <summary>
+    /// Check if player can afford to unlock Pattern Display
+    /// </summary>
+    public bool CanAffordPatternDisplayUnlock()
+    {
+        return this.totalStars >= this.patternDisplayUnlockCost;
+    }
+    
+    #endregion
+    
     #region Debug & Utility Methods
     /// <summary>
     /// Delete all saved progress from PlayerPrefs (for debugging/testing)
@@ -643,8 +695,9 @@ public class GameProgress : SaiSingleton<GameProgress>
         PlayerPrefs.SetInt(AUTO_NOTE_UNLOCKED_KEY, this.autoNoteUnlocked ? 1 : 0);
         PlayerPrefs.SetInt(CLEAR_NOTES_UNLOCKED_KEY, this.clearNotesUnlocked ? 1 : 0);
         PlayerPrefs.SetInt(HINT_PANEL_UNLOCKED_KEY, this.hintPanelUnlocked ? 1 : 0);
+        PlayerPrefs.SetInt(PATTERN_DISPLAY_UNLOCKED_KEY, this.patternDisplayUnlocked ? 1 : 0);
         
-        Debug.Log($"[GameProgress] Force saving progress... AutoNote unlocked: {this.autoNoteUnlocked}, ClearNotes unlocked: {this.clearNotesUnlocked}, HintPanel unlocked: {this.hintPanelUnlocked}");
+        Debug.Log($"[GameProgress] Force saving progress... AutoNote unlocked: {this.autoNoteUnlocked}, ClearNotes unlocked: {this.clearNotesUnlocked}, HintPanel unlocked: {this.hintPanelUnlocked}, PatternDisplay unlocked: {this.patternDisplayUnlocked}");
         this.Save();
     }
     #endregion

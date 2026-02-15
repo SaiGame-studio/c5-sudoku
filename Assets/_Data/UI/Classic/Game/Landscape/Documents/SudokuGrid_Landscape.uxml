@@ -364,9 +364,7 @@
             <ui:VisualElement name="" class="difficulty-control-panel" style="width: 500px; margin-top: 50px; margin-left: 0;">
                 <ui:Instance template="AutoNote"/>
                 <ui:Instance template="HintPanel"/>
-                <ui:VisualElement style="flex-grow: 1;">
-                    <ui:Instance template="PatternDisplay"/>
-                </ui:VisualElement>
+                <ui:Instance template="PatternDisplay"/>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
