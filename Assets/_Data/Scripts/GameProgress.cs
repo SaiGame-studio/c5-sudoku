@@ -9,13 +9,32 @@ using com.cyborgAssets.inspectorButtonPro;
 public class GameProgress : SaiSingleton<GameProgress>
 {
     private const string SAVE_KEY = "GameProgress_Save";
+    private const string AUTO_NOTE_UNLOCKED_KEY = "AutoNote_Unlocked";
+    private const string CLEAR_NOTES_UNLOCKED_KEY = "ClearNotes_Unlocked";
+    private const string HINT_PANEL_UNLOCKED_KEY = "HintPanel_Unlocked";
+    private const string PATTERN_DISPLAY_UNLOCKED_KEY = "PatternDisplay_Unlocked";
     
     // Stars earned for each difficulty level (0-8)
-    private static readonly int[] STARS_PER_DIFFICULTY = { 1, 2, 3, 4, 3, 3, 4, 8, 9 };
+    // Maps directly to star display: difficulty 0 = 1 star, difficulty 1 = 2 stars, etc.
+    private static readonly int[] STARS_PER_DIFFICULTY = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
     
     [Header("Progress Data")]
-    [SerializeField] private int totalStars = 0;
+    [SerializeField] private int totalStars = 0; // Cumulative stars earned (cap at 99)
     [SerializeField] private int completedLevelCount = 0;
+    
+    private const int MAX_STARS = 99; // Maximum total stars
+    
+    [Header("Unlock")]
+    [SerializeField] private bool clearNotesUnlocked = false;
+    [SerializeField] private int clearNotesUnlockCost = 2;
+    [SerializeField] private bool autoNoteUnlocked = false;
+    [SerializeField] private int autoNoteUnlockCost = 16;
+    [SerializeField] private int autoNoteUsageCost = 2;
+    [SerializeField] private bool hintPanelUnlocked = false;
+    [SerializeField] private int hintPanelUnlockCost = 50;
+    [SerializeField] private int hintUsageCost = 7;
+    [SerializeField] private bool patternDisplayUnlocked = false;
+    [SerializeField] private int patternDisplayUnlockCost = 50;
     
     [Header("Completed Levels")]
     [SerializeField] private List<LevelCompletionData> completedLevelsList = new List<LevelCompletionData>();
@@ -28,6 +47,10 @@ public class GameProgress : SaiSingleton<GameProgress>
         base.Awake();
         this.completedLevels = new Dictionary<string, int>();
         this.Load();
+        this.autoNoteUnlocked = this.IsAutoNoteUnlocked();
+        this.clearNotesUnlocked = this.IsClearNotesUnlocked();
+        this.hintPanelUnlocked = this.IsHintPanelUnlocked();
+        this.patternDisplayUnlocked = this.IsPatternDisplayUnlocked();
         Debug.Log("[GameProgress] Initialized and loaded progress from PlayerPrefs");
     }
     
@@ -70,7 +93,6 @@ public class GameProgress : SaiSingleton<GameProgress>
     private void UpdateInspectorData()
     {
         this.completedLevelsList.Clear();
-        this.totalStars = 0;
         
         foreach (var kvp in this.completedLevels)
         {
@@ -86,11 +108,14 @@ public class GameProgress : SaiSingleton<GameProgress>
                     stars = kvp.Value,
                     difficultyName = GameData.DIFFICULTY_NAMES[difficulty]
                 });
-                this.totalStars += kvp.Value;
             }
         }
         
         this.completedLevelCount = this.completedLevels.Count;
+        this.autoNoteUnlocked = this.IsAutoNoteUnlocked();
+        this.clearNotesUnlocked = this.IsClearNotesUnlocked();
+        this.hintPanelUnlocked = this.IsHintPanelUnlocked();
+        this.patternDisplayUnlocked = this.IsPatternDisplayUnlocked();
         
         // Sort by level number for better Inspector view
         this.completedLevelsList.Sort((a, b) => a.level.CompareTo(b.level));
@@ -110,9 +135,11 @@ public class GameProgress : SaiSingleton<GameProgress>
     
     /// <summary>
     /// Mark a level as completed and award stars
+    /// Stars are awarded EVERY time level is won, even if already completed
     /// </summary>
     /// <param name="levelNumber">Global level number (1-23)</param>
-    public void CompleteLevel(int levelNumber)
+    /// <param name="difficulty">Actual difficulty played (0-8)</param>
+    public void CompleteLevel(int levelNumber, int difficulty)
     {
         if (levelNumber < 1 || levelNumber > 23)
         {
@@ -120,31 +147,62 @@ public class GameProgress : SaiSingleton<GameProgress>
             return;
         }
         
+        if (difficulty < 0 || difficulty > 8)
+        {
+            Debug.LogError($"[GameProgress] Invalid difficulty: {difficulty}. Must be between 0 and 8.");
+            return;
+        }
+        
         string key = this.GetLevelKey(levelNumber);
-        int difficulty = this.GetDifficultyFromLevelNumber(levelNumber);
-        int stars = GetStarsForDifficulty(difficulty);
+        int starsToAward = GetStarsForDifficulty(difficulty);
         
         bool isNewCompletion = !this.completedLevels.ContainsKey(key);
         
-        // Store the stars earned for this level
+        // Mark level as completed (store stars for reference)
         if (isNewCompletion)
         {
-            this.completedLevels[key] = stars;
-            Debug.Log($"[GameProgress] Level {levelNumber} completed! Difficulty: {GameData.DIFFICULTY_NAMES[difficulty]}, Stars: {stars}");
+            this.completedLevels[key] = starsToAward;
         }
         else
         {
-            // Keep the existing stars (don't override)
+            // Keep the max stars for this specific level (for reference)
             int oldStars = this.completedLevels[key];
-            this.completedLevels[key] = Mathf.Max(oldStars, stars);
-            if (this.completedLevels[key] > oldStars)
-            {
-                Debug.Log($"[GameProgress] Level {levelNumber} improved! Stars: {oldStars} -> {this.completedLevels[key]}");
-            }
+            this.completedLevels[key] = Mathf.Max(oldStars, starsToAward);
         }
         
-        this.UpdateInspectorData();
-        this.Save();
+        // Calculate how many stars can be awarded (don't increment yet - let animation do it)
+        int previousTotal = this.totalStars;
+        int targetTotal = Mathf.Min(this.totalStars + starsToAward, MAX_STARS);
+        int actualStarsAwarded = targetTotal - previousTotal;
+        
+        if (actualStarsAwarded > 0)
+        {
+            Debug.Log($"[GameProgress] Level {levelNumber} won! Difficulty: {GameData.DIFFICULTY_NAMES[difficulty]}, Will award: +{actualStarsAwarded} stars (from {previousTotal} to {targetTotal}/{MAX_STARS})");
+            
+            // Trigger flying stars animation - it will increment stars as each one explodes
+            FlyingStarAnimation.PlayAnimation(actualStarsAwarded, previousTotal, targetTotal, MAX_STARS);
+        }
+        else
+        {
+            Debug.Log($"[GameProgress] Level {levelNumber} won! Max stars ({MAX_STARS}) already reached.");
+            this.UpdateInspectorData();
+            this.Save();
+        }
+    }
+    
+    /// <summary>
+    /// Increment total stars by specified amount (called by animation system)
+    /// </summary>
+    public void IncrementTotalStars(int amount)
+    {
+        int oldValue = this.totalStars;
+        this.totalStars = Mathf.Min(this.totalStars + amount, MAX_STARS);
+        
+        if (this.totalStars != oldValue)
+        {
+            this.UpdateInspectorData();
+            this.Save();
+        }
     }
     
     /// <summary>
@@ -172,16 +230,19 @@ public class GameProgress : SaiSingleton<GameProgress>
     }
     
     /// <summary>
-    /// Get total stars earned across all levels
+    /// Get total cumulative stars earned (capped at 99)
     /// </summary>
     public int GetTotalStars()
     {
-        int total = 0;
-        foreach (var stars in this.completedLevels.Values)
-        {
-            total += stars;
-        }
-        return total;
+        return this.totalStars;
+    }
+    
+    /// <summary>
+    /// Get maximum possible stars
+    /// </summary>
+    public int GetMaxStars()
+    {
+        return MAX_STARS;
     }
     
     /// <summary>
@@ -221,6 +282,7 @@ public class GameProgress : SaiSingleton<GameProgress>
         int previousStars = this.totalStars;
         
         this.completedLevels.Clear();
+        this.totalStars = 0;
         this.UpdateInspectorData();
         this.Save();
         
@@ -236,6 +298,7 @@ public class GameProgress : SaiSingleton<GameProgress>
         {
             SaveData saveData = new SaveData
             {
+                totalStars = this.totalStars,
                 completedLevels = new List<LevelData>()
             };
             
@@ -277,6 +340,9 @@ public class GameProgress : SaiSingleton<GameProgress>
                 string json = PlayerPrefs.GetString(SAVE_KEY);
                 SaveData saveData = JsonUtility.FromJson<SaveData>(json);
                 
+                // Load total stars (cumulative)
+                this.totalStars = saveData.totalStars;
+                
                 this.completedLevels.Clear();
                 foreach (var levelData in saveData.completedLevels)
                 {
@@ -315,6 +381,7 @@ public class GameProgress : SaiSingleton<GameProgress>
             }
             else
             {
+                this.totalStars = 0;
                 this.UpdateInspectorData();
                 Debug.Log("[GameProgress] No saved data found, starting fresh");
             }
@@ -323,6 +390,7 @@ public class GameProgress : SaiSingleton<GameProgress>
         {
             Debug.LogError($"[GameProgress] Failed to load game progress: {e.Message}");
             this.completedLevels.Clear();
+            this.totalStars = 0;
             this.UpdateInspectorData();
         }
     }
@@ -377,6 +445,263 @@ public class GameProgress : SaiSingleton<GameProgress>
         
         return 1; // Default to level 1
     }
+    
+    #region Auto Note Unlock
+    
+    /// <summary>
+    /// Check if AutoNote feature has been permanently unlocked
+    /// </summary>
+    public bool IsAutoNoteUnlocked()
+    {
+        return PlayerPrefs.GetInt(AUTO_NOTE_UNLOCKED_KEY, 0) == 1;
+    }
+    
+    /// <summary>
+    /// Get the star cost to unlock AutoNote
+    /// </summary>
+    public int GetAutoNoteUnlockCost()
+    {
+        return this.autoNoteUnlockCost;
+    }
+    
+    /// <summary>
+    /// Attempt to unlock AutoNote by spending stars. Returns true if successful.
+    /// </summary>
+    public bool TryUnlockAutoNote()
+    {
+        if (this.IsAutoNoteUnlocked()) return true;
+        
+        if (this.totalStars < this.autoNoteUnlockCost) return false;
+        
+        this.totalStars -= this.autoNoteUnlockCost;
+        PlayerPrefs.SetInt(AUTO_NOTE_UNLOCKED_KEY, 1);
+        this.autoNoteUnlocked = true;
+        
+        this.UpdateInspectorData();
+        this.Save();
+        
+        return true;
+    }
+    
+    /// <summary>
+    /// Check if player can afford to unlock AutoNote
+    /// </summary>
+    public bool CanAffordAutoNoteUnlock()
+    {
+        return this.totalStars >= this.autoNoteUnlockCost;
+    }
+    
+    /// <summary>
+    /// Get the star cost to use Auto Note feature (per use)
+    /// </summary>
+    public int GetAutoNoteUsageCost()
+    {
+        return this.autoNoteUsageCost;
+    }
+    
+    /// <summary>
+    /// Check if player can afford to use Auto Note
+    /// </summary>
+    public bool CanAffordAutoNoteUsage()
+    {
+        return this.totalStars >= this.autoNoteUsageCost;
+    }
+    
+    /// <summary>
+    /// Deduct stars for using Auto Note. Returns true if successful.
+    /// </summary>
+    public bool TryUseAutoNote()
+    {
+        if (this.totalStars < this.autoNoteUsageCost) return false;
+        
+        this.totalStars -= this.autoNoteUsageCost;
+        this.UpdateInspectorData();
+        this.Save();
+        StarCounter.RefreshAll();
+        
+        Debug.Log($"[GameProgress] Auto Note used. Cost: {this.autoNoteUsageCost} stars. Remaining: {this.totalStars}");
+        return true;
+    }
+    
+    #endregion
+    
+    #region Clear Notes Unlock
+    
+    /// <summary>
+    /// Check if Clear Notes feature has been permanently unlocked
+    /// </summary>
+    public bool IsClearNotesUnlocked()
+    {
+        return PlayerPrefs.GetInt(CLEAR_NOTES_UNLOCKED_KEY, 0) == 1;
+    }
+    
+    /// <summary>
+    /// Get the star cost to unlock Clear Notes
+    /// </summary>
+    public int GetClearNotesUnlockCost()
+    {
+        return this.clearNotesUnlockCost;
+    }
+    
+    /// <summary>
+    /// Attempt to unlock Clear Notes by spending stars. Returns true if successful.
+    /// </summary>
+    public bool TryUnlockClearNotes()
+    {
+        if (this.IsClearNotesUnlocked()) return true;
+        
+        if (this.totalStars < this.clearNotesUnlockCost) return false;
+        
+        this.totalStars -= this.clearNotesUnlockCost;
+        PlayerPrefs.SetInt(CLEAR_NOTES_UNLOCKED_KEY, 1);
+        this.clearNotesUnlocked = true;
+        
+        this.UpdateInspectorData();
+        this.Save();
+        
+        return true;
+    }
+    
+    /// <summary>
+    /// Check if player can afford to unlock Clear Notes
+    /// </summary>
+    public bool CanAffordClearNotesUnlock()
+    {
+        return this.totalStars >= this.clearNotesUnlockCost;
+    }
+    
+    #endregion
+    
+    #region Hint Panel Unlock
+    
+    /// <summary>
+    /// Check if Hint Panel feature has been permanently unlocked
+    /// </summary>
+    public bool IsHintPanelUnlocked()
+    {
+        return PlayerPrefs.GetInt(HINT_PANEL_UNLOCKED_KEY, 0) == 1;
+    }
+    
+    /// <summary>
+    /// Get the star cost to unlock Hint Panel
+    /// </summary>
+    public int GetHintPanelUnlockCost()
+    {
+        return this.hintPanelUnlockCost;
+    }
+    
+    /// <summary>
+    /// Attempt to unlock Hint Panel by spending stars. Returns true if successful.
+    /// </summary>
+    public bool TryUnlockHintPanel()
+    {
+        if (this.IsHintPanelUnlocked()) return true;
+        
+        if (this.totalStars < this.hintPanelUnlockCost) return false;
+        
+        this.totalStars -= this.hintPanelUnlockCost;
+        PlayerPrefs.SetInt(HINT_PANEL_UNLOCKED_KEY, 1);
+        this.hintPanelUnlocked = true;
+        
+        this.UpdateInspectorData();
+        this.Save();
+        
+        return true;
+    }
+    
+    /// <summary>
+    /// Check if player can afford to unlock Hint Panel
+    /// </summary>
+    public bool CanAffordHintPanelUnlock()
+    {
+        return this.totalStars >= this.hintPanelUnlockCost;
+    }
+    
+    /// <summary>
+    /// Get the star cost to use Hint feature (per use)
+    /// </summary>
+    public int GetHintUsageCost()
+    {
+        return this.hintUsageCost;
+    }
+    
+    /// <summary>
+    /// Check if player can afford to use Hint
+    /// </summary>
+    public bool CanAffordHintUsage()
+    {
+        return this.totalStars >= this.hintUsageCost;
+    }
+    
+    /// <summary>
+    /// Deduct stars for using Hint. Returns true if successful.
+    /// </summary>
+    public bool TryUseHint()
+    {
+        if (this.totalStars < this.hintUsageCost) return false;
+        
+        this.totalStars -= this.hintUsageCost;
+        this.UpdateInspectorData();
+        this.Save();
+        StarCounter.RefreshAll();
+        
+        Debug.Log($"[GameProgress] Hint used. Cost: {this.hintUsageCost} stars. Remaining: {this.totalStars}");
+        return true;
+    }
+    
+    #endregion
+    
+    #region Pattern Display Unlock
+    
+    /// <summary>
+    /// Check if Pattern Display feature has been permanently unlocked
+    /// </summary>
+    public bool IsPatternDisplayUnlocked()
+    {
+        return PlayerPrefs.GetInt(PATTERN_DISPLAY_UNLOCKED_KEY, 0) == 1;
+    }
+    
+    /// <summary>
+    /// Get the star cost to unlock Pattern Display
+    /// </summary>
+    public int GetPatternDisplayUnlockCost()
+    {
+        return this.patternDisplayUnlockCost;
+    }
+    
+    /// <summary>
+    /// Attempt to unlock Pattern Display by spending stars. Returns true if successful.
+    /// Requires Hint Panel to be unlocked first.
+    /// </summary>
+    public bool TryUnlockPatternDisplay()
+    {
+        if (this.IsPatternDisplayUnlocked()) return true;
+        
+        // Pattern Display requires Hint Panel to be unlocked first
+        if (!this.IsHintPanelUnlocked()) return false;
+        
+        if (this.totalStars < this.patternDisplayUnlockCost) return false;
+        
+        this.totalStars -= this.patternDisplayUnlockCost;
+        PlayerPrefs.SetInt(PATTERN_DISPLAY_UNLOCKED_KEY, 1);
+        this.patternDisplayUnlocked = true;
+        
+        this.UpdateInspectorData();
+        this.Save();
+        
+        return true;
+    }
+    
+    /// <summary>
+    /// Check if player can afford to unlock Pattern Display
+    /// Requires Hint Panel to be unlocked first.
+    /// </summary>
+    public bool CanAffordPatternDisplayUnlock()
+    {
+        return this.IsHintPanelUnlocked() && this.totalStars >= this.patternDisplayUnlockCost;
+    }
+    
+    #endregion
     
     #region Debug & Utility Methods
     /// <summary>
@@ -437,7 +762,13 @@ public class GameProgress : SaiSingleton<GameProgress>
     [ProButton]
     public void ForceSave()
     {
-        Debug.Log("[GameProgress] Force saving progress...");
+        // Sync unlock Inspector values back to PlayerPrefs
+        PlayerPrefs.SetInt(AUTO_NOTE_UNLOCKED_KEY, this.autoNoteUnlocked ? 1 : 0);
+        PlayerPrefs.SetInt(CLEAR_NOTES_UNLOCKED_KEY, this.clearNotesUnlocked ? 1 : 0);
+        PlayerPrefs.SetInt(HINT_PANEL_UNLOCKED_KEY, this.hintPanelUnlocked ? 1 : 0);
+        PlayerPrefs.SetInt(PATTERN_DISPLAY_UNLOCKED_KEY, this.patternDisplayUnlocked ? 1 : 0);
+        
+        Debug.Log($"[GameProgress] Force saving progress... AutoNote unlocked: {this.autoNoteUnlocked}, ClearNotes unlocked: {this.clearNotesUnlocked}, HintPanel unlocked: {this.hintPanelUnlocked}, PatternDisplay unlocked: {this.patternDisplayUnlocked}");
         this.Save();
     }
     #endregion
@@ -458,6 +789,7 @@ public class GameProgress : SaiSingleton<GameProgress>
     [Serializable]
     private class SaveData
     {
+        public int totalStars; // Cumulative stars earned
         public List<LevelData> completedLevels;
     }
     

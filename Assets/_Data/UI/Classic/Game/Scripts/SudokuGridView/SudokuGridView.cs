@@ -49,6 +49,20 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private Button autoPlayButton;
     [SerializeField] private Label patternNameLabel;
     [SerializeField] private Label patternNameLabel2;
+    [SerializeField] private VisualElement autoNoteLockOverlay;
+    [SerializeField] private VisualElement clearNoteLockOverlay;
+    [SerializeField] private VisualElement hintLockOverlay;
+    [SerializeField] private VisualElement patternDisplayLockOverlay;
+    [SerializeField] private VisualElement unlockConfirmOverlay;
+    [SerializeField] private VisualElement unlockConfirmDialog;
+    [SerializeField] private Button unlockConfirmBtn;
+    [SerializeField] private Button unlockCancelBtn;
+    [SerializeField] private Label unlockConfirmTitle;
+    [SerializeField] private Label unlockDialogStarCost;
+    
+    // Tracks which feature the confirm dialog is currently targeting
+    private enum UnlockTarget { None, AutoNote, ClearNotes, HintPanel, PatternDisplay }
+    private UnlockTarget activeUnlockTarget = UnlockTarget.None;
     [SerializeField] private SudokuCell[,] cells;
     [SerializeField] private SudokuCell selectedCell;
     [SerializeField] private int[,] cachedSolution;
@@ -116,6 +130,16 @@ public class SudokuGridView : SaiBehaviour
         this.hintButton = this.root.Q<Button>("hint-button");
         this.autoNotesButton = this.root.Q<Button>("auto-notes-button");
         this.clearNotesButton = this.root.Q<Button>("clear-notes-button");
+        this.autoNoteLockOverlay = this.root.Q<VisualElement>("auto-note-lock-overlay");
+        this.clearNoteLockOverlay = this.root.Q<VisualElement>("clear-note-lock-overlay");
+        this.hintLockOverlay = this.root.Q<VisualElement>("hint-lock-overlay");
+        this.patternDisplayLockOverlay = this.root.Q<VisualElement>("pattern-display-lock-overlay");
+        this.unlockConfirmOverlay = this.root.Q<VisualElement>("unlock-confirm-overlay");
+        this.unlockConfirmDialog = this.root.Q<VisualElement>("unlock-confirm-dialog");
+        this.unlockConfirmBtn = this.root.Q<Button>("unlock-confirm-btn");
+        this.unlockCancelBtn = this.root.Q<Button>("unlock-cancel-btn");
+        this.unlockConfirmTitle = this.root.Q<Label>("unlock-confirm-title");
+        this.unlockDialogStarCost = this.root.Q<Label>("dialog-star-cost");
         this.debugButtonsContainer = this.root.Q<VisualElement>("debug-buttons");
         this.autoPlayButton = this.root.Q<Button>("auto-play-button");
         this.patternNameLabel = this.root.Q<Label>("pattern-name-label");
@@ -258,6 +282,49 @@ public class SudokuGridView : SaiBehaviour
         if (this.autoNotesButton != null)
         {
             this.autoNotesButton.clicked += this.OnAutoNotesButtonClicked;
+        }
+
+        if (this.autoNoteLockOverlay != null)
+        {
+            this.autoNoteLockOverlay.RegisterCallback<ClickEvent>(this.OnAutoNoteLockClicked);
+            this.UpdateAutoNoteLockState();
+        }
+
+        if (this.clearNoteLockOverlay != null)
+        {
+            this.clearNoteLockOverlay.RegisterCallback<ClickEvent>(this.OnClearNoteLockClicked);
+            this.UpdateClearNoteLockState();
+        }
+
+        if (this.hintLockOverlay != null)
+        {
+            this.hintLockOverlay.RegisterCallback<ClickEvent>(this.OnHintLockClicked);
+            this.UpdateHintLockState();
+        }
+
+        if (this.patternDisplayLockOverlay != null)
+        {
+            this.patternDisplayLockOverlay.RegisterCallback<ClickEvent>(this.OnPatternDisplayLockClicked);
+            this.UpdatePatternDisplayLockState();
+        }
+
+        if (this.unlockConfirmBtn != null)
+        {
+            this.unlockConfirmBtn.clicked += this.OnUnlockConfirmClicked;
+        }
+
+        if (this.unlockCancelBtn != null)
+        {
+            this.unlockCancelBtn.clicked += this.OnUnlockCancelClicked;
+        }
+
+        if (this.unlockConfirmOverlay != null)
+        {
+            this.unlockConfirmOverlay.RegisterCallback<ClickEvent>(evt =>
+            {
+                if (evt.target == this.unlockConfirmOverlay)
+                    this.HideUnlockConfirmDialog();
+            });
         }
 
         if (this.clearNotesButton != null)
@@ -595,6 +662,9 @@ public class SudokuGridView : SaiBehaviour
             Label star = this.difficultyStarsContainer.Q<Label>("star-" + i);
             if (star == null) continue;
 
+            // Reset opacity to ensure stars are visible after flying animation
+            star.style.opacity = 1f;
+
             if (i <= activeCount)
                 star.AddToClassList("difficulty-star--active");
             else
@@ -826,6 +896,24 @@ public class SudokuGridView : SaiBehaviour
     /// </summary>
     private void OnHintButtonClicked()
     {
+        // Block if Hint Panel is still locked
+        if (GameProgress.Instance != null && !GameProgress.Instance.IsHintPanelUnlocked()) return;
+        
+        // Check and deduct stars for usage
+        if (GameProgress.Instance != null)
+        {
+            if (!GameProgress.Instance.CanAffordHintUsage())
+            {
+                StarCounter.PulseAllForInsufficientStars();
+                return;
+            }
+            
+            if (!GameProgress.Instance.TryUseHint())
+            {
+                return;
+            }
+        }
+        
         if (this.hintManager == null)
         {
             Debug.LogWarning("Hint Manager is not available");
@@ -846,13 +934,460 @@ public class SudokuGridView : SaiBehaviour
             return;
         }
 
+        // Block if locked
+        if (GameProgress.Instance != null && !GameProgress.Instance.IsAutoNoteUnlocked())
+        {
+            return;
+        }
+        
+        // Check and deduct stars for usage
+        if (GameProgress.Instance != null)
+        {
+            if (!GameProgress.Instance.CanAffordAutoNoteUsage())
+            {
+                StarCounter.PulseAllForInsufficientStars();
+                return;
+            }
+            
+            if (!GameProgress.Instance.TryUseAutoNote())
+            {
+                StarCounter.PulseAllForInsufficientStars();
+                return;
+            }
+        }
+
         this.ClearAllNotes();
         
         this.autoNotes.StartAutoNotes();
     }
 
+    /// <summary>
+    /// Handle click on the auto-note lock overlay - show confirm dialog
+    /// </summary>
+    private void OnAutoNoteLockClicked(ClickEvent evt)
+    {
+        evt.StopPropagation();
+        
+        if (GameProgress.Instance == null) return;
+        
+        if (GameProgress.Instance.IsAutoNoteUnlocked())
+        {
+            this.UpdateAutoNoteLockState();
+            return;
+        }
+        
+        if (!GameProgress.Instance.CanAffordAutoNoteUnlock())
+        {
+            StarCounter.PulseAllForInsufficientStars();
+            return;
+        }
+        
+        this.ShowUnlockConfirmDialog(UnlockTarget.AutoNote, "Unlock Auto Note?", GameProgress.Instance.GetAutoNoteUnlockCost());
+    }
+    
+    /// <summary>
+    /// Handle clear note lock overlay click
+    /// </summary>
+    private void OnClearNoteLockClicked(ClickEvent evt)
+    {
+        evt.StopPropagation();
+        
+        if (GameProgress.Instance == null) return;
+        
+        if (GameProgress.Instance.IsClearNotesUnlocked())
+        {
+            this.UpdateClearNoteLockState();
+            return;
+        }
+        
+        if (!GameProgress.Instance.CanAffordClearNotesUnlock())
+        {
+            StarCounter.PulseAllForInsufficientStars();
+            return;
+        }
+        
+        this.ShowUnlockConfirmDialog(UnlockTarget.ClearNotes, "Unlock Clear Notes?", GameProgress.Instance.GetClearNotesUnlockCost());
+    }
+    
+    /// <summary>
+    /// Handle hint lock overlay click
+    /// </summary>
+    private void OnHintLockClicked(ClickEvent evt)
+    {
+        evt.StopPropagation();
+        
+        if (GameProgress.Instance == null) return;
+        
+        if (GameProgress.Instance.IsHintPanelUnlocked())
+        {
+            this.UpdateHintLockState();
+            return;
+        }
+        
+        if (!GameProgress.Instance.CanAffordHintPanelUnlock())
+        {
+            StarCounter.PulseAllForInsufficientStars();
+            return;
+        }
+        
+        this.ShowUnlockConfirmDialog(UnlockTarget.HintPanel, "Unlock Hint?", GameProgress.Instance.GetHintPanelUnlockCost());
+    }
+    
+    private void OnPatternDisplayLockClicked(ClickEvent evt)
+    {
+        evt.StopPropagation();
+        
+        if (GameProgress.Instance == null) return;
+        
+        // Pattern Display requires Hint Panel to be unlocked first
+        if (!GameProgress.Instance.IsHintPanelUnlocked())
+        {
+            // Dependency issue: shake HintPanel lock to indicate it must be unlocked first
+            this.PlayLockShake(this.hintLockOverlay);
+            return;
+        }
+        
+        if (GameProgress.Instance.IsPatternDisplayUnlocked())
+        {
+            this.UpdatePatternDisplayLockState();
+            return;
+        }
+        
+        if (!GameProgress.Instance.CanAffordPatternDisplayUnlock())
+        {
+            StarCounter.PulseAllForInsufficientStars();
+            return;
+        }
+        
+        this.ShowUnlockConfirmDialog(UnlockTarget.PatternDisplay, "Unlock Pattern?", GameProgress.Instance.GetPatternDisplayUnlockCost());
+    }
+    
+    /// <summary>
+    /// Show the unlock confirmation dialog with pop-in animation
+    /// </summary>
+    private void ShowUnlockConfirmDialog(UnlockTarget target, string title, int cost)
+    {
+        if (this.unlockConfirmOverlay == null) return;
+        
+        this.activeUnlockTarget = target;
+        
+        // Update dialog content dynamically
+        if (this.unlockConfirmTitle != null) this.unlockConfirmTitle.text = title;
+        if (this.unlockDialogStarCost != null) this.unlockDialogStarCost.text = cost.ToString();
+        
+        // Reparent overlay to document root so it renders on top of everything
+        if (this.unlockConfirmOverlay.parent != this.root)
+        {
+            this.unlockConfirmOverlay.RemoveFromHierarchy();
+            this.root.Add(this.unlockConfirmOverlay);
+        }
+        
+        this.unlockConfirmOverlay.RemoveFromClassList("unlock-confirm-overlay--hidden");
+        
+        // Pop-in: start small, then scale to normal
+        if (this.unlockConfirmDialog != null)
+        {
+            this.unlockConfirmDialog.AddToClassList("unlock-confirm-dialog--pop-in");
+            this.unlockConfirmDialog.schedule.Execute(() =>
+            {
+                this.unlockConfirmDialog.RemoveFromClassList("unlock-confirm-dialog--pop-in");
+            }).StartingIn(30);
+        }
+    }
+    
+    /// <summary>
+    /// Hide the unlock confirmation dialog
+    /// </summary>
+    private void HideUnlockConfirmDialog()
+    {
+        if (this.unlockConfirmOverlay == null) return;
+        this.unlockConfirmOverlay.AddToClassList("unlock-confirm-overlay--hidden");
+    }
+    
+    /// <summary>
+    /// User confirmed unlock - spend stars and play break-apart animation
+    /// </summary>
+    private void OnUnlockConfirmClicked()
+    {
+        if (GameProgress.Instance == null) return;
+        
+        this.HideUnlockConfirmDialog();
+        
+        bool success = false;
+        VisualElement targetOverlay = null;
+        
+        if (this.activeUnlockTarget == UnlockTarget.AutoNote)
+        {
+            success = GameProgress.Instance.TryUnlockAutoNote();
+            targetOverlay = this.autoNoteLockOverlay;
+        }
+        else if (this.activeUnlockTarget == UnlockTarget.ClearNotes)
+        {
+            success = GameProgress.Instance.TryUnlockClearNotes();
+            targetOverlay = this.clearNoteLockOverlay;
+        }
+        else if (this.activeUnlockTarget == UnlockTarget.HintPanel)
+        {
+            success = GameProgress.Instance.TryUnlockHintPanel();
+            targetOverlay = this.hintLockOverlay;
+            
+            // When Hint Panel is unlocked, enable Pattern Display lock overlay
+            if (success)
+            {
+                this.UpdatePatternDisplayLockState();
+            }
+        }
+        else if (this.activeUnlockTarget == UnlockTarget.PatternDisplay)
+        {
+            success = GameProgress.Instance.TryUnlockPatternDisplay();
+            targetOverlay = this.patternDisplayLockOverlay;
+        }
+        
+        if (success)
+        {
+            StarCounter.RefreshAll();
+            this.PlayUnlockBreakAnimation(targetOverlay);
+        }
+        
+        this.activeUnlockTarget = UnlockTarget.None;
+    }
+    
+    /// <summary>
+    /// User cancelled unlock
+    /// </summary>
+    private void OnUnlockCancelClicked()
+    {
+        this.activeUnlockTarget = UnlockTarget.None;
+        this.HideUnlockConfirmDialog();
+    }
+    
+    /// <summary>
+    /// Update lock overlay visibility based on unlock state
+    /// </summary>
+    private void UpdateAutoNoteLockState()
+    {
+        if (this.autoNoteLockOverlay == null) return;
+        
+        bool isUnlocked = GameProgress.Instance != null && GameProgress.Instance.IsAutoNoteUnlocked();
+        
+        if (isUnlocked)
+        {
+            this.autoNoteLockOverlay.AddToClassList("auto-note-lock-overlay--hidden");
+        }
+        else
+        {
+            this.autoNoteLockOverlay.RemoveFromClassList("auto-note-lock-overlay--hidden");
+        }
+        
+        // Sync cost labels
+        if (GameProgress.Instance != null)
+        {
+            // Sync unlock cost on lock overlay
+            string unlockCostText = GameProgress.Instance.GetAutoNoteUnlockCost().ToString();
+            Label lockStarCost = this.root.Q<Label>("lock-star-cost");
+            if (lockStarCost != null) lockStarCost.text = unlockCostText;
+            
+            // Sync usage cost on button
+            string usageCostText = GameProgress.Instance.GetAutoNoteUsageCost().ToString();
+            Label notesStarCost = this.root.Q<Label>("notes-star-cost");
+            if (notesStarCost != null) notesStarCost.text = usageCostText;
+        }
+    }
+    
+    /// <summary>
+    /// Update clear notes lock overlay visibility based on unlock state
+    /// </summary>
+    private void UpdateClearNoteLockState()
+    {
+        if (this.clearNoteLockOverlay == null) return;
+        
+        bool isUnlocked = GameProgress.Instance != null && GameProgress.Instance.IsClearNotesUnlocked();
+        
+        if (isUnlocked)
+        {
+            this.clearNoteLockOverlay.AddToClassList("auto-note-lock-overlay--hidden");
+        }
+        else
+        {
+            this.clearNoteLockOverlay.RemoveFromClassList("auto-note-lock-overlay--hidden");
+        }
+        
+        // Sync cost label on the lock overlay
+        if (GameProgress.Instance != null)
+        {
+            string costText = GameProgress.Instance.GetClearNotesUnlockCost().ToString();
+            
+            Label clearLockStarCost = this.root.Q<Label>("clear-lock-star-cost");
+            if (clearLockStarCost != null) clearLockStarCost.text = costText;
+        }
+    }
+    
+    /// <summary>
+    /// Update hint panel lock overlay visibility based on unlock state
+    /// </summary>
+    private void UpdateHintLockState()
+    {
+        if (this.hintLockOverlay == null) return;
+        
+        bool isUnlocked = GameProgress.Instance != null && GameProgress.Instance.IsHintPanelUnlocked();
+        
+        if (isUnlocked)
+        {
+            this.hintLockOverlay.AddToClassList("hint-lock-overlay--hidden");
+        }
+        else
+        {
+            this.hintLockOverlay.RemoveFromClassList("hint-lock-overlay--hidden");
+        }
+        
+        // Sync cost labels
+        if (GameProgress.Instance != null)
+        {
+            // Sync unlock cost on lock overlay
+            string unlockCostText = GameProgress.Instance.GetHintPanelUnlockCost().ToString();
+            Label hintLockStarCost = this.root.Q<Label>("hint-lock-star-cost");
+            if (hintLockStarCost != null) hintLockStarCost.text = unlockCostText;
+            
+            // Sync usage cost on button
+            string usageCostText = GameProgress.Instance.GetHintUsageCost().ToString();
+            Label hintStarCost = this.root.Q<Label>("hint-star-cost");
+            if (hintStarCost != null) hintStarCost.text = usageCostText;
+        }
+    }
+    
+    private void UpdatePatternDisplayLockState()
+    {
+        if (this.patternDisplayLockOverlay == null) return;
+        
+        bool isUnlocked = GameProgress.Instance != null && GameProgress.Instance.IsPatternDisplayUnlocked();
+        
+        if (isUnlocked)
+        {
+            this.patternDisplayLockOverlay.AddToClassList("pattern-display-lock-overlay--hidden");
+        }
+        else
+        {
+            this.patternDisplayLockOverlay.RemoveFromClassList("pattern-display-lock-overlay--hidden");
+        }
+        
+        // Sync cost label on the lock overlay
+        if (GameProgress.Instance != null)
+        {
+            string costText = GameProgress.Instance.GetPatternDisplayUnlockCost().ToString();
+            
+            Label patternLockStarCost = this.root.Q<Label>("pattern-display-lock-star-cost");
+            if (patternLockStarCost != null) patternLockStarCost.text = costText;
+        }
+    }
+    
+    /// <summary>
+    /// Get the CSS class prefix for a given lock overlay element
+    /// </summary>
+    private string GetLockClassPrefix(VisualElement overlay)
+    {
+        if (overlay == this.hintLockOverlay) return "hint-lock-overlay";
+        if (overlay == this.patternDisplayLockOverlay) return "pattern-display-lock-overlay";
+        return "auto-note-lock-overlay";
+    }
+    
+    /// <summary>
+    /// Shake animation feedback when player cannot afford unlock
+    /// </summary>
+    private void PlayLockShake(VisualElement overlay)
+    {
+        if (overlay == null) return;
+        
+        string prefix = this.GetLockClassPrefix(overlay);
+        
+        overlay.AddToClassList($"{prefix}--shake");
+        overlay.schedule.Execute(() =>
+        {
+            overlay.style.translate = new Translate(-4f, 0);
+            overlay.schedule.Execute(() =>
+            {
+                overlay.style.translate = new Translate(3f, 0);
+                overlay.schedule.Execute(() =>
+                {
+                    overlay.style.translate = new Translate(-2f, 0);
+                    overlay.schedule.Execute(() =>
+                    {
+                        overlay.style.translate = new Translate(0, 0);
+                        overlay.RemoveFromClassList($"{prefix}--shake");
+                    }).StartingIn(50);
+                }).StartingIn(50);
+            }).StartingIn(50);
+        }).StartingIn(50);
+    }
+    
+    /// <summary>
+    /// Break-apart / shatter animation when unlock succeeds.
+    /// Sequence: intense shake -> crack glow -> explode outward -> hide
+    /// </summary>
+    private void PlayUnlockBreakAnimation(VisualElement overlay)
+    {
+        if (overlay == null)
+        {
+            this.UpdateAutoNoteLockState();
+            this.UpdateClearNoteLockState();
+            this.UpdateHintLockState();
+            this.UpdatePatternDisplayLockState();
+            return;
+        }
+        
+        string prefix = this.GetLockClassPrefix(overlay);
+        
+        overlay.AddToClassList($"{prefix}--unlocking");
+        
+        // Phase 1: Intense rapid shake (0-400ms)
+        int shakeCount = 0;
+        int totalShakes = 10;
+        float[] shakeOffsets = { 3f, -3f, 4f, -4f, 5f, -5f, 3f, -3f, 2f, -2f };
+        
+        IVisualElementScheduledItem shakeItem = null;
+        shakeItem = overlay.schedule.Execute(() =>
+        {
+            if (shakeCount < totalShakes)
+            {
+                float offset = shakeOffsets[shakeCount];
+                overlay.style.translate = new Translate(offset, shakeCount % 2 == 0 ? 1f : -1f);
+                shakeCount++;
+            }
+            else
+            {
+                shakeItem?.Pause();
+                overlay.style.translate = new Translate(0, 0);
+                
+                // Phase 2: Crack glow (400-600ms)
+                overlay.AddToClassList($"{prefix}--crack");
+                
+                overlay.schedule.Execute(() =>
+                {
+                    // Phase 3: Explode outward (600-1000ms)
+                    overlay.RemoveFromClassList($"{prefix}--crack");
+                    overlay.AddToClassList($"{prefix}--explode");
+                    
+                    overlay.schedule.Execute(() =>
+                    {
+                        // Cleanup: hide and reset all classes
+                        overlay.RemoveFromClassList($"{prefix}--unlocking");
+                        overlay.RemoveFromClassList($"{prefix}--explode");
+                        overlay.style.scale = new Scale(Vector2.one);
+                        overlay.style.opacity = 1f;
+                        this.UpdateAutoNoteLockState();
+                        this.UpdateClearNoteLockState();
+                        this.UpdateHintLockState();
+                        this.UpdatePatternDisplayLockState();
+                    }).StartingIn(400);
+                }).StartingIn(200);
+            }
+        }).Every(40);
+    }
+
     private void OnClearNotesButtonClicked()
     {
+        // Block if Clear Notes is still locked
+        if (GameProgress.Instance != null && !GameProgress.Instance.IsClearNotesUnlocked()) return;
+        
         this.ClearAllNotes();
     }
     

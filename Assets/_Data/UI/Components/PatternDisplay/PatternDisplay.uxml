@@ -1,6 +1,15 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/_Data/UI/Components/PatternDisplay/PatternDisplay.uss?fileID=7433441132597879392&amp;guid=be7722d076b24024b8cacd49583d26bb&amp;type=3#PatternDisplay"/>
-    <ui:VisualElement class="pattern-display" style="padding-top: 12px; padding-right: 18px; padding-bottom: 12px; padding-left: 18px; margin-top: 10px; margin-right: 4px; margin-bottom: 10px; margin-left: 4px; height: 60px;">
-        <ui:Label name="pattern-name-label-2" text="Pattern Detail" class="pattern-name-label"/>
+    <ui:VisualElement name="pattern-display-wrapper" class="pattern-display-wrapper">
+        <ui:VisualElement class="pattern-display" style="padding-top: 12px; padding-right: 18px; padding-bottom: 12px; padding-left: 18px; margin-top: 10px; margin-right: 4px; margin-bottom: 10px; margin-left: 4px; height: 60px;">
+            <ui:Label name="pattern-name-label-2" text="Pattern Detail" class="pattern-name-label"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="pattern-display-lock-overlay" class="pattern-display-lock-overlay" style="background-color: rgba(0, 0, 0, 0.96);">
+            <ui:VisualElement class="pattern-display-lock-cost" style="background-color: rgba(0, 0, 0, 0);">
+                <ui:Label text="" name="hint-lock-icon" class="hint-lock-icon"/>
+                <ui:Label text="" class="hint-lock-star-icon"/>
+                <ui:Label text="50" name="pattern-display-lock-star-cost" class="pattern-display-lock-star-text"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

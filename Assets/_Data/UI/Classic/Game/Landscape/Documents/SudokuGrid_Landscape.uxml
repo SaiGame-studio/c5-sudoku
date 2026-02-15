@@ -1,13 +1,14 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:Template name="AutoNote" src="project://database/Assets/_Data/UI/Components/AutoNote/AutoNote.uxml?fileID=9197481963319205126&amp;guid=5513c69c10b7777498c0bebd5e7d5643&amp;type=3#AutoNote"/>
+    <ui:Template name="DifficultyStars" src="project://database/Assets/_Data/UI/Components/DifficultyStars/DifficultyStars.uxml?fileID=9197481963319205126&amp;guid=6fcac682067845ca940822d9859d55f1&amp;type=3#DifficultyStars"/>
     <ui:Template name="HintPanel" src="project://database/Assets/_Data/UI/Components/HintPanel/HintPanel.uxml?fileID=9197481963319205126&amp;guid=42d6f3203b7bab24ea9e54279275d624&amp;type=3#HintPanel"/>
     <ui:Template name="PatternDisplay" src="project://database/Assets/_Data/UI/Components/PatternDisplay/PatternDisplay.uxml?fileID=9197481963319205126&amp;guid=56b57dd297071df4ea550a8cbed4c3cf&amp;type=3#PatternDisplay"/>
-    <ui:Template name="DifficultyStars" src="project://database/Assets/_Data/UI/Components/DifficultyStars/DifficultyStars.uxml?fileID=9197481963319205126&amp;guid=6fcac682067845ca940822d9859d55f1&amp;type=3#DifficultyStars"/>
     <Style src="project://database/Assets/_Data/UI/Classic/Game/Landscape/Styles/SudokuGrid_Landscape.uss?fileID=7433441132597879392&amp;guid=b2326dbb7b14a3b48abff5404a6d2524&amp;type=3#SudokuGrid_Landscape"/>
     <Style src="project://database/Assets/_Data/UI/Components/AutoNote/AutoNote.uss?fileID=7433441132597879392&amp;guid=0443a54366f343a4794753d18cafcdcb&amp;type=3#AutoNote"/>
     <Style src="project://database/Assets/_Data/UI/Components/HintPanel/HintPanel.uss?fileID=7433441132597879392&amp;guid=ce0757dbf941c784fbd2585367691dd3&amp;type=3#HintPanel"/>
     <Style src="project://database/Assets/_Data/UI/Components/PatternDisplay/PatternDisplay.uss?fileID=7433441132597879392&amp;guid=be7722d076b24024b8cacd49583d26bb&amp;type=3#PatternDisplay"/>
     <Style src="project://database/Assets/_Data/UI/Components/DifficultyStars/DifficultyStars.uss?fileID=7433441132597879392&amp;guid=cdf4efe3825141668758dec718b40e66&amp;type=3#DifficultyStars"/>
+    <Style src="project://database/Assets/_Data/UI/Components/StarCounter/StarCounter.uss?fileID=7433441132597879392&amp;guid=5e65c2e64b66c7e4eadee6b26d152823&amp;type=3#StarCounter"/>
     <Style src="project://database/Assets/_Data/UI/Styles/ThemeToggle.uss?fileID=7433441132597879392&amp;guid=bfa19512b5ae6d54bae198db679fb34b&amp;type=3#ThemeToggle"/>
     <Style src="project://database/Assets/_Data/UI/Styles/VersionLabel.uss?fileID=7433441132597879392&amp;guid=656b7a98457ea5045b9ce786d56712c5&amp;type=3#VersionLabel"/>
     <ui:VisualElement class="sudoku-grid-root">
@@ -342,6 +343,7 @@
                 </ui:VisualElement>
                 <ui:VisualElement name="grid-bottom-bar" class="grid-bottom-bar" style="height: 70px;">
                     <BackButton target="classic-home" style="left: 0; position: absolute;"/>
+                    <StarCounter style="margin-left: 15px; align-self: center; position: absolute; right: 0;"/>
                 </ui:VisualElement>
                 <ui:VisualElement name="debug-buttons" class="difficulty-top-row" style="margin-bottom: 15px; margin-top: 15px;">
                     <ui:VisualElement name="difficulty-dropdown" class="difficulty-dropdown-stars">
@@ -359,12 +361,10 @@
                     <ui:Button name="auto-play-button" text="A" class="auto-play-button" style="max-height: 50px;"/>
                 </ui:VisualElement>
             </ui:VisualElement>
-            <ui:VisualElement name="difficulty-control-panel" class="difficulty-control-panel" style="width: 500px; margin-top: 35px;">
+            <ui:VisualElement name="" class="difficulty-control-panel" style="width: 500px; margin-top: 50px; margin-left: 0;">
                 <ui:Instance template="AutoNote"/>
                 <ui:Instance template="HintPanel"/>
-                <ui:VisualElement style="flex-grow: 1;">
-                    <ui:Instance template="PatternDisplay"/>
-                </ui:VisualElement>
+                <ui:Instance template="PatternDisplay"/>
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
