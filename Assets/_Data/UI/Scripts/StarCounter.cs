@@ -295,4 +295,61 @@ public partial class StarCounter : VisualElement
             }
         }
     }
+    
+    /// <summary>
+    /// Pulse all star counters to indicate insufficient stars
+    /// </summary>
+    public static void PulseAllForInsufficientStars()
+    {
+        foreach (var instance in instances)
+        {
+            if (instance != null && instance.panel != null)
+            {
+                instance.PlayInsufficientStarsPulse();
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Play pulse animation to indicate player needs more stars
+    /// </summary>
+    private void PlayInsufficientStarsPulse()
+    {
+        // Add pulse and glow classes
+        this.AddToClassList("star-counter--pulse");
+        this.AddToClassList("star-counter--glow");
+        
+        // Shake animation similar to lock shake
+        float shakeProgress = 0f;
+        this.bounceSchedule?.Pause();
+        this.bounceSchedule = this.schedule.Execute(() =>
+        {
+            shakeProgress += 0.25f;
+            
+            if (shakeProgress <= 0.25f)
+            {
+                this.style.translate = new Translate(-4f, 0);
+            }
+            else if (shakeProgress <= 0.5f)
+            {
+                this.style.translate = new Translate(3f, 0);
+            }
+            else if (shakeProgress <= 0.75f)
+            {
+                this.style.translate = new Translate(-2f, 0);
+            }
+            else
+            {
+                this.style.translate = new Translate(0, 0);
+                this.bounceSchedule.Pause();
+            }
+        }).Every(50);
+        
+        // Remove effect classes
+        this.schedule.Execute(() =>
+        {
+            this.RemoveFromClassList("star-counter--pulse");
+            this.RemoveFromClassList("star-counter--glow");
+        }).StartingIn(300);
+    }
 }

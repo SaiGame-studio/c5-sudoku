@@ -947,7 +947,7 @@ public class SudokuGridView : SaiBehaviour
         
         if (!GameProgress.Instance.CanAffordAutoNoteUnlock())
         {
-            this.PlayLockShake(this.autoNoteLockOverlay);
+            StarCounter.PulseAllForInsufficientStars();
             return;
         }
         
@@ -971,7 +971,7 @@ public class SudokuGridView : SaiBehaviour
         
         if (!GameProgress.Instance.CanAffordClearNotesUnlock())
         {
-            this.PlayLockShake(this.clearNoteLockOverlay);
+            StarCounter.PulseAllForInsufficientStars();
             return;
         }
         
@@ -995,7 +995,7 @@ public class SudokuGridView : SaiBehaviour
         
         if (!GameProgress.Instance.CanAffordHintPanelUnlock())
         {
-            this.PlayLockShake(this.hintLockOverlay);
+            StarCounter.PulseAllForInsufficientStars();
             return;
         }
         
@@ -1008,6 +1008,14 @@ public class SudokuGridView : SaiBehaviour
         
         if (GameProgress.Instance == null) return;
         
+        // Pattern Display requires Hint Panel to be unlocked first
+        if (!GameProgress.Instance.IsHintPanelUnlocked())
+        {
+            // Dependency issue: shake HintPanel lock to indicate it must be unlocked first
+            this.PlayLockShake(this.hintLockOverlay);
+            return;
+        }
+        
         if (GameProgress.Instance.IsPatternDisplayUnlocked())
         {
             this.UpdatePatternDisplayLockState();
@@ -1016,7 +1024,7 @@ public class SudokuGridView : SaiBehaviour
         
         if (!GameProgress.Instance.CanAffordPatternDisplayUnlock())
         {
-            this.PlayLockShake(this.patternDisplayLockOverlay);
+            StarCounter.PulseAllForInsufficientStars();
             return;
         }
         
@@ -1091,6 +1099,12 @@ public class SudokuGridView : SaiBehaviour
         {
             success = GameProgress.Instance.TryUnlockHintPanel();
             targetOverlay = this.hintLockOverlay;
+            
+            // When Hint Panel is unlocked, enable Pattern Display lock overlay
+            if (success)
+            {
+                this.UpdatePatternDisplayLockState();
+            }
         }
         else if (this.activeUnlockTarget == UnlockTarget.PatternDisplay)
         {
@@ -1275,6 +1289,7 @@ public class SudokuGridView : SaiBehaviour
             this.UpdateAutoNoteLockState();
             this.UpdateClearNoteLockState();
             this.UpdateHintLockState();
+            this.UpdatePatternDisplayLockState();
             return;
         }
         
@@ -1320,6 +1335,7 @@ public class SudokuGridView : SaiBehaviour
                         this.UpdateAutoNoteLockState();
                         this.UpdateClearNoteLockState();
                         this.UpdateHintLockState();
+                        this.UpdatePatternDisplayLockState();
                     }).StartingIn(400);
                 }).StartingIn(200);
             }

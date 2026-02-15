@@ -605,10 +605,14 @@ public class GameProgress : SaiSingleton<GameProgress>
     
     /// <summary>
     /// Attempt to unlock Pattern Display by spending stars. Returns true if successful.
+    /// Requires Hint Panel to be unlocked first.
     /// </summary>
     public bool TryUnlockPatternDisplay()
     {
         if (this.IsPatternDisplayUnlocked()) return true;
+        
+        // Pattern Display requires Hint Panel to be unlocked first
+        if (!this.IsHintPanelUnlocked()) return false;
         
         if (this.totalStars < this.patternDisplayUnlockCost) return false;
         
@@ -624,10 +628,11 @@ public class GameProgress : SaiSingleton<GameProgress>
     
     /// <summary>
     /// Check if player can afford to unlock Pattern Display
+    /// Requires Hint Panel to be unlocked first.
     /// </summary>
     public bool CanAffordPatternDisplayUnlock()
     {
-        return this.totalStars >= this.patternDisplayUnlockCost;
+        return this.IsHintPanelUnlocked() && this.totalStars >= this.patternDisplayUnlockCost;
     }
     
     #endregion
