@@ -64,6 +64,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameProgress
   totalStars: 0
   completedLevelCount: 0
+  autoNoteUnlocked: 0
+  autoNoteUnlockCost: 16
+  clearNotesUnlocked: 0
+  clearNotesUnlockCost: 2
   completedLevelsList: []
 --- !u!114 &2906024432080822569
 MonoBehaviour:
