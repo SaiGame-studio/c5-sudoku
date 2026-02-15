@@ -924,6 +924,22 @@ public class SudokuGridView : SaiBehaviour
         {
             return;
         }
+        
+        // Check and deduct stars for usage
+        if (GameProgress.Instance != null)
+        {
+            if (!GameProgress.Instance.CanAffordAutoNoteUsage())
+            {
+                StarCounter.PulseAllForInsufficientStars();
+                return;
+            }
+            
+            if (!GameProgress.Instance.TryUseAutoNote())
+            {
+                StarCounter.PulseAllForInsufficientStars();
+                return;
+            }
+        }
 
         this.ClearAllNotes();
         
@@ -1148,13 +1164,18 @@ public class SudokuGridView : SaiBehaviour
             this.autoNoteLockOverlay.RemoveFromClassList("auto-note-lock-overlay--hidden");
         }
         
-        // Sync cost label on the lock overlay
+        // Sync cost labels
         if (GameProgress.Instance != null)
         {
-            string costText = GameProgress.Instance.GetAutoNoteUnlockCost().ToString();
-            
+            // Sync unlock cost on lock overlay
+            string unlockCostText = GameProgress.Instance.GetAutoNoteUnlockCost().ToString();
             Label lockStarCost = this.root.Q<Label>("lock-star-cost");
-            if (lockStarCost != null) lockStarCost.text = costText;
+            if (lockStarCost != null) lockStarCost.text = unlockCostText;
+            
+            // Sync usage cost on button
+            string usageCostText = GameProgress.Instance.GetAutoNoteUsageCost().ToString();
+            Label notesStarCost = this.root.Q<Label>("notes-star-cost");
+            if (notesStarCost != null) notesStarCost.text = usageCostText;
         }
     }
     

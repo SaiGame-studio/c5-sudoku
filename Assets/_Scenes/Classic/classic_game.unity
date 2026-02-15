@@ -803,6 +803,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4676443951157944214, guid: 0f578c7d5f473524791b58b16b8597bb, type: 3}
+      propertyPath: autoNoteUsageCost
+      value: 21
+      objectReference: {fileID: 0}
     - target: {fileID: 8292984400632937015, guid: 0f578c7d5f473524791b58b16b8597bb, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

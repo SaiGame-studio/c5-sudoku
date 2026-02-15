@@ -29,6 +29,7 @@ public class GameProgress : SaiSingleton<GameProgress>
     [SerializeField] private int clearNotesUnlockCost = 2;
     [SerializeField] private bool autoNoteUnlocked = false;
     [SerializeField] private int autoNoteUnlockCost = 16;
+    [SerializeField] private int autoNoteUsageCost = 2;
     [SerializeField] private bool hintPanelUnlocked = false;
     [SerializeField] private int hintPanelUnlockCost = 50;
     [SerializeField] private bool patternDisplayUnlocked = false;
@@ -487,6 +488,38 @@ public class GameProgress : SaiSingleton<GameProgress>
     public bool CanAffordAutoNoteUnlock()
     {
         return this.totalStars >= this.autoNoteUnlockCost;
+    }
+    
+    /// <summary>
+    /// Get the star cost to use Auto Note feature (per use)
+    /// </summary>
+    public int GetAutoNoteUsageCost()
+    {
+        return this.autoNoteUsageCost;
+    }
+    
+    /// <summary>
+    /// Check if player can afford to use Auto Note
+    /// </summary>
+    public bool CanAffordAutoNoteUsage()
+    {
+        return this.totalStars >= this.autoNoteUsageCost;
+    }
+    
+    /// <summary>
+    /// Deduct stars for using Auto Note. Returns true if successful.
+    /// </summary>
+    public bool TryUseAutoNote()
+    {
+        if (this.totalStars < this.autoNoteUsageCost) return false;
+        
+        this.totalStars -= this.autoNoteUsageCost;
+        this.UpdateInspectorData();
+        this.Save();
+        StarCounter.RefreshAll();
+        
+        Debug.Log($"[GameProgress] Auto Note used. Cost: {this.autoNoteUsageCost} stars. Remaining: {this.totalStars}");
+        return true;
     }
     
     #endregion

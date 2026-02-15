@@ -19,6 +19,8 @@
             <ui:Button name="auto-notes-button" class="auto-note-btn auto-note-btn--purple" style="margin-right: 2px; margin-top: 2px; margin-bottom: 2px; margin-left: 2px;">
                 <ui:Label text="" class="auto-note-btn-icon"/>
                 <ui:Label text="Auto Note" class="auto-note-btn-text"/>
+                <ui:Label text="" class="auto-note-lock-star-icon"/>
+                <ui:Label text="2" name="notes-star-cost" class="auto-note-lock-star-text"/>
             </ui:Button>
             <ui:VisualElement name="auto-note-lock-overlay" class="auto-note-lock-overlay" style="background-color: rgba(0, 0, 0, 0.97);">
                 <ui:Label text="" name="lock-icon" class="auto-note-lock-icon"/>
