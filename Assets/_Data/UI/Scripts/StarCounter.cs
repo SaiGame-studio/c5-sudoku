@@ -88,6 +88,17 @@ public partial class StarCounter : VisualElement
     }
     
     /// <summary>
+    /// Refresh all star counter instances to reflect current star total
+    /// </summary>
+    public static void RefreshAll()
+    {
+        foreach (StarCounter counter in instances)
+        {
+            counter.UpdateStarCount();
+        }
+    }
+    
+    /// <summary>
     /// Simple increment for flying star impact - just updates value with quick pulse
     /// </summary>
     public void IncrementWithPulse(int newValue, int maxStars)

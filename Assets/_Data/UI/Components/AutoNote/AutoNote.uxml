@@ -1,13 +1,43 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/_Data/UI/Components/AutoNote/AutoNote.uss?fileID=7433441132597879392&amp;guid=0443a54366f343a4794753d18cafcdcb&amp;type=3#AutoNote"/>
     <ui:VisualElement class="auto-note-container">
-        <ui:Button name="auto-notes-button" class="auto-note-btn auto-note-btn--purple" style="margin-right: 10px;">
-            <ui:Label text="" class="auto-note-btn-icon"/>
-            <ui:Label text="Auto Note" class="auto-note-btn-text"/>
-        </ui:Button>
+        <ui:VisualElement name="auto-note-wrapper" class="auto-note-wrapper">
+            <ui:Button name="auto-notes-button" class="auto-note-btn auto-note-btn--purple" style="margin-right: 0; margin-top: 0; margin-bottom: 2px;">
+                <ui:Label text="" class="auto-note-btn-icon"/>
+                <ui:Label text="Auto Note" class="auto-note-btn-text"/>
+            </ui:Button>
+            <ui:VisualElement name="auto-note-lock-overlay" class="auto-note-lock-overlay" style="background-color: rgba(0, 0, 0, 0.97);">
+                <ui:Label text="" name="lock-icon" class="auto-note-lock-icon"/>
+                <ui:VisualElement class="auto-note-lock-cost">
+                    <ui:Label text="" class="auto-note-lock-star-icon"/>
+                    <ui:Label text="7" class="auto-note-lock-star-text"/>
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
         <ui:Button name="clear-notes-button" class="auto-note-btn auto-note-btn--gray" style="margin-left: 10px;">
             <ui:Label text="" class="auto-note-btn-icon"/>
             <ui:Label text="Clear Notes" class="auto-note-btn-text"/>
         </ui:Button>
+    </ui:VisualElement>
+    <ui:VisualElement name="unlock-confirm-overlay" class="unlock-confirm-overlay unlock-confirm-overlay--hidden">
+        <ui:VisualElement name="unlock-confirm-dialog" class="unlock-confirm-dialog">
+            <ui:Label text="" class="unlock-confirm-icon"/>
+            <ui:Label text="Unlock Auto Note?" class="unlock-confirm-title"/>
+            <ui:VisualElement class="unlock-confirm-cost-row">
+                <ui:Label text="Cost:" class="unlock-confirm-cost-label"/>
+                <ui:Label text="" class="unlock-confirm-star-icon"/>
+                <ui:Label text="7" class="unlock-confirm-cost-value"/>
+            </ui:VisualElement>
+            <ui:Label text="This is a one-time purchase" class="unlock-confirm-desc"/>
+            <ui:VisualElement class="unlock-confirm-buttons">
+                <ui:Button name="unlock-confirm-btn" class="unlock-confirm-btn unlock-confirm-btn--yes">
+                    <ui:Label text="" class="unlock-confirm-btn-icon"/>
+                    <ui:Label text="Unlock" class="unlock-confirm-btn-text"/>
+                </ui:Button>
+                <ui:Button name="unlock-cancel-btn" class="unlock-confirm-btn unlock-confirm-btn--no">
+                    <ui:Label text="Cancel" class="unlock-confirm-btn-text"/>
+                </ui:Button>
+            </ui:VisualElement>
+        </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

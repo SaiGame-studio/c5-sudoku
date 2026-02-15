@@ -9,6 +9,7 @@ using com.cyborgAssets.inspectorButtonPro;
 public class GameProgress : SaiSingleton<GameProgress>
 {
     private const string SAVE_KEY = "GameProgress_Save";
+    private const string AUTO_NOTE_UNLOCKED_KEY = "AutoNote_Unlocked";
     
     // Stars earned for each difficulty level (0-8)
     // Maps directly to star display: difficulty 0 = 1 star, difficulty 1 = 2 stars, etc.
@@ -17,6 +18,7 @@ public class GameProgress : SaiSingleton<GameProgress>
     [Header("Progress Data")]
     [SerializeField] private int totalStars = 0; // Cumulative stars earned (cap at 99)
     [SerializeField] private int completedLevelCount = 0;
+    [SerializeField] private bool autoNoteUnlocked = false;
     
     private const int MAX_STARS = 99; // Maximum total stars
     
@@ -31,6 +33,7 @@ public class GameProgress : SaiSingleton<GameProgress>
         base.Awake();
         this.completedLevels = new Dictionary<string, int>();
         this.Load();
+        this.autoNoteUnlocked = this.IsAutoNoteUnlocked();
         Debug.Log("[GameProgress] Initialized and loaded progress from PlayerPrefs");
     }
     
@@ -92,6 +95,7 @@ public class GameProgress : SaiSingleton<GameProgress>
         }
         
         this.completedLevelCount = this.completedLevels.Count;
+        this.autoNoteUnlocked = this.IsAutoNoteUnlocked();
         
         // Sort by level number for better Inspector view
         this.completedLevelsList.Sort((a, b) => a.level.CompareTo(b.level));
@@ -422,6 +426,55 @@ public class GameProgress : SaiSingleton<GameProgress>
         return 1; // Default to level 1
     }
     
+    #region Auto Note Unlock
+    
+    private const int AUTO_NOTE_UNLOCK_COST = 7;
+    
+    /// <summary>
+    /// Check if AutoNote feature has been permanently unlocked
+    /// </summary>
+    public bool IsAutoNoteUnlocked()
+    {
+        return PlayerPrefs.GetInt(AUTO_NOTE_UNLOCKED_KEY, 0) == 1;
+    }
+    
+    /// <summary>
+    /// Get the star cost to unlock AutoNote
+    /// </summary>
+    public int GetAutoNoteUnlockCost()
+    {
+        return AUTO_NOTE_UNLOCK_COST;
+    }
+    
+    /// <summary>
+    /// Attempt to unlock AutoNote by spending stars. Returns true if successful.
+    /// </summary>
+    public bool TryUnlockAutoNote()
+    {
+        if (this.IsAutoNoteUnlocked()) return true;
+        
+        if (this.totalStars < AUTO_NOTE_UNLOCK_COST) return false;
+        
+        this.totalStars -= AUTO_NOTE_UNLOCK_COST;
+        PlayerPrefs.SetInt(AUTO_NOTE_UNLOCKED_KEY, 1);
+        this.autoNoteUnlocked = true;
+        
+        this.UpdateInspectorData();
+        this.Save();
+        
+        return true;
+    }
+    
+    /// <summary>
+    /// Check if player can afford to unlock AutoNote
+    /// </summary>
+    public bool CanAffordAutoNoteUnlock()
+    {
+        return this.totalStars >= AUTO_NOTE_UNLOCK_COST;
+    }
+    
+    #endregion
+    
     #region Debug & Utility Methods
     /// <summary>
     /// Delete all saved progress from PlayerPrefs (for debugging/testing)
@@ -481,7 +534,10 @@ public class GameProgress : SaiSingleton<GameProgress>
     [ProButton]
     public void ForceSave()
     {
-        Debug.Log("[GameProgress] Force saving progress...");
+        // Sync autoNoteUnlocked Inspector value back to PlayerPrefs
+        PlayerPrefs.SetInt(AUTO_NOTE_UNLOCKED_KEY, this.autoNoteUnlocked ? 1 : 0);
+        
+        Debug.Log($"[GameProgress] Force saving progress... AutoNote unlocked: {this.autoNoteUnlocked}");
         this.Save();
     }
     #endregion

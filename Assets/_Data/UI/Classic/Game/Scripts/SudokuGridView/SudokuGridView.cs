@@ -49,6 +49,11 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private Button autoPlayButton;
     [SerializeField] private Label patternNameLabel;
     [SerializeField] private Label patternNameLabel2;
+    [SerializeField] private VisualElement autoNoteLockOverlay;
+    [SerializeField] private VisualElement unlockConfirmOverlay;
+    [SerializeField] private VisualElement unlockConfirmDialog;
+    [SerializeField] private Button unlockConfirmBtn;
+    [SerializeField] private Button unlockCancelBtn;
     [SerializeField] private SudokuCell[,] cells;
     [SerializeField] private SudokuCell selectedCell;
     [SerializeField] private int[,] cachedSolution;
@@ -116,6 +121,11 @@ public class SudokuGridView : SaiBehaviour
         this.hintButton = this.root.Q<Button>("hint-button");
         this.autoNotesButton = this.root.Q<Button>("auto-notes-button");
         this.clearNotesButton = this.root.Q<Button>("clear-notes-button");
+        this.autoNoteLockOverlay = this.root.Q<VisualElement>("auto-note-lock-overlay");
+        this.unlockConfirmOverlay = this.root.Q<VisualElement>("unlock-confirm-overlay");
+        this.unlockConfirmDialog = this.root.Q<VisualElement>("unlock-confirm-dialog");
+        this.unlockConfirmBtn = this.root.Q<Button>("unlock-confirm-btn");
+        this.unlockCancelBtn = this.root.Q<Button>("unlock-cancel-btn");
         this.debugButtonsContainer = this.root.Q<VisualElement>("debug-buttons");
         this.autoPlayButton = this.root.Q<Button>("auto-play-button");
         this.patternNameLabel = this.root.Q<Label>("pattern-name-label");
@@ -258,6 +268,31 @@ public class SudokuGridView : SaiBehaviour
         if (this.autoNotesButton != null)
         {
             this.autoNotesButton.clicked += this.OnAutoNotesButtonClicked;
+        }
+
+        if (this.autoNoteLockOverlay != null)
+        {
+            this.autoNoteLockOverlay.RegisterCallback<ClickEvent>(this.OnAutoNoteLockClicked);
+            this.UpdateAutoNoteLockState();
+        }
+
+        if (this.unlockConfirmBtn != null)
+        {
+            this.unlockConfirmBtn.clicked += this.OnUnlockConfirmClicked;
+        }
+
+        if (this.unlockCancelBtn != null)
+        {
+            this.unlockCancelBtn.clicked += this.OnUnlockCancelClicked;
+        }
+
+        if (this.unlockConfirmOverlay != null)
+        {
+            this.unlockConfirmOverlay.RegisterCallback<ClickEvent>(evt =>
+            {
+                if (evt.target == this.unlockConfirmOverlay)
+                    this.HideUnlockConfirmDialog();
+            });
         }
 
         if (this.clearNotesButton != null)
@@ -849,9 +884,201 @@ public class SudokuGridView : SaiBehaviour
             return;
         }
 
+        // Block if locked
+        if (GameProgress.Instance != null && !GameProgress.Instance.IsAutoNoteUnlocked())
+        {
+            return;
+        }
+
         this.ClearAllNotes();
         
         this.autoNotes.StartAutoNotes();
+    }
+
+    /// <summary>
+    /// Handle click on the auto-note lock overlay - show confirm dialog
+    /// </summary>
+    private void OnAutoNoteLockClicked(ClickEvent evt)
+    {
+        evt.StopPropagation();
+        
+        if (GameProgress.Instance == null) return;
+        
+        if (GameProgress.Instance.IsAutoNoteUnlocked())
+        {
+            this.UpdateAutoNoteLockState();
+            return;
+        }
+        
+        if (!GameProgress.Instance.CanAffordAutoNoteUnlock())
+        {
+            this.PlayLockShake();
+            return;
+        }
+        
+        this.ShowUnlockConfirmDialog();
+    }
+    
+    /// <summary>
+    /// Show the unlock confirmation dialog with pop-in animation
+    /// </summary>
+    private void ShowUnlockConfirmDialog()
+    {
+        if (this.unlockConfirmOverlay == null) return;
+        
+        // Reparent overlay to document root so it renders on top of everything
+        if (this.unlockConfirmOverlay.parent != this.root)
+        {
+            this.unlockConfirmOverlay.RemoveFromHierarchy();
+            this.root.Add(this.unlockConfirmOverlay);
+        }
+        
+        this.unlockConfirmOverlay.RemoveFromClassList("unlock-confirm-overlay--hidden");
+        
+        // Pop-in: start small, then scale to normal
+        if (this.unlockConfirmDialog != null)
+        {
+            this.unlockConfirmDialog.AddToClassList("unlock-confirm-dialog--pop-in");
+            this.unlockConfirmDialog.schedule.Execute(() =>
+            {
+                this.unlockConfirmDialog.RemoveFromClassList("unlock-confirm-dialog--pop-in");
+            }).StartingIn(30);
+        }
+    }
+    
+    /// <summary>
+    /// Hide the unlock confirmation dialog
+    /// </summary>
+    private void HideUnlockConfirmDialog()
+    {
+        if (this.unlockConfirmOverlay == null) return;
+        this.unlockConfirmOverlay.AddToClassList("unlock-confirm-overlay--hidden");
+    }
+    
+    /// <summary>
+    /// User confirmed unlock - spend stars and play break-apart animation
+    /// </summary>
+    private void OnUnlockConfirmClicked()
+    {
+        if (GameProgress.Instance == null) return;
+        
+        this.HideUnlockConfirmDialog();
+        
+        if (GameProgress.Instance.TryUnlockAutoNote())
+        {
+            StarCounter.RefreshAll();
+            this.PlayUnlockBreakAnimation();
+        }
+    }
+    
+    /// <summary>
+    /// User cancelled unlock
+    /// </summary>
+    private void OnUnlockCancelClicked()
+    {
+        this.HideUnlockConfirmDialog();
+    }
+    
+    /// <summary>
+    /// Update lock overlay visibility based on unlock state
+    /// </summary>
+    private void UpdateAutoNoteLockState()
+    {
+        if (this.autoNoteLockOverlay == null) return;
+        
+        bool isUnlocked = GameProgress.Instance != null && GameProgress.Instance.IsAutoNoteUnlocked();
+        
+        if (isUnlocked)
+        {
+            this.autoNoteLockOverlay.AddToClassList("auto-note-lock-overlay--hidden");
+        }
+        else
+        {
+            this.autoNoteLockOverlay.RemoveFromClassList("auto-note-lock-overlay--hidden");
+        }
+    }
+    
+    /// <summary>
+    /// Shake animation feedback when player cannot afford unlock
+    /// </summary>
+    private void PlayLockShake()
+    {
+        if (this.autoNoteLockOverlay == null) return;
+        
+        this.autoNoteLockOverlay.AddToClassList("auto-note-lock-overlay--shake");
+        this.autoNoteLockOverlay.schedule.Execute(() =>
+        {
+            this.autoNoteLockOverlay.style.translate = new Translate(-4f, 0);
+            this.autoNoteLockOverlay.schedule.Execute(() =>
+            {
+                this.autoNoteLockOverlay.style.translate = new Translate(3f, 0);
+                this.autoNoteLockOverlay.schedule.Execute(() =>
+                {
+                    this.autoNoteLockOverlay.style.translate = new Translate(-2f, 0);
+                    this.autoNoteLockOverlay.schedule.Execute(() =>
+                    {
+                        this.autoNoteLockOverlay.style.translate = new Translate(0, 0);
+                        this.autoNoteLockOverlay.RemoveFromClassList("auto-note-lock-overlay--shake");
+                    }).StartingIn(50);
+                }).StartingIn(50);
+            }).StartingIn(50);
+        }).StartingIn(50);
+    }
+    
+    /// <summary>
+    /// Break-apart / shatter animation when unlock succeeds.
+    /// Sequence: intense shake -> crack glow -> explode outward -> hide
+    /// </summary>
+    private void PlayUnlockBreakAnimation()
+    {
+        if (this.autoNoteLockOverlay == null)
+        {
+            this.UpdateAutoNoteLockState();
+            return;
+        }
+        
+        this.autoNoteLockOverlay.AddToClassList("auto-note-lock-overlay--unlocking");
+        
+        // Phase 1: Intense rapid shake (0-400ms)
+        int shakeCount = 0;
+        int totalShakes = 10;
+        float[] shakeOffsets = { 3f, -3f, 4f, -4f, 5f, -5f, 3f, -3f, 2f, -2f };
+        
+        IVisualElementScheduledItem shakeItem = null;
+        shakeItem = this.autoNoteLockOverlay.schedule.Execute(() =>
+        {
+            if (shakeCount < totalShakes)
+            {
+                float offset = shakeOffsets[shakeCount];
+                this.autoNoteLockOverlay.style.translate = new Translate(offset, shakeCount % 2 == 0 ? 1f : -1f);
+                shakeCount++;
+            }
+            else
+            {
+                shakeItem?.Pause();
+                this.autoNoteLockOverlay.style.translate = new Translate(0, 0);
+                
+                // Phase 2: Crack glow (400-600ms)
+                this.autoNoteLockOverlay.AddToClassList("auto-note-lock-overlay--crack");
+                
+                this.autoNoteLockOverlay.schedule.Execute(() =>
+                {
+                    // Phase 3: Explode outward (600-1000ms)
+                    this.autoNoteLockOverlay.RemoveFromClassList("auto-note-lock-overlay--crack");
+                    this.autoNoteLockOverlay.AddToClassList("auto-note-lock-overlay--explode");
+                    
+                    this.autoNoteLockOverlay.schedule.Execute(() =>
+                    {
+                        // Cleanup: hide and reset all classes
+                        this.autoNoteLockOverlay.RemoveFromClassList("auto-note-lock-overlay--unlocking");
+                        this.autoNoteLockOverlay.RemoveFromClassList("auto-note-lock-overlay--explode");
+                        this.autoNoteLockOverlay.style.scale = new Scale(Vector2.one);
+                        this.autoNoteLockOverlay.style.opacity = 1f;
+                        this.UpdateAutoNoteLockState();
+                    }).StartingIn(400);
+                }).StartingIn(200);
+            }
+        }).Every(40);
     }
 
     private void OnClearNotesButtonClicked()
