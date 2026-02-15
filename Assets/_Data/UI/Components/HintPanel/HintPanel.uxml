@@ -10,7 +10,7 @@
                 <ui:Label text="Hint" class="hint-panel-btn-text"/>
             </ui:Button>
         </ui:VisualElement>
-        <ui:VisualElement name="hint-lock-overlay" class="hint-lock-overlay" style="background-color: rgba(0, 0, 0, 0.97);">
+        <ui:VisualElement name="hint-lock-overlay" class="hint-lock-overlay" style="background-color: rgba(0, 0, 0, 0.97); margin-top: 10px; height: 70px;">
             <ui:Label text="" name="hint-lock-icon" class="hint-lock-icon"/>
             <ui:VisualElement class="hint-lock-cost">
                 <ui:Label text="" class="hint-lock-star-icon"/>

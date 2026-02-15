@@ -2,11 +2,11 @@
     <Style src="project://database/Assets/_Data/UI/Components/AutoNote/AutoNote.uss?fileID=7433441132597879392&amp;guid=0443a54366f343a4794753d18cafcdcb&amp;type=3#AutoNote"/>
     <ui:VisualElement class="auto-note-container">
         <ui:VisualElement name="clear-note-wrapper" class="auto-note-wrapper">
-            <ui:Button name="clear-notes-button" class="auto-note-btn auto-note-btn--gray" style="margin-left: 0;">
+            <ui:Button name="clear-notes-button" class="auto-note-btn auto-note-btn--gray" style="margin-left: 2px; margin-top: 2px; margin-bottom: 2px; margin-right: 2px;">
                 <ui:Label text="" class="auto-note-btn-icon"/>
                 <ui:Label text="Clear Notes" class="auto-note-btn-text"/>
             </ui:Button>
-            <ui:VisualElement name="clear-note-lock-overlay" class="auto-note-lock-overlay" style="background-color: rgba(0, 0, 0, 0.97);">
+            <ui:VisualElement name="clear-note-lock-overlay" class="auto-note-lock-overlay" style="background-color: rgba(0, 0, 0, 0.97); height: 63px;">
                 <ui:Label text="" name="lock-icon" class="auto-note-lock-icon"/>
                 <ui:Label text="" class="auto-note-lock-star-icon"/>
                 <ui:VisualElement class="auto-note-lock-cost">
@@ -16,7 +16,7 @@
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="auto-note-wrapper" class="auto-note-wrapper">
-            <ui:Button name="auto-notes-button" class="auto-note-btn auto-note-btn--purple" style="margin-right: 0; margin-top: 0; margin-bottom: 2px;">
+            <ui:Button name="auto-notes-button" class="auto-note-btn auto-note-btn--purple" style="margin-right: 2px; margin-top: 2px; margin-bottom: 2px; margin-left: 2px;">
                 <ui:Label text="" class="auto-note-btn-icon"/>
                 <ui:Label text="Auto Note" class="auto-note-btn-text"/>
             </ui:Button>

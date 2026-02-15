@@ -361,7 +361,7 @@
                     <ui:Button name="auto-play-button" text="A" class="auto-play-button" style="max-height: 50px;"/>
                 </ui:VisualElement>
             </ui:VisualElement>
-            <ui:VisualElement name="difficulty-control-panel" class="difficulty-control-panel" style="width: 500px; margin-top: 50px; margin-left: 0;">
+            <ui:VisualElement name="" class="difficulty-control-panel" style="width: 500px; margin-top: 50px; margin-left: 0;">
                 <ui:Instance template="AutoNote"/>
                 <ui:Instance template="HintPanel"/>
                 <ui:VisualElement style="flex-grow: 1;">
