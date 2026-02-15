@@ -910,3 +910,8 @@
 .back-button:active {
     background-color: rgb(40, 45, 60);
 }
+
+/* Unlock dialog width for portrait mode */
+.unlock-confirm-overlay .unlock-confirm-dialog {
+    scale: 2 2;
+}
