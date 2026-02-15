@@ -32,6 +32,7 @@ public class GameProgress : SaiSingleton<GameProgress>
     [SerializeField] private int autoNoteUsageCost = 2;
     [SerializeField] private bool hintPanelUnlocked = false;
     [SerializeField] private int hintPanelUnlockCost = 50;
+    [SerializeField] private int hintUsageCost = 7;
     [SerializeField] private bool patternDisplayUnlocked = false;
     [SerializeField] private int patternDisplayUnlockCost = 50;
     
@@ -614,6 +615,38 @@ public class GameProgress : SaiSingleton<GameProgress>
     public bool CanAffordHintPanelUnlock()
     {
         return this.totalStars >= this.hintPanelUnlockCost;
+    }
+    
+    /// <summary>
+    /// Get the star cost to use Hint feature (per use)
+    /// </summary>
+    public int GetHintUsageCost()
+    {
+        return this.hintUsageCost;
+    }
+    
+    /// <summary>
+    /// Check if player can afford to use Hint
+    /// </summary>
+    public bool CanAffordHintUsage()
+    {
+        return this.totalStars >= this.hintUsageCost;
+    }
+    
+    /// <summary>
+    /// Deduct stars for using Hint. Returns true if successful.
+    /// </summary>
+    public bool TryUseHint()
+    {
+        if (this.totalStars < this.hintUsageCost) return false;
+        
+        this.totalStars -= this.hintUsageCost;
+        this.UpdateInspectorData();
+        this.Save();
+        StarCounter.RefreshAll();
+        
+        Debug.Log($"[GameProgress] Hint used. Cost: {this.hintUsageCost} stars. Remaining: {this.totalStars}");
+        return true;
     }
     
     #endregion

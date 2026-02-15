@@ -8,9 +8,11 @@
             <ui:Button name="hint-button" class="hint-panel-btn" style="margin-top: 5px;">
                 <ui:Label text="" class="hint-panel-btn-icon" style="height: 27px; margin-top: 0;"/>
                 <ui:Label text="Hint" class="hint-panel-btn-text"/>
+                <ui:Label text="" class="hint-lock-star-icon"/>
+                <ui:Label text="7" name="hint-star-cost" class="auto-note-lock-star-text"/>
             </ui:Button>
         </ui:VisualElement>
-        <ui:VisualElement name="hint-lock-overlay" class="hint-lock-overlay" style="background-color: rgba(0, 0, 0, 0.97); margin-top: 10px; height: 70px;">
+        <ui:VisualElement name="hint-lock-overlay" enabled="true" class="hint-lock-overlay" style="background-color: rgba(0, 0, 0, 0.97); margin-top: 10px; height: 70px;">
             <ui:Label text="" name="hint-lock-icon" class="hint-lock-icon"/>
             <ui:VisualElement class="hint-lock-cost">
                 <ui:Label text="" class="hint-lock-star-icon"/>

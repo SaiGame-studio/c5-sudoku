@@ -899,6 +899,21 @@ public class SudokuGridView : SaiBehaviour
         // Block if Hint Panel is still locked
         if (GameProgress.Instance != null && !GameProgress.Instance.IsHintPanelUnlocked()) return;
         
+        // Check and deduct stars for usage
+        if (GameProgress.Instance != null)
+        {
+            if (!GameProgress.Instance.CanAffordHintUsage())
+            {
+                StarCounter.PulseAllForInsufficientStars();
+                return;
+            }
+            
+            if (!GameProgress.Instance.TryUseHint())
+            {
+                return;
+            }
+        }
+        
         if (this.hintManager == null)
         {
             Debug.LogWarning("Hint Manager is not available");
@@ -1225,13 +1240,18 @@ public class SudokuGridView : SaiBehaviour
             this.hintLockOverlay.RemoveFromClassList("hint-lock-overlay--hidden");
         }
         
-        // Sync cost label on the lock overlay
+        // Sync cost labels
         if (GameProgress.Instance != null)
         {
-            string costText = GameProgress.Instance.GetHintPanelUnlockCost().ToString();
-            
+            // Sync unlock cost on lock overlay
+            string unlockCostText = GameProgress.Instance.GetHintPanelUnlockCost().ToString();
             Label hintLockStarCost = this.root.Q<Label>("hint-lock-star-cost");
-            if (hintLockStarCost != null) hintLockStarCost.text = costText;
+            if (hintLockStarCost != null) hintLockStarCost.text = unlockCostText;
+            
+            // Sync usage cost on button
+            string usageCostText = GameProgress.Instance.GetHintUsageCost().ToString();
+            Label hintStarCost = this.root.Q<Label>("hint-star-cost");
+            if (hintStarCost != null) hintStarCost.text = usageCostText;
         }
     }
     
