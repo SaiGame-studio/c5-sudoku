@@ -1,5 +1,10 @@
 /* Hint Panel Component */
 
+.hint-panel-wrapper {
+    position: relative;
+    flex-grow: 1;
+}
+
 .hint-panel {
     flex-direction: row;
     align-items: center;
@@ -94,4 +99,93 @@
 
 .light-mode .hint-panel-btn:active {
     background-color: rgb(40, 160, 90);
+}
+
+/* Lock Overlay - covers entire hint panel */
+.hint-lock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 9px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    cursor: link;
+    transition-duration: 0.2s;
+}
+
+.hint-lock-overlay:hover {
+    background-color: rgba(0, 0, 0, 0.55);
+}
+
+.hint-lock-overlay:active {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.hint-lock-icon {
+    -unity-font-definition: url("project://database/Assets/_Data/Fonts/fa-solid-900.ttf?fileID=12800000&guid=512de696859bfa941b17280a6ca5b068&type=3#fa-solid-900");
+    font-size: 22px;
+    color: rgb(255, 215, 0);
+    margin-right: 10px;
+}
+
+.hint-lock-cost {
+    flex-direction: row;
+    align-items: center;
+}
+
+.hint-lock-star-icon {
+    -unity-font-definition: url("project://database/Assets/_Data/Fonts/fa-solid-900.ttf?fileID=12800000&guid=512de696859bfa941b17280a6ca5b068&type=3#fa-solid-900");
+    font-size: 16px;
+    color: rgb(255, 215, 0);
+    margin-right: 4px;
+}
+
+.hint-lock-star-text {
+    font-size: 18px;
+    -unity-font-style: bold;
+    color: rgb(255, 215, 0);
+}
+
+/* Hidden state for lock overlay */
+.hint-lock-overlay--hidden {
+    display: none;
+}
+
+/* Shake animation when not enough stars */
+.hint-lock-overlay--shake {
+    translate: 4px 0;
+    transition-duration: 0.05s;
+}
+
+/* Break-apart animation classes */
+.hint-lock-overlay--unlocking {
+    transition-duration: 0s;
+}
+
+.hint-lock-overlay--crack {
+    background-color: rgba(255, 200, 50, 0.3);
+    transition-duration: 0.15s;
+}
+
+.hint-lock-overlay--explode {
+    scale: 1.5 1.5;
+    opacity: 0;
+    transition-duration: 0.4s;
+}
+
+/* Light Mode */
+.light-mode .hint-lock-overlay {
+    background-color: rgba(200, 210, 230, 0.92);
+}
+
+.light-mode .hint-lock-overlay:hover {
+    background-color: rgba(200, 210, 230, 0.8);
+}
+
+.light-mode .hint-lock-overlay:active {
+    background-color: rgba(200, 210, 230, 0.95);
 }

@@ -24,7 +24,7 @@
                 <ui:Label text="" name="lock-icon" class="auto-note-lock-icon"/>
                 <ui:VisualElement class="auto-note-lock-cost">
                     <ui:Label text="" class="auto-note-lock-star-icon"/>
-                    <ui:Label text="7" name="lock-star-cost" class="auto-note-lock-star-text"/>
+                    <ui:Label text="16" name="lock-star-cost" class="auto-note-lock-star-text"/>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>

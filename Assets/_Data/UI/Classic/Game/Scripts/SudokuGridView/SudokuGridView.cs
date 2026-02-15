@@ -51,6 +51,7 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private Label patternNameLabel2;
     [SerializeField] private VisualElement autoNoteLockOverlay;
     [SerializeField] private VisualElement clearNoteLockOverlay;
+    [SerializeField] private VisualElement hintLockOverlay;
     [SerializeField] private VisualElement unlockConfirmOverlay;
     [SerializeField] private VisualElement unlockConfirmDialog;
     [SerializeField] private Button unlockConfirmBtn;
@@ -59,7 +60,7 @@ public class SudokuGridView : SaiBehaviour
     [SerializeField] private Label unlockDialogStarCost;
     
     // Tracks which feature the confirm dialog is currently targeting
-    private enum UnlockTarget { None, AutoNote, ClearNotes }
+    private enum UnlockTarget { None, AutoNote, ClearNotes, HintPanel }
     private UnlockTarget activeUnlockTarget = UnlockTarget.None;
     [SerializeField] private SudokuCell[,] cells;
     [SerializeField] private SudokuCell selectedCell;
@@ -130,6 +131,7 @@ public class SudokuGridView : SaiBehaviour
         this.clearNotesButton = this.root.Q<Button>("clear-notes-button");
         this.autoNoteLockOverlay = this.root.Q<VisualElement>("auto-note-lock-overlay");
         this.clearNoteLockOverlay = this.root.Q<VisualElement>("clear-note-lock-overlay");
+        this.hintLockOverlay = this.root.Q<VisualElement>("hint-lock-overlay");
         this.unlockConfirmOverlay = this.root.Q<VisualElement>("unlock-confirm-overlay");
         this.unlockConfirmDialog = this.root.Q<VisualElement>("unlock-confirm-dialog");
         this.unlockConfirmBtn = this.root.Q<Button>("unlock-confirm-btn");
@@ -290,6 +292,12 @@ public class SudokuGridView : SaiBehaviour
         {
             this.clearNoteLockOverlay.RegisterCallback<ClickEvent>(this.OnClearNoteLockClicked);
             this.UpdateClearNoteLockState();
+        }
+
+        if (this.hintLockOverlay != null)
+        {
+            this.hintLockOverlay.RegisterCallback<ClickEvent>(this.OnHintLockClicked);
+            this.UpdateHintLockState();
         }
 
         if (this.unlockConfirmBtn != null)
@@ -880,6 +888,9 @@ public class SudokuGridView : SaiBehaviour
     /// </summary>
     private void OnHintButtonClicked()
     {
+        // Block if Hint Panel is still locked
+        if (GameProgress.Instance != null && !GameProgress.Instance.IsHintPanelUnlocked()) return;
+        
         if (this.hintManager == null)
         {
             Debug.LogWarning("Hint Manager is not available");
@@ -960,6 +971,30 @@ public class SudokuGridView : SaiBehaviour
     }
     
     /// <summary>
+    /// Handle hint lock overlay click
+    /// </summary>
+    private void OnHintLockClicked(ClickEvent evt)
+    {
+        evt.StopPropagation();
+        
+        if (GameProgress.Instance == null) return;
+        
+        if (GameProgress.Instance.IsHintPanelUnlocked())
+        {
+            this.UpdateHintLockState();
+            return;
+        }
+        
+        if (!GameProgress.Instance.CanAffordHintPanelUnlock())
+        {
+            this.PlayLockShake(this.hintLockOverlay);
+            return;
+        }
+        
+        this.ShowUnlockConfirmDialog(UnlockTarget.HintPanel, "Unlock Hint?", GameProgress.Instance.GetHintPanelUnlockCost());
+    }
+    
+    /// <summary>
     /// Show the unlock confirmation dialog with pop-in animation
     /// </summary>
     private void ShowUnlockConfirmDialog(UnlockTarget target, string title, int cost)
@@ -1022,6 +1057,11 @@ public class SudokuGridView : SaiBehaviour
         {
             success = GameProgress.Instance.TryUnlockClearNotes();
             targetOverlay = this.clearNoteLockOverlay;
+        }
+        else if (this.activeUnlockTarget == UnlockTarget.HintPanel)
+        {
+            success = GameProgress.Instance.TryUnlockHintPanel();
+            targetOverlay = this.hintLockOverlay;
         }
         
         if (success)
@@ -1099,13 +1139,52 @@ public class SudokuGridView : SaiBehaviour
     }
     
     /// <summary>
+    /// Update hint panel lock overlay visibility based on unlock state
+    /// </summary>
+    private void UpdateHintLockState()
+    {
+        if (this.hintLockOverlay == null) return;
+        
+        bool isUnlocked = GameProgress.Instance != null && GameProgress.Instance.IsHintPanelUnlocked();
+        
+        if (isUnlocked)
+        {
+            this.hintLockOverlay.AddToClassList("hint-lock-overlay--hidden");
+        }
+        else
+        {
+            this.hintLockOverlay.RemoveFromClassList("hint-lock-overlay--hidden");
+        }
+        
+        // Sync cost label on the lock overlay
+        if (GameProgress.Instance != null)
+        {
+            string costText = GameProgress.Instance.GetHintPanelUnlockCost().ToString();
+            
+            Label hintLockStarCost = this.root.Q<Label>("hint-lock-star-cost");
+            if (hintLockStarCost != null) hintLockStarCost.text = costText;
+        }
+    }
+    
+    /// <summary>
+    /// Get the CSS class prefix for a given lock overlay element
+    /// </summary>
+    private string GetLockClassPrefix(VisualElement overlay)
+    {
+        if (overlay == this.hintLockOverlay) return "hint-lock-overlay";
+        return "auto-note-lock-overlay";
+    }
+    
+    /// <summary>
     /// Shake animation feedback when player cannot afford unlock
     /// </summary>
     private void PlayLockShake(VisualElement overlay)
     {
         if (overlay == null) return;
         
-        overlay.AddToClassList("auto-note-lock-overlay--shake");
+        string prefix = this.GetLockClassPrefix(overlay);
+        
+        overlay.AddToClassList($"{prefix}--shake");
         overlay.schedule.Execute(() =>
         {
             overlay.style.translate = new Translate(-4f, 0);
@@ -1118,7 +1197,7 @@ public class SudokuGridView : SaiBehaviour
                     overlay.schedule.Execute(() =>
                     {
                         overlay.style.translate = new Translate(0, 0);
-                        overlay.RemoveFromClassList("auto-note-lock-overlay--shake");
+                        overlay.RemoveFromClassList($"{prefix}--shake");
                     }).StartingIn(50);
                 }).StartingIn(50);
             }).StartingIn(50);
@@ -1135,10 +1214,13 @@ public class SudokuGridView : SaiBehaviour
         {
             this.UpdateAutoNoteLockState();
             this.UpdateClearNoteLockState();
+            this.UpdateHintLockState();
             return;
         }
         
-        overlay.AddToClassList("auto-note-lock-overlay--unlocking");
+        string prefix = this.GetLockClassPrefix(overlay);
+        
+        overlay.AddToClassList($"{prefix}--unlocking");
         
         // Phase 1: Intense rapid shake (0-400ms)
         int shakeCount = 0;
@@ -1160,23 +1242,24 @@ public class SudokuGridView : SaiBehaviour
                 overlay.style.translate = new Translate(0, 0);
                 
                 // Phase 2: Crack glow (400-600ms)
-                overlay.AddToClassList("auto-note-lock-overlay--crack");
+                overlay.AddToClassList($"{prefix}--crack");
                 
                 overlay.schedule.Execute(() =>
                 {
                     // Phase 3: Explode outward (600-1000ms)
-                    overlay.RemoveFromClassList("auto-note-lock-overlay--crack");
-                    overlay.AddToClassList("auto-note-lock-overlay--explode");
+                    overlay.RemoveFromClassList($"{prefix}--crack");
+                    overlay.AddToClassList($"{prefix}--explode");
                     
                     overlay.schedule.Execute(() =>
                     {
                         // Cleanup: hide and reset all classes
-                        overlay.RemoveFromClassList("auto-note-lock-overlay--unlocking");
-                        overlay.RemoveFromClassList("auto-note-lock-overlay--explode");
+                        overlay.RemoveFromClassList($"{prefix}--unlocking");
+                        overlay.RemoveFromClassList($"{prefix}--explode");
                         overlay.style.scale = new Scale(Vector2.one);
                         overlay.style.opacity = 1f;
                         this.UpdateAutoNoteLockState();
                         this.UpdateClearNoteLockState();
+                        this.UpdateHintLockState();
                     }).StartingIn(400);
                 }).StartingIn(200);
             }

@@ -43,6 +43,7 @@ public class VictoryEffect
 
     private SudokuCell[,] cells;
     private VisualElement root;
+    private VisualElement blockingLayer;
     private VisualElement victoryOverlay;
     private VisualElement particleLayer;
     private List<VisualElement> activeParticles;
@@ -61,6 +62,12 @@ public class VictoryEffect
 
     private void BuildOverlay()
     {
+        // Transparent blocking layer - prevents all input behind Victory
+        this.blockingLayer = new VisualElement();
+        this.blockingLayer.AddToClassList("victory-blocking-layer");
+        this.blockingLayer.pickingMode = PickingMode.Ignore;
+        this.root.Add(this.blockingLayer);
+        
         // Victory overlay (full screen, initially hidden)
         this.victoryOverlay = new VisualElement();
         this.victoryOverlay.AddToClassList(CLASS_VICTORY_OVERLAY);
@@ -102,7 +109,14 @@ public class VictoryEffect
         if (this.isPlaying) yield break;
         this.isPlaying = true;
 
-        // Allow overlay to receive clicks for dismissal
+        // Reparent blocking layer + overlay to top of root so nothing renders above them
+        this.blockingLayer.RemoveFromHierarchy();
+        this.root.Add(this.blockingLayer);
+        this.victoryOverlay.RemoveFromHierarchy();
+        this.root.Add(this.victoryOverlay);
+        
+        // Enable both layers to block all input
+        this.blockingLayer.pickingMode = PickingMode.Position;
         this.victoryOverlay.pickingMode = PickingMode.Position;
 
         // Phase 1: Wave animation across cells (diagonal sweep)
@@ -464,6 +478,7 @@ public class VictoryEffect
         // Hide overlay
         this.victoryOverlay.RemoveFromClassList(CLASS_VICTORY_OVERLAY_VISIBLE);
         this.victoryOverlay.pickingMode = PickingMode.Ignore;
+        this.blockingLayer.pickingMode = PickingMode.Ignore;
 
         this.isPlaying = false;
     }
@@ -475,6 +490,11 @@ public class VictoryEffect
     {
         this.StopEffect();
 
+        if (this.blockingLayer != null && this.blockingLayer.parent != null)
+        {
+            this.blockingLayer.parent.Remove(this.blockingLayer);
+        }
+        
         if (this.victoryOverlay != null && this.victoryOverlay.parent != null)
         {
             this.victoryOverlay.parent.Remove(this.victoryOverlay);
