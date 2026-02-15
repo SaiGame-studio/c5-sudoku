@@ -10,7 +10,7 @@
                 <ui:Label text="" name="lock-icon" class="auto-note-lock-icon"/>
                 <ui:VisualElement class="auto-note-lock-cost">
                     <ui:Label text="" class="auto-note-lock-star-icon"/>
-                    <ui:Label text="7" class="auto-note-lock-star-text"/>
+                    <ui:Label text="7" name="lock-star-cost" class="auto-note-lock-star-text"/>
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
@@ -26,7 +26,7 @@
             <ui:VisualElement class="unlock-confirm-cost-row">
                 <ui:Label text="Cost:" class="unlock-confirm-cost-label"/>
                 <ui:Label text="" class="unlock-confirm-star-icon"/>
-                <ui:Label text="7" class="unlock-confirm-cost-value"/>
+                <ui:Label text="7" name="dialog-star-cost" class="unlock-confirm-cost-value"/>
             </ui:VisualElement>
             <ui:Label text="This is a one-time purchase" class="unlock-confirm-desc"/>
             <ui:VisualElement class="unlock-confirm-buttons">

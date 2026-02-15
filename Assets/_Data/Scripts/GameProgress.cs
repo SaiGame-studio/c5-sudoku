@@ -18,9 +18,12 @@ public class GameProgress : SaiSingleton<GameProgress>
     [Header("Progress Data")]
     [SerializeField] private int totalStars = 0; // Cumulative stars earned (cap at 99)
     [SerializeField] private int completedLevelCount = 0;
-    [SerializeField] private bool autoNoteUnlocked = false;
     
     private const int MAX_STARS = 99; // Maximum total stars
+    
+    [Header("Unlock")]
+    [SerializeField] private bool autoNoteUnlocked = false;
+    [SerializeField] private int autoNoteUnlockCost = 16;
     
     [Header("Completed Levels")]
     [SerializeField] private List<LevelCompletionData> completedLevelsList = new List<LevelCompletionData>();
@@ -428,8 +431,6 @@ public class GameProgress : SaiSingleton<GameProgress>
     
     #region Auto Note Unlock
     
-    private const int AUTO_NOTE_UNLOCK_COST = 7;
-    
     /// <summary>
     /// Check if AutoNote feature has been permanently unlocked
     /// </summary>
@@ -443,7 +444,7 @@ public class GameProgress : SaiSingleton<GameProgress>
     /// </summary>
     public int GetAutoNoteUnlockCost()
     {
-        return AUTO_NOTE_UNLOCK_COST;
+        return this.autoNoteUnlockCost;
     }
     
     /// <summary>
@@ -453,9 +454,9 @@ public class GameProgress : SaiSingleton<GameProgress>
     {
         if (this.IsAutoNoteUnlocked()) return true;
         
-        if (this.totalStars < AUTO_NOTE_UNLOCK_COST) return false;
+        if (this.totalStars < this.autoNoteUnlockCost) return false;
         
-        this.totalStars -= AUTO_NOTE_UNLOCK_COST;
+        this.totalStars -= this.autoNoteUnlockCost;
         PlayerPrefs.SetInt(AUTO_NOTE_UNLOCKED_KEY, 1);
         this.autoNoteUnlocked = true;
         
@@ -470,7 +471,7 @@ public class GameProgress : SaiSingleton<GameProgress>
     /// </summary>
     public bool CanAffordAutoNoteUnlock()
     {
-        return this.totalStars >= AUTO_NOTE_UNLOCK_COST;
+        return this.totalStars >= this.autoNoteUnlockCost;
     }
     
     #endregion

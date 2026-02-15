@@ -996,6 +996,18 @@ public class SudokuGridView : SaiBehaviour
         {
             this.autoNoteLockOverlay.RemoveFromClassList("auto-note-lock-overlay--hidden");
         }
+        
+        // Sync cost labels with GameProgress value
+        if (GameProgress.Instance != null)
+        {
+            string costText = GameProgress.Instance.GetAutoNoteUnlockCost().ToString();
+            
+            Label lockStarCost = this.root.Q<Label>("lock-star-cost");
+            if (lockStarCost != null) lockStarCost.text = costText;
+            
+            Label dialogStarCost = this.root.Q<Label>("dialog-star-cost");
+            if (dialogStarCost != null) dialogStarCost.text = costText;
+        }
     }
     
     /// <summary>
