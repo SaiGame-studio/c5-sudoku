@@ -23,6 +23,11 @@
                         <ui:TextField name="login-password" password="true" class="auth-input"/>
                     </ui:VisualElement>
 
+                    <ui:VisualElement class="input-group" style="flex-direction: row; justify-content: space-between; margin-top: 10px; margin-bottom: 10px;">
+                        <ui:Toggle name="remember-me-toggle" label="Remember Me" style="flex-grow: 1;"/>
+                        <ui:Toggle name="auto-login-toggle" label="Auto Login" style="flex-grow: 1; margin-left: 10px;"/>
+                    </ui:VisualElement>
+
                     <ui:Label name="login-error" class="error-label"/>
 
                     <ui:Button name="login-button" class="auth-button primary-button">

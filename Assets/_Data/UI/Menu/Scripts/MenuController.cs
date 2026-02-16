@@ -80,35 +80,28 @@ public class MenuController : SaiBehaviour
 
         float canvasWidth = 0f;
         float canvasHeight = 0f;
-        string resolutionSource = "Unknown";
 
         var panelSettings = this.uiDocument.panelSettings;
 
         if (panelSettings != null)
         {
-            // Always use Reference Resolution if it exists
             Vector2 refRes = panelSettings.referenceResolution;
             if (refRes.x > 0 && refRes.y > 0)
             {
                 canvasWidth = refRes.x;
                 canvasHeight = refRes.y;
-                resolutionSource = "Reference Resolution";
             }
-            // Fallback to RenderTexture
             else if (panelSettings.targetTexture != null)
             {
                 canvasWidth = panelSettings.targetTexture.width;
                 canvasHeight = panelSettings.targetTexture.height;
-                resolutionSource = "RenderTexture";
             }
         }
 
-        // Fallback: Use Screen size (unreliable in Edit Mode)
         if (canvasWidth <= 0 || float.IsNaN(canvasWidth))
         {
             canvasWidth = Screen.width;
             canvasHeight = Screen.height;
-            resolutionSource = "Screen Size (UNRELIABLE)";
         }
 
         bool isLandscape = canvasWidth > canvasHeight;

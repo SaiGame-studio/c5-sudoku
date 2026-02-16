@@ -66,7 +66,9 @@ public class GameManager : SaiSingleton<GameManager>
     /// </summary>
     public void LoadMainMenu()
     {
+        Debug.Log($"[GameManager] LoadMainMenu called - Loading scene: {this.mainMenuSceneName}");
         SceneManager.LoadScene(this.mainMenuSceneName);
+        Debug.Log("[GameManager] Scene load initiated successfully");
     }
     #endregion
 

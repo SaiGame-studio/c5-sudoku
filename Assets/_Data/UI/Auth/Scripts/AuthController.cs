@@ -23,6 +23,8 @@ public class AuthController : SaiBehaviour
     private VisualElement loginPage;
     private TextField loginUsernameField;
     private TextField loginPasswordField;
+    private Toggle rememberMeToggle;
+    private Toggle autoLoginToggle;
     private Label loginErrorLabel;
     private Button loginButton;
     private Button gotoRegisterButton;
@@ -74,6 +76,8 @@ public class AuthController : SaiBehaviour
         this.loginPage = this.root.Q<VisualElement>("login-page");
         this.loginUsernameField = this.root.Q<TextField>("login-username");
         this.loginPasswordField = this.root.Q<TextField>("login-password");
+        this.rememberMeToggle = this.root.Q<Toggle>("remember-me-toggle");
+        this.autoLoginToggle = this.root.Q<Toggle>("auto-login-toggle");
         this.loginErrorLabel = this.root.Q<Label>("login-error");
         this.loginButton = this.root.Q<Button>("login-button");
         this.gotoRegisterButton = this.root.Q<Button>("goto-register-button");
@@ -112,6 +116,7 @@ public class AuthController : SaiBehaviour
         });
 
         this.RegisterButtonCallbacks();
+        this.LoadSavedCredentials();
         this.ShowLoginPage();
     }
 
@@ -224,6 +229,33 @@ public class AuthController : SaiBehaviour
             this.backToMenuLogin.clicked += this.OnBackToMenuClicked;
         }
 
+        // Remember Me and Auto Login toggles
+        if (this.rememberMeToggle != null)
+        {
+            this.rememberMeToggle.RegisterValueChangedCallback(evt =>
+            {
+                if (this.saiAuth != null)
+                {
+                    this.saiAuth.SetSaveEmail(evt.newValue);
+                }
+            });
+        }
+
+        if (this.autoLoginToggle != null)
+        {
+            this.autoLoginToggle.RegisterValueChangedCallback(evt =>
+            {
+                if (this.saiAuth != null)
+                {
+                    this.saiAuth.SetSavePassword(evt.newValue);
+                    if (evt.newValue && this.rememberMeToggle != null && !this.rememberMeToggle.value)
+                    {
+                        this.rememberMeToggle.value = true;
+                    }
+                }
+            });
+        }
+
         // Register page buttons
         if (this.registerButton != null)
         {
@@ -239,6 +271,68 @@ public class AuthController : SaiBehaviour
         {
             this.backToMenuRegister.clicked += this.OnBackToMenuClicked;
         }
+    }
+
+    private void LoadSavedCredentials()
+    {
+        if (this.saiAuth == null) return;
+
+        if (this.rememberMeToggle != null)
+        {
+            this.rememberMeToggle.value = this.saiAuth.GetSaveEmail();
+        }
+
+        if (this.autoLoginToggle != null)
+        {
+            this.autoLoginToggle.value = this.saiAuth.GetSavePassword();
+        }
+
+        if (this.saiAuth.GetSaveEmail() && PlayerPrefs.HasKey("SaiGame_SavedEmail"))
+        {
+            string savedUsername = PlayerPrefs.GetString("SaiGame_SavedEmail");
+            if (this.loginUsernameField != null && !string.IsNullOrEmpty(savedUsername))
+            {
+                this.loginUsernameField.value = savedUsername;
+            }
+        }
+
+        if (this.saiAuth.GetSavePassword() && PlayerPrefs.HasKey("SaiGame_SavedPassword"))
+        {
+            if (!this.saiAuth.IsAuthenticated)
+            {
+                string savedUsername = PlayerPrefs.GetString("SaiGame_SavedEmail");
+                string encryptedPassword = PlayerPrefs.GetString("SaiGame_SavedPassword");
+                
+                if (!string.IsNullOrEmpty(savedUsername) && !string.IsNullOrEmpty(encryptedPassword))
+                {
+                    this.TryAutoLogin(savedUsername, encryptedPassword);
+                }
+            }
+        }
+    }
+
+    private void TryAutoLogin(string username, string encryptedPassword)
+    {
+        Debug.Log($"[AuthController] Attempting auto-login for user: {username}");
+        string password = SaiEncryption.Decrypt(encryptedPassword);
+
+        if (this.loginUsernameField != null)
+        {
+            this.loginUsernameField.value = username;
+        }
+
+        this.saiAuth.Login(username, password,
+            response =>
+            {
+                Debug.Log($"[AuthController] Auto-login successful for user: {username}");
+                this.OnLoginSuccess(response);
+            },
+            error =>
+            {
+                Debug.LogWarning($"[AuthController] Auto-login failed for user: {username}. Error: {error}");
+                this.ShowLoginError("Auto login failed. Please login manually.");
+            }
+        );
     }
 
     #region Page Navigation
@@ -292,17 +386,20 @@ public class AuthController : SaiBehaviour
             return;
         }
 
+        Debug.Log($"[AuthController] Starting login process for user: {username}");
         this.SetLoginProcessing(true);
         this.ShowLoginError("");
 
         this.saiAuth.Login(username, password,
             response =>
             {
+                Debug.Log($"[AuthController] Login successful for user: {username}");
                 this.SetLoginProcessing(false);
                 this.OnLoginSuccess(response);
             },
             error =>
             {
+                Debug.LogError($"[AuthController] Login failed for user: {username}. Error: {error}");
                 this.SetLoginProcessing(false);
                 this.ShowLoginError(error);
             }
@@ -311,8 +408,14 @@ public class AuthController : SaiBehaviour
 
     private void OnLoginSuccess(LoginResponse response)
     {
+        Debug.Log("[AuthController] OnLoginSuccess called - User authenticated successfully!");
+        Debug.Log($"[AuthController] User ID: {response?.user?.id}, Username: {response?.user?.username}");
+        Debug.Log("[AuthController] Transitioning to main menu scene...");
+        
         // Navigate to menu after successful login
         GameManager.Instance.LoadMainMenu();
+        
+        Debug.Log("[AuthController] Scene transition initiated.");
     }
 
     private void ShowLoginError(string message)
@@ -340,7 +443,10 @@ public class AuthController : SaiBehaviour
 
     private void ClearLoginForm()
     {
-        if (this.loginUsernameField != null) this.loginUsernameField.value = "";
+        if (!this.saiAuth.GetSaveEmail())
+        {
+            if (this.loginUsernameField != null) this.loginUsernameField.value = "";
+        }
         if (this.loginPasswordField != null) this.loginPasswordField.value = "";
         this.ShowLoginError("");
     }
