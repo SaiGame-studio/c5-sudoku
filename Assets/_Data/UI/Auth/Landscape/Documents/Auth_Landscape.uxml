@@ -1,0 +1,91 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/_Data/UI/Auth/Landscape/Styles/Auth_Landscape.uss?fileID=7433441132597879392&amp;guid=00000000000000000000000000000000&amp;type=3#Auth_Landscape"/>
+    <Style src="project://database/Assets/_Data/UI/Styles/ThemeToggle.uss?fileID=7433441132597879392&amp;guid=bfa19512b5ae6d54bae198db679fb34b&amp;type=3#ThemeToggle"/>
+    <Style src="project://database/Assets/_Data/UI/Styles/VersionLabel.uss"/>
+    <ui:VisualElement class="auth-root">
+        <ui:VisualElement class="auth-container">
+
+            <!-- Login Page -->
+            <ui:VisualElement name="login-page" class="auth-page">
+                <ui:VisualElement class="auth-header">
+                    <ui:Label text="SUDOKU" class="auth-title"/>
+                    <ui:Label text="Welcome Back" class="auth-subtitle"/>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="auth-form">
+                    <ui:VisualElement class="input-group">
+                        <ui:Label text="Username or Email" class="input-label"/>
+                        <ui:TextField name="login-username" class="auth-input"/>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="input-group">
+                        <ui:Label text="Password" class="input-label"/>
+                        <ui:TextField name="login-password" password="true" class="auth-input"/>
+                    </ui:VisualElement>
+
+                    <ui:Label name="login-error" class="error-label"/>
+
+                    <ui:Button name="login-button" class="auth-button primary-button">
+                        <ui:Label text="Login" class="auth-button-label"/>
+                    </ui:Button>
+
+                    <ui:VisualElement class="auth-switch">
+                        <ui:Label text="Don't have an account?" class="switch-text"/>
+                        <ui:Button name="goto-register-button" class="switch-button">
+                            <ui:Label text="Register" class="switch-button-label"/>
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <ui:Button name="back-to-menu-login" class="auth-button back-button">
+                        <ui:Label text="Back to Menu" class="auth-button-label"/>
+                    </ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+            <!-- Register Page -->
+            <ui:VisualElement name="register-page" class="auth-page" style="display: none;">
+                <ui:VisualElement class="auth-header">
+                    <ui:Label text="SUDOKU" class="auth-title"/>
+                    <ui:Label text="Create Account" class="auth-subtitle"/>
+                </ui:VisualElement>
+
+                <ui:VisualElement class="auth-form">
+                    <ui:VisualElement class="input-group">
+                        <ui:Label text="Email" class="input-label"/>
+                        <ui:TextField name="register-email" class="auth-input"/>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="input-group">
+                        <ui:Label text="Username" class="input-label"/>
+                        <ui:TextField name="register-username" class="auth-input"/>
+                    </ui:VisualElement>
+
+                    <ui:VisualElement class="input-group">
+                        <ui:Label text="Password" class="input-label"/>
+                        <ui:TextField name="register-password" password="true" class="auth-input"/>
+                    </ui:VisualElement>
+
+                    <ui:Label name="register-error" class="error-label"/>
+
+                    <ui:Button name="register-button" class="auth-button primary-button">
+                        <ui:Label text="Register" class="auth-button-label"/>
+                    </ui:Button>
+
+                    <ui:VisualElement class="auth-switch">
+                        <ui:Label text="Already have an account?" class="switch-text"/>
+                        <ui:Button name="goto-login-button" class="switch-button">
+                            <ui:Label text="Login" class="switch-button-label"/>
+                        </ui:Button>
+                    </ui:VisualElement>
+
+                    <ui:Button name="back-to-menu-register" class="auth-button back-button">
+                        <ui:Label text="Back to Menu" class="auth-button-label"/>
+                    </ui:Button>
+                </ui:VisualElement>
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+        <ThemeToggle style="position: absolute; top: 50px; right: 50px;"/>
+        <VersionLabel/>
+    </ui:VisualElement>
+</ui:UXML>

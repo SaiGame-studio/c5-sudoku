@@ -1,0 +1,295 @@
+/* ===== Auth - Landscape ===== */
+
+.auth-root {
+    flex-grow: 1;
+    align-items: center;
+    justify-content: flex-start;
+    background-color: rgb(22, 22, 30);
+    padding: 20px;
+}
+
+.auth-container {
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    max-width: 800px;
+    flex-grow: 1;
+}
+
+/* ===== Pages ===== */
+.auth-page {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+/* ===== Header ===== */
+.auth-header {
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.auth-title {
+    font-size: 64px;
+    color: rgb(255, 215, 0);
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    letter-spacing: 12px;
+    margin-bottom: 8px;
+}
+
+.auth-subtitle {
+    font-size: 22px;
+    color: rgb(160, 175, 210);
+    -unity-text-align: middle-center;
+    -unity-font-style: italic;
+}
+
+/* ===== Form ===== */
+.auth-form {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 420px;
+}
+
+.input-group {
+    width: 100%;
+    margin-bottom: 14px;
+}
+
+.input-label {
+    font-size: 15px;
+    color: rgb(160, 175, 210);
+    margin-bottom: 6px;
+    -unity-font-style: bold;
+}
+
+.auth-input {
+    width: 100%;
+    height: 44px;
+    font-size: 17px;
+    color: rgb(230, 235, 250);
+    background-color: rgb(38, 42, 56);
+    border-width: 2px;
+    border-color: rgb(70, 80, 110);
+    border-radius: 10px;
+    padding: 0 14px;
+}
+
+.auth-input .unity-text-field__input {
+    background-color: rgb(38, 42, 56);
+    color: rgb(230, 235, 250);
+    border-width: 0;
+    border-radius: 8px;
+    padding: 0 10px;
+    --unity-cursor-color: rgb(100, 180, 255);
+}
+
+.auth-input:focus {
+    border-color: rgb(100, 160, 240);
+    background-color: rgb(44, 48, 64);
+}
+
+.auth-input:focus .unity-text-field__input {
+    background-color: rgb(44, 48, 64);
+}
+
+.auth-input:hover {
+    border-color: rgb(90, 100, 140);
+}
+
+/* ===== Error Label ===== */
+.error-label {
+    font-size: 14px;
+    color: rgb(240, 100, 100);
+    -unity-text-align: middle-center;
+    margin-bottom: 8px;
+    min-height: 18px;
+    white-space: normal;
+    max-width: 420px;
+}
+
+/* ===== Buttons ===== */
+.auth-button {
+    width: 100%;
+    min-height: 50px;
+    margin: 8px 0;
+    padding: 12px 24px;
+    background-color: rgb(38, 42, 56);
+    border-width: 2px;
+    border-color: rgb(70, 80, 110);
+    border-radius: 14px;
+    align-items: center;
+    justify-content: center;
+    transition-duration: 0.15s;
+}
+
+.auth-button:hover {
+    background-color: rgb(50, 58, 80);
+    scale: 1.06;
+}
+
+.auth-button:active {
+    background-color: rgb(40, 50, 70);
+    scale: 0.96;
+}
+
+.auth-button-label {
+    font-size: 22px;
+    color: rgb(230, 235, 250);
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}
+
+/* ===== Button Variants ===== */
+.primary-button {
+    border-color: rgb(80, 160, 240);
+    background-color: rgba(60, 120, 220, 0.15);
+}
+
+.primary-button:hover {
+    border-color: rgb(100, 180, 255);
+    background-color: rgba(60, 120, 220, 0.25);
+}
+
+.primary-button .auth-button-label {
+    color: rgb(130, 200, 255);
+}
+
+.back-button {
+    width: 200px;
+    min-height: 42px;
+    margin-top: 16px;
+    border-color: rgb(120, 120, 140);
+    background-color: rgba(100, 100, 120, 0.1);
+}
+
+.back-button:hover {
+    border-color: rgb(160, 160, 180);
+    background-color: rgba(100, 100, 120, 0.2);
+}
+
+.back-button .auth-button-label {
+    color: rgb(180, 180, 200);
+    font-size: 18px;
+}
+
+/* ===== Switch Link ===== */
+.auth-switch {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 14px;
+    margin-bottom: 4px;
+}
+
+.switch-text {
+    font-size: 15px;
+    color: rgb(140, 155, 190);
+    margin-right: 6px;
+}
+
+.switch-button {
+    background-color: rgba(0, 0, 0, 0);
+    border-width: 0;
+    padding: 4px 8px;
+}
+
+.switch-button:hover {
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.switch-button-label {
+    font-size: 16px;
+    color: rgb(100, 180, 255);
+    -unity-font-style: bold;
+}
+
+.switch-button-label:hover {
+    color: rgb(140, 200, 255);
+}
+
+/* ===== Disabled State ===== */
+.auth-button:disabled {
+    opacity: 0.4;
+    background-color: rgb(30, 32, 42);
+    border-color: rgb(55, 60, 75);
+}
+
+/* ===== Light Mode ===== */
+.light-mode .auth-root {
+    background-color: rgb(240, 242, 248);
+}
+
+.light-mode .auth-title {
+    color: rgb(50, 60, 100);
+}
+
+.light-mode .auth-subtitle {
+    color: rgb(100, 110, 140);
+}
+
+.light-mode .input-label {
+    color: rgb(80, 90, 120);
+}
+
+.light-mode .auth-input {
+    background-color: rgb(255, 255, 255);
+    border-color: rgb(190, 200, 220);
+    color: rgb(40, 45, 60);
+}
+
+.light-mode .auth-input .unity-text-field__input {
+    background-color: rgb(255, 255, 255);
+    color: rgb(40, 45, 60);
+    --unity-cursor-color: rgb(40, 100, 200);
+}
+
+.light-mode .auth-input:focus {
+    border-color: rgb(80, 140, 220);
+    background-color: rgb(248, 250, 255);
+}
+
+.light-mode .auth-button {
+    background-color: rgb(255, 255, 255);
+    border-color: rgb(190, 200, 220);
+}
+
+.light-mode .auth-button:hover {
+    background-color: rgb(240, 245, 255);
+}
+
+.light-mode .auth-button-label {
+    color: rgb(50, 60, 80);
+}
+
+.light-mode .primary-button {
+    background-color: rgba(60, 120, 220, 0.08);
+    border-color: rgb(80, 140, 220);
+}
+
+.light-mode .primary-button .auth-button-label {
+    color: rgb(40, 100, 200);
+}
+
+.light-mode .back-button {
+    background-color: rgba(0, 0, 0, 0.03);
+    border-color: rgb(180, 185, 200);
+}
+
+.light-mode .back-button .auth-button-label {
+    color: rgb(100, 105, 120);
+}
+
+.light-mode .switch-text {
+    color: rgb(100, 110, 140);
+}
+
+.light-mode .switch-button-label {
+    color: rgb(40, 100, 200);
+}
+
+.light-mode .error-label {
+    color: rgb(200, 50, 50);
+}
