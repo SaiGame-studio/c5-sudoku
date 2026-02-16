@@ -73,6 +73,18 @@ namespace SaiGame.Services
 
         protected virtual void LoadCredentialsFromPlayerPrefs()
         {
+            // If there's already a SaiService singleton instance with authenticated SaiAuth, skip loading
+            if (SaiService.Instance != null && SaiService.Instance != this.saiService)
+            {
+                SaiAuth existingAuth = SaiService.Instance.GetComponent<SaiAuth>();
+                if (existingAuth != null && existingAuth.IsAuthenticated)
+                {
+                    if (this.saiService != null && this.saiService.ShowDebug)
+                        Debug.Log("[SaiAuth] Singleton instance already authenticated, skipping credential load");
+                    return;
+                }
+            }
+
             this.saveEmail = PlayerPrefs.GetInt(PREF_SAVE_EMAIL_FLAG, 0) == 1;
             this.savePassword = PlayerPrefs.GetInt(PREF_SAVE_PASSWORD_FLAG, 0) == 1;
 
@@ -80,7 +92,7 @@ namespace SaiGame.Services
             {
                 this.username = PlayerPrefs.GetString(PREF_EMAIL);
                 if (this.saiService != null && this.saiService.ShowDebug)
-                    Debug.Log($"Loaded email from PlayerPrefs: {this.username}");
+                    Debug.Log($"[SaiAuth] Loaded email from PlayerPrefs: {this.username}");
             }
 
             if (this.savePassword && PlayerPrefs.HasKey(PREF_PASSWORD))
@@ -88,7 +100,7 @@ namespace SaiGame.Services
                 string encryptedPassword = PlayerPrefs.GetString(PREF_PASSWORD);
                 this.password = SaiEncryption.Decrypt(encryptedPassword);
                 if (this.saiService != null && this.saiService.ShowDebug)
-                    Debug.Log("Loaded password from PlayerPrefs");
+                    Debug.Log("[SaiAuth] Loaded password from PlayerPrefs");
             }
         }
 
@@ -159,12 +171,12 @@ namespace SaiGame.Services
                         Debug.Log($"Auto-refreshing token... (expires in {timeUntilExpire:F1}s)");
 
                     RefreshAuthToken(
-                        response => 
+                        response =>
                         {
                             if (saiService != null && saiService.ShowDebug)
                                 Debug.Log("Token auto-refreshed successfully!");
                         },
-                        error => 
+                        error =>
                         {
                             if (saiService != null && saiService.ShowDebug)
                                 Debug.LogError($"Auto-refresh failed: {error}");
@@ -266,7 +278,7 @@ namespace SaiGame.Services
                         this.expiresIn = loginResponse.expires_in;
                         this.userData = loginResponse.user;
                         this.loginTime = Time.time;
-                        
+
                         this.username = username;
                         this.password = password;
                         this.SaveCredentialsToPlayerPrefs();
@@ -283,7 +295,7 @@ namespace SaiGame.Services
                         onError?.Invoke(errorMsg);
                     }
                 },
-                error => 
+                error =>
                 {
                     OnLoginFailure?.Invoke(error);
                     onError?.Invoke(error);
@@ -336,12 +348,12 @@ namespace SaiGame.Services
                         StartTokenExpirationCheck();
 
                         GetMyProfile(
-                            userData => 
+                            userData =>
                             {
                                 if (saiService != null && saiService.ShowDebug)
                                     Debug.Log($"User data refreshed after token refresh: {userData.username}");
                             },
-                            error => 
+                            error =>
                             {
                                 if (saiService != null && saiService.ShowDebug)
                                     Debug.LogWarning($"Failed to refresh user data after token refresh: {error}");
@@ -375,14 +387,14 @@ namespace SaiGame.Services
         {
             if (saiService != null && saiService.IsAuthenticated)
             {
-                yield return StartCoroutine(saiService.PostRequest("/api/v1/auth/logout", "{}", 
-                    response => 
+                yield return StartCoroutine(saiService.PostRequest("/api/v1/auth/logout", "{}",
+                    response =>
                     {
                         // Logout successful from server
                         ClearAuthData();
                         OnLogoutSuccess?.Invoke();
                     },
-                    error => 
+                    error =>
                     {
                         // Even if server logout fails, clear local data
                         ClearAuthData();
@@ -412,12 +424,12 @@ namespace SaiGame.Services
             this.expiresIn = 0;
             this.userData = null;
             this.loginTime = 0;
-            
+
             if (!this.saveEmail)
             {
                 this.username = "";
             }
-            
+
             if (!this.savePassword)
             {
                 this.password = "";
@@ -515,12 +527,12 @@ namespace SaiGame.Services
             PlayerPrefs.DeleteKey(PREF_SAVE_EMAIL_FLAG);
             PlayerPrefs.DeleteKey(PREF_SAVE_PASSWORD_FLAG);
             PlayerPrefs.Save();
-            
+
             this.username = string.Empty;
             this.password = string.Empty;
             this.saveEmail = false;
             this.savePassword = false;
-            
+
             if (this.saiService != null && this.saiService.ShowDebug)
                 Debug.Log("Cleared all credentials from PlayerPrefs");
         }

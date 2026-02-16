@@ -13,6 +13,14 @@ public class ThemeManager : SaiSingleton<ThemeManager>
     protected override void Awake()
     {
         base.Awake();
+        
+        // If this is not the singleton instance (will be destroyed), skip initialization
+        if (Instance != this)
+        {
+            Debug.Log("[ThemeManager] Duplicate instance detected, skipping initialization");
+            return;
+        }
+        
         this.Load();
     }
 

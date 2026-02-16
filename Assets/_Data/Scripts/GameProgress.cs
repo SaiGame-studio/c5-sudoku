@@ -45,6 +45,14 @@ public class GameProgress : SaiSingleton<GameProgress>
     protected override void Awake()
     {
         base.Awake();
+        
+        // If this is not the singleton instance (will be destroyed), skip initialization
+        if (Instance != this)
+        {
+            Debug.Log("[GameProgress] Duplicate instance detected, skipping initialization");
+            return;
+        }
+        
         this.completedLevels = new Dictionary<string, int>();
         this.Load();
         this.autoNoteUnlocked = this.IsAutoNoteUnlocked();
