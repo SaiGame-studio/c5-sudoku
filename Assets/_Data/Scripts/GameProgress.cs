@@ -306,6 +306,18 @@ public class GameProgress : SaiSingleton<GameProgress>
         
         this.completedLevels.Clear();
         this.totalStars = 0;
+        
+        // Reset unlock states
+        this.SetUnlockState(AUTO_NOTE_UNLOCKED_KEY, false);
+        this.SetUnlockState(CLEAR_NOTES_UNLOCKED_KEY, false);
+        this.SetUnlockState(HINT_PANEL_UNLOCKED_KEY, false);
+        this.SetUnlockState(PATTERN_DISPLAY_UNLOCKED_KEY, false);
+        
+        this.autoNoteUnlocked = false;
+        this.clearNotesUnlocked = false;
+        this.hintPanelUnlocked = false;
+        this.patternDisplayUnlocked = false;
+        
         this.UpdateInspectorData();
         this.Save();
         
@@ -342,7 +354,11 @@ public class GameProgress : SaiSingleton<GameProgress>
             SaveData saveData = new SaveData
             {
                 totalStars = this.totalStars,
-                completedLevels = new List<LevelData>()
+                completedLevels = new List<LevelData>(),
+                autoNoteUnlocked = this.GetUnlockState(AUTO_NOTE_UNLOCKED_KEY),
+                clearNotesUnlocked = this.GetUnlockState(CLEAR_NOTES_UNLOCKED_KEY),
+                hintPanelUnlocked = this.GetUnlockState(HINT_PANEL_UNLOCKED_KEY),
+                patternDisplayUnlocked = this.GetUnlockState(PATTERN_DISPLAY_UNLOCKED_KEY)
             };
             
             foreach (var kvp in this.completedLevels)
@@ -395,7 +411,11 @@ public class GameProgress : SaiSingleton<GameProgress>
             SaveData saveData = new SaveData
             {
                 totalStars = this.totalStars,
-                completedLevels = new List<LevelData>()
+                completedLevels = new List<LevelData>(),
+                autoNoteUnlocked = this.GetUnlockState(AUTO_NOTE_UNLOCKED_KEY),
+                clearNotesUnlocked = this.GetUnlockState(CLEAR_NOTES_UNLOCKED_KEY),
+                hintPanelUnlocked = this.GetUnlockState(HINT_PANEL_UNLOCKED_KEY),
+                patternDisplayUnlocked = this.GetUnlockState(PATTERN_DISPLAY_UNLOCKED_KEY)
             };
             
             foreach (var kvp in this.completedLevels)
@@ -498,12 +518,22 @@ public class GameProgress : SaiSingleton<GameProgress>
                     }
                 }
                 
+                // Load unlock states
+                this.SetUnlockState(AUTO_NOTE_UNLOCKED_KEY, saveData.autoNoteUnlocked);
+                this.SetUnlockState(CLEAR_NOTES_UNLOCKED_KEY, saveData.clearNotesUnlocked);
+                this.SetUnlockState(HINT_PANEL_UNLOCKED_KEY, saveData.hintPanelUnlocked);
+                this.SetUnlockState(PATTERN_DISPLAY_UNLOCKED_KEY, saveData.patternDisplayUnlocked);
+                
                 this.UpdateInspectorData();
                 Debug.Log($"[GameProgress] Loaded from PlayerPrefs: {this.completedLevelCount} levels, {this.totalStars} total stars");
             }
             else
             {
                 this.totalStars = 0;
+                this.SetUnlockState(AUTO_NOTE_UNLOCKED_KEY, false);
+                this.SetUnlockState(CLEAR_NOTES_UNLOCKED_KEY, false);
+                this.SetUnlockState(HINT_PANEL_UNLOCKED_KEY, false);
+                this.SetUnlockState(PATTERN_DISPLAY_UNLOCKED_KEY, false);
                 this.UpdateInspectorData();
                 Debug.Log("[GameProgress] No saved data found in PlayerPrefs, starting fresh");
             }
@@ -526,8 +556,10 @@ public class GameProgress : SaiSingleton<GameProgress>
         
         if (gamerProgress == null)
         {
-            Debug.LogWarning("[GameProgress] Cannot load from SaiService: GamerProgress not found. Using PlayerPrefs as fallback.");
-            this.LoadFromPlayerPrefs();
+            Debug.LogWarning("[GameProgress] Cannot load from SaiService: GamerProgress not found. Starting with empty data.");
+            this.totalStars = 0;
+            this.completedLevels.Clear();
+            this.UpdateInspectorData();
             return;
         }
         
@@ -541,6 +573,10 @@ public class GameProgress : SaiSingleton<GameProgress>
                         Debug.Log("[GameProgress] No game data in SaiService, starting fresh");
                         this.totalStars = 0;
                         this.completedLevels.Clear();
+                        this.SetUnlockState(AUTO_NOTE_UNLOCKED_KEY, false);
+                        this.SetUnlockState(CLEAR_NOTES_UNLOCKED_KEY, false);
+                        this.SetUnlockState(HINT_PANEL_UNLOCKED_KEY, false);
+                        this.SetUnlockState(PATTERN_DISPLAY_UNLOCKED_KEY, false);
                         this.UpdateInspectorData();
                         return;
                     }
@@ -560,6 +596,12 @@ public class GameProgress : SaiSingleton<GameProgress>
                         }
                     }
                     
+                    // Load unlock states
+                    this.SetUnlockState(AUTO_NOTE_UNLOCKED_KEY, saveData.autoNoteUnlocked);
+                    this.SetUnlockState(CLEAR_NOTES_UNLOCKED_KEY, saveData.clearNotesUnlocked);
+                    this.SetUnlockState(HINT_PANEL_UNLOCKED_KEY, saveData.hintPanelUnlocked);
+                    this.SetUnlockState(PATTERN_DISPLAY_UNLOCKED_KEY, saveData.patternDisplayUnlocked);
+                    
                     this.UpdateInspectorData();
                     Debug.Log($"[GameProgress] Loaded from SaiService: {this.completedLevelCount} levels, {this.totalStars} total stars");
                 }
@@ -568,13 +610,23 @@ public class GameProgress : SaiSingleton<GameProgress>
                     Debug.LogError($"[GameProgress] Failed to parse game data from SaiService: {e.Message}");
                     this.totalStars = 0;
                     this.completedLevels.Clear();
+                    this.SetUnlockState(AUTO_NOTE_UNLOCKED_KEY, false);
+                    this.SetUnlockState(CLEAR_NOTES_UNLOCKED_KEY, false);
+                    this.SetUnlockState(HINT_PANEL_UNLOCKED_KEY, false);
+                    this.SetUnlockState(PATTERN_DISPLAY_UNLOCKED_KEY, false);
                     this.UpdateInspectorData();
                 }
             },
             error =>
             {
-                Debug.LogError($"[GameProgress] Failed to load from SaiService: {error}. Using PlayerPrefs as fallback.");
-                this.LoadFromPlayerPrefs();
+                Debug.LogError($"[GameProgress] Failed to load from SaiService: {error}. Starting with empty data.");
+                this.totalStars = 0;
+                this.completedLevels.Clear();
+                this.SetUnlockState(AUTO_NOTE_UNLOCKED_KEY, false);
+                this.SetUnlockState(CLEAR_NOTES_UNLOCKED_KEY, false);
+                this.SetUnlockState(HINT_PANEL_UNLOCKED_KEY, false);
+                this.SetUnlockState(PATTERN_DISPLAY_UNLOCKED_KEY, false);
+                this.UpdateInspectorData();
             }
         );
     }
@@ -615,6 +667,47 @@ public class GameProgress : SaiSingleton<GameProgress>
     }
     
     /// <summary>
+    /// Get unlock state based on current storage type
+    /// </summary>
+    private bool GetUnlockState(string key)
+    {
+        switch (this.saveStorageType)
+        {
+            case SaveStorageType.PlayerPrefs:
+                return PlayerPrefs.GetInt(key, 0) == 1;
+            case SaveStorageType.SaiService:
+                // For SaiService, use in-memory values loaded from SaveData
+                if (key == AUTO_NOTE_UNLOCKED_KEY) return this.autoNoteUnlocked;
+                if (key == CLEAR_NOTES_UNLOCKED_KEY) return this.clearNotesUnlocked;
+                if (key == HINT_PANEL_UNLOCKED_KEY) return this.hintPanelUnlocked;
+                if (key == PATTERN_DISPLAY_UNLOCKED_KEY) return this.patternDisplayUnlocked;
+                return false;
+            default:
+                return false;
+        }
+    }
+    
+    /// <summary>
+    /// Set unlock state based on current storage type
+    /// </summary>
+    private void SetUnlockState(string key, bool value)
+    {
+        switch (this.saveStorageType)
+        {
+            case SaveStorageType.PlayerPrefs:
+                PlayerPrefs.SetInt(key, value ? 1 : 0);
+                break;
+            case SaveStorageType.SaiService:
+                // For SaiService, set in-memory values that will be saved to SaveData
+                if (key == AUTO_NOTE_UNLOCKED_KEY) this.autoNoteUnlocked = value;
+                else if (key == CLEAR_NOTES_UNLOCKED_KEY) this.clearNotesUnlocked = value;
+                else if (key == HINT_PANEL_UNLOCKED_KEY) this.hintPanelUnlocked = value;
+                else if (key == PATTERN_DISPLAY_UNLOCKED_KEY) this.patternDisplayUnlocked = value;
+                break;
+        }
+    }
+    
+    /// <summary>
     /// Extract level number from level name (e.g., "level-15" -> 15)
     /// </summary>
     public static int ParseLevelName(string levelName)
@@ -637,7 +730,7 @@ public class GameProgress : SaiSingleton<GameProgress>
     /// </summary>
     public bool IsAutoNoteUnlocked()
     {
-        return PlayerPrefs.GetInt(AUTO_NOTE_UNLOCKED_KEY, 0) == 1;
+        return this.GetUnlockState(AUTO_NOTE_UNLOCKED_KEY);
     }
     
     /// <summary>
@@ -658,7 +751,7 @@ public class GameProgress : SaiSingleton<GameProgress>
         if (this.totalStars < this.autoNoteUnlockCost) return false;
         
         this.totalStars -= this.autoNoteUnlockCost;
-        PlayerPrefs.SetInt(AUTO_NOTE_UNLOCKED_KEY, 1);
+        this.SetUnlockState(AUTO_NOTE_UNLOCKED_KEY, true);
         this.autoNoteUnlocked = true;
         
         this.UpdateInspectorData();
@@ -716,7 +809,7 @@ public class GameProgress : SaiSingleton<GameProgress>
     /// </summary>
     public bool IsClearNotesUnlocked()
     {
-        return PlayerPrefs.GetInt(CLEAR_NOTES_UNLOCKED_KEY, 0) == 1;
+        return this.GetUnlockState(CLEAR_NOTES_UNLOCKED_KEY);
     }
     
     /// <summary>
@@ -737,7 +830,7 @@ public class GameProgress : SaiSingleton<GameProgress>
         if (this.totalStars < this.clearNotesUnlockCost) return false;
         
         this.totalStars -= this.clearNotesUnlockCost;
-        PlayerPrefs.SetInt(CLEAR_NOTES_UNLOCKED_KEY, 1);
+        this.SetUnlockState(CLEAR_NOTES_UNLOCKED_KEY, true);
         this.clearNotesUnlocked = true;
         
         this.UpdateInspectorData();
@@ -763,7 +856,7 @@ public class GameProgress : SaiSingleton<GameProgress>
     /// </summary>
     public bool IsHintPanelUnlocked()
     {
-        return PlayerPrefs.GetInt(HINT_PANEL_UNLOCKED_KEY, 0) == 1;
+        return this.GetUnlockState(HINT_PANEL_UNLOCKED_KEY);
     }
     
     /// <summary>
@@ -784,7 +877,7 @@ public class GameProgress : SaiSingleton<GameProgress>
         if (this.totalStars < this.hintPanelUnlockCost) return false;
         
         this.totalStars -= this.hintPanelUnlockCost;
-        PlayerPrefs.SetInt(HINT_PANEL_UNLOCKED_KEY, 1);
+        this.SetUnlockState(HINT_PANEL_UNLOCKED_KEY, true);
         this.hintPanelUnlocked = true;
         
         this.UpdateInspectorData();
@@ -842,7 +935,7 @@ public class GameProgress : SaiSingleton<GameProgress>
     /// </summary>
     public bool IsPatternDisplayUnlocked()
     {
-        return PlayerPrefs.GetInt(PATTERN_DISPLAY_UNLOCKED_KEY, 0) == 1;
+        return this.GetUnlockState(PATTERN_DISPLAY_UNLOCKED_KEY);
     }
     
     /// <summary>
@@ -867,7 +960,7 @@ public class GameProgress : SaiSingleton<GameProgress>
         if (this.totalStars < this.patternDisplayUnlockCost) return false;
         
         this.totalStars -= this.patternDisplayUnlockCost;
-        PlayerPrefs.SetInt(PATTERN_DISPLAY_UNLOCKED_KEY, 1);
+        this.SetUnlockState(PATTERN_DISPLAY_UNLOCKED_KEY, true);
         this.patternDisplayUnlocked = true;
         
         this.UpdateInspectorData();
@@ -897,8 +990,12 @@ public class GameProgress : SaiSingleton<GameProgress>
         if (PlayerPrefs.HasKey(SAVE_KEY))
         {
             PlayerPrefs.DeleteKey(SAVE_KEY);
+            PlayerPrefs.DeleteKey(AUTO_NOTE_UNLOCKED_KEY);
+            PlayerPrefs.DeleteKey(CLEAR_NOTES_UNLOCKED_KEY);
+            PlayerPrefs.DeleteKey(HINT_PANEL_UNLOCKED_KEY);
+            PlayerPrefs.DeleteKey(PATTERN_DISPLAY_UNLOCKED_KEY);
             PlayerPrefs.Save();
-            Debug.Log("[GameProgress] Deleted save data from PlayerPrefs");
+            Debug.Log("[GameProgress] Deleted save data and unlock states from PlayerPrefs");
         }
         else
         {
@@ -1021,6 +1118,15 @@ public class GameProgress : SaiSingleton<GameProgress>
             : SaveStorageType.PlayerPrefs;
         
         Debug.Log($"[GameProgress] Storage type changed to: {this.saveStorageType}");
+        
+        // Load data from the new storage type
+        this.Load();
+        
+        // Update unlock states
+        this.autoNoteUnlocked = this.IsAutoNoteUnlocked();
+        this.clearNotesUnlocked = this.IsClearNotesUnlocked();
+        this.hintPanelUnlocked = this.IsHintPanelUnlocked();
+        this.patternDisplayUnlocked = this.IsPatternDisplayUnlocked();
     }
     #endregion
     
@@ -1042,6 +1148,10 @@ public class GameProgress : SaiSingleton<GameProgress>
     {
         public int totalStars; // Cumulative stars earned
         public List<LevelData> completedLevels;
+        public bool autoNoteUnlocked;
+        public bool clearNotesUnlocked;
+        public bool hintPanelUnlocked;
+        public bool patternDisplayUnlocked;
     }
     
     [Serializable]
