@@ -77,6 +77,8 @@ namespace SaiGame.Services
 
         public GamerProgress GamerProgress => gamerProgress;
 
+        public SaiAuth SaiAuth => saiAuth;
+
         public string GameId => gameId;
 
         public void SetAccessToken(string token)

@@ -6,8 +6,6 @@ namespace SaiGame.Services
 {
     public class SaiAuth : SaiBehaviour
     {
-        [SerializeField] protected SaiService saiService;
-
         // Events for other classes to listen to
         public event Action<LoginResponse> OnLoginSuccess;
         public event Action<string> OnLoginFailure;
@@ -59,27 +57,18 @@ namespace SaiGame.Services
         protected override void LoadComponents()
         {
             base.LoadComponents();
-            this.LoadSaiService();
             this.LoadCredentialsFromPlayerPrefs();
-        }
-
-        protected virtual void LoadSaiService()
-        {
-            if (this.saiService != null) return;
-            this.saiService = GetComponent<SaiService>();
-            if (this.saiService != null && this.saiService.ShowDebug)
-                Debug.Log(transform.name + ": LoadSaiService", gameObject);
         }
 
         protected virtual void LoadCredentialsFromPlayerPrefs()
         {
             // If there's already a SaiService singleton instance with authenticated SaiAuth, skip loading
-            if (SaiService.Instance != null && SaiService.Instance != this.saiService)
+            if (SaiService.Instance != null && this.GetComponent<SaiService>() != SaiService.Instance)
             {
                 SaiAuth existingAuth = SaiService.Instance.GetComponent<SaiAuth>();
                 if (existingAuth != null && existingAuth.IsAuthenticated)
                 {
-                    if (this.saiService != null && this.saiService.ShowDebug)
+                    if (SaiService.Instance != null && SaiService.Instance.ShowDebug)
                         Debug.Log("[SaiAuth] Singleton instance already authenticated, skipping credential load");
                     return;
                 }
@@ -91,7 +80,7 @@ namespace SaiGame.Services
             if (this.saveEmail && PlayerPrefs.HasKey(PREF_EMAIL))
             {
                 this.username = PlayerPrefs.GetString(PREF_EMAIL);
-                if (this.saiService != null && this.saiService.ShowDebug)
+                if (SaiService.Instance != null && SaiService.Instance.ShowDebug)
                     Debug.Log($"[SaiAuth] Loaded email from PlayerPrefs: {this.username}");
             }
 
@@ -99,7 +88,7 @@ namespace SaiGame.Services
             {
                 string encryptedPassword = PlayerPrefs.GetString(PREF_PASSWORD);
                 this.password = SaiEncryption.Decrypt(encryptedPassword);
-                if (this.saiService != null && this.saiService.ShowDebug)
+                if (SaiService.Instance != null && SaiService.Instance.ShowDebug)
                     Debug.Log("[SaiAuth] Loaded password from PlayerPrefs");
             }
         }
@@ -112,7 +101,7 @@ namespace SaiGame.Services
             if (this.saveEmail)
             {
                 PlayerPrefs.SetString(PREF_EMAIL, this.username);
-                if (this.saiService != null && this.saiService.ShowDebug)
+                if (SaiService.Instance != null && SaiService.Instance.ShowDebug)
                     Debug.Log($"Saved email to PlayerPrefs: {this.username}");
             }
             else
@@ -124,7 +113,7 @@ namespace SaiGame.Services
             {
                 string encryptedPassword = SaiEncryption.Encrypt(this.password);
                 PlayerPrefs.SetString(PREF_PASSWORD, encryptedPassword);
-                if (this.saiService != null && this.saiService.ShowDebug)
+                if (SaiService.Instance != null && SaiService.Instance.ShowDebug)
                     Debug.Log("Saved encrypted password to PlayerPrefs");
             }
             else
@@ -167,18 +156,18 @@ namespace SaiGame.Services
 
                 if (timeUntilExpire <= refreshBeforeExpire && timeUntilExpire > 0)
                 {
-                    if (saiService != null && saiService.ShowDebug)
+                    if (SaiService.Instance != null && SaiService.Instance.ShowDebug)
                         Debug.Log($"Auto-refreshing token... (expires in {timeUntilExpire:F1}s)");
 
                     RefreshAuthToken(
                         response =>
                         {
-                            if (saiService != null && saiService.ShowDebug)
+                            if (SaiService.Instance != null && SaiService.Instance.ShowDebug)
                                 Debug.Log("Token auto-refreshed successfully!");
                         },
                         error =>
                         {
-                            if (saiService != null && saiService.ShowDebug)
+                            if (SaiService.Instance != null && SaiService.Instance.ShowDebug)
                                 Debug.LogError($"Auto-refresh failed: {error}");
                         }
                     );
@@ -192,7 +181,7 @@ namespace SaiGame.Services
 
         public void Register(string email, string username, string password, System.Action<RegisterResponse> onSuccess = null, System.Action<string> onError = null)
         {
-            if (saiService == null)
+            if (SaiService.Instance == null)
             {
                 onError?.Invoke("SaiService not found!");
                 return;
@@ -214,14 +203,14 @@ namespace SaiGame.Services
 
             string jsonData = JsonUtility.ToJson(registerRequest);
 
-            yield return saiService.PostRequest(endpoint, jsonData,
+            yield return SaiService.Instance.PostRequest(endpoint, jsonData,
                 response =>
                 {
                     try
                     {
                         RegisterResponse registerResponse = JsonUtility.FromJson<RegisterResponse>(response);
 
-                        if (saiService != null && saiService.ShowDebug)
+                        if (SaiService.Instance != null && SaiService.Instance.ShowDebug)
                             Debug.Log($"Registration successful! User: {registerResponse.user.username} ({registerResponse.user.email})");
 
                         OnRegisterSuccess?.Invoke(registerResponse);
@@ -244,7 +233,7 @@ namespace SaiGame.Services
 
         public void Login(string username, string password, System.Action<LoginResponse> onSuccess = null, System.Action<string> onError = null)
         {
-            if (saiService == null)
+            if (SaiService.Instance == null)
             {
                 onError?.Invoke("SaiService not found!");
                 return;
@@ -265,13 +254,13 @@ namespace SaiGame.Services
 
             string jsonData = JsonUtility.ToJson(loginRequest);
 
-            yield return saiService.PostRequest(endpoint, jsonData,
+            yield return SaiService.Instance.PostRequest(endpoint, jsonData,
                 response =>
                 {
                     try
                     {
                         LoginResponse loginResponse = JsonUtility.FromJson<LoginResponse>(response);
-                        saiService.SetLoginData(loginResponse.access_token, loginResponse.refresh_token, loginResponse.expires_in, loginResponse.user);
+                        SaiService.Instance.SetLoginData(loginResponse.access_token, loginResponse.refresh_token, loginResponse.expires_in, loginResponse.user);
 
                         this.accessToken = loginResponse.access_token;
                         this.refreshToken = loginResponse.refresh_token;
@@ -305,7 +294,7 @@ namespace SaiGame.Services
 
         public void RefreshAuthToken(System.Action<LoginResponse> onSuccess = null, System.Action<string> onError = null)
         {
-            if (saiService == null)
+            if (SaiService.Instance == null)
             {
                 onError?.Invoke("SaiService not found!");
                 return;
@@ -331,13 +320,13 @@ namespace SaiGame.Services
 
             string jsonData = JsonUtility.ToJson(refreshRequest);
 
-            yield return saiService.PostRequest(endpoint, jsonData,
+            yield return SaiService.Instance.PostRequest(endpoint, jsonData,
                 response =>
                 {
                     try
                     {
                         LoginResponse loginResponse = JsonUtility.FromJson<LoginResponse>(response);
-                        saiService.SetLoginData(loginResponse.access_token, loginResponse.refresh_token, loginResponse.expires_in, loginResponse.user);
+                        SaiService.Instance.SetLoginData(loginResponse.access_token, loginResponse.refresh_token, loginResponse.expires_in, loginResponse.user);
 
                         this.accessToken = loginResponse.access_token;
                         this.refreshToken = loginResponse.refresh_token;
@@ -350,12 +339,12 @@ namespace SaiGame.Services
                         GetMyProfile(
                             userData =>
                             {
-                                if (saiService != null && saiService.ShowDebug)
+                                if (SaiService.Instance != null && SaiService.Instance.ShowDebug)
                                     Debug.Log($"User data refreshed after token refresh: {userData.username}");
                             },
                             error =>
                             {
-                                if (saiService != null && saiService.ShowDebug)
+                                if (SaiService.Instance != null && SaiService.Instance.ShowDebug)
                                     Debug.LogWarning($"Failed to refresh user data after token refresh: {error}");
                             }
                         );
@@ -385,9 +374,9 @@ namespace SaiGame.Services
 
         private IEnumerator LogoutCoroutine()
         {
-            if (saiService != null && saiService.IsAuthenticated)
+            if (SaiService.Instance != null && SaiService.Instance.IsAuthenticated)
             {
-                yield return StartCoroutine(saiService.PostRequest("/api/v1/auth/logout", "{}",
+                yield return StartCoroutine(SaiService.Instance.PostRequest("/api/v1/auth/logout", "{}",
                     response =>
                     {
                         // Logout successful from server
@@ -414,9 +403,9 @@ namespace SaiGame.Services
         {
             StopTokenExpirationCheck();
 
-            if (saiService != null)
+            if (SaiService.Instance != null)
             {
-                saiService.SetLoginData("", "", 0, null);
+                SaiService.Instance.SetLoginData("", "", 0, null);
             }
 
             this.accessToken = "";
@@ -438,7 +427,7 @@ namespace SaiGame.Services
 
         public void GetMyProfile(System.Action<UserData> onSuccess = null, System.Action<string> onError = null)
         {
-            if (saiService == null || !saiService.IsAuthenticated)
+            if (SaiService.Instance == null || !SaiService.Instance.IsAuthenticated)
             {
                 onError?.Invoke("Not authenticated! Please login first.");
                 return;
@@ -451,7 +440,7 @@ namespace SaiGame.Services
         {
             string endpoint = "/api/v1/auth/me";
 
-            yield return saiService.GetRequest(endpoint,
+            yield return SaiService.Instance.GetRequest(endpoint,
                 response =>
                 {
                     try
@@ -459,7 +448,7 @@ namespace SaiGame.Services
                         GetMeResponse meResponse = JsonUtility.FromJson<GetMeResponse>(response);
                         this.userData = meResponse.user;
 
-                        if (saiService != null && saiService.ShowDebug)
+                        if (SaiService.Instance != null && SaiService.Instance.ShowDebug)
                             Debug.Log($"Profile loaded: {userData.username} ({userData.email})");
 
                         OnGetProfileSuccess?.Invoke(userData);
@@ -533,7 +522,7 @@ namespace SaiGame.Services
             this.saveEmail = false;
             this.savePassword = false;
 
-            if (this.saiService != null && this.saiService.ShowDebug)
+            if (SaiService.Instance != null && SaiService.Instance.ShowDebug)
                 Debug.Log("Cleared all credentials from PlayerPrefs");
         }
     }
