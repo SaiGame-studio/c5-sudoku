@@ -1,7 +1,18 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using com.cyborgAssets.inspectorButtonPro;
+using SaiGame.Services;
+
+/// <summary>
+/// Storage type for saving game progress
+/// </summary>
+public enum SaveStorageType
+{
+    PlayerPrefs,
+    SaiService
+}
 
 /// <summary>
 /// Manages game progress including level completion and stars earned
@@ -13,6 +24,11 @@ public class GameProgress : SaiSingleton<GameProgress>
     private const string CLEAR_NOTES_UNLOCKED_KEY = "ClearNotes_Unlocked";
     private const string HINT_PANEL_UNLOCKED_KEY = "HintPanel_Unlocked";
     private const string PATTERN_DISPLAY_UNLOCKED_KEY = "PatternDisplay_Unlocked";
+    
+    [Header("Storage Settings")]
+    [SerializeField] private SaveStorageType saveStorageType = SaveStorageType.PlayerPrefs;
+    [SerializeField] private bool autoSyncToSaiService = true;
+    [SerializeField] private SaiGamerProgress saiGamerProgress;
     
     // Stars earned for each difficulty level (0-8)
     // Maps directly to star display: difficulty 0 = 1 star, difficulty 1 = 2 stars, etc.
@@ -54,12 +70,31 @@ public class GameProgress : SaiSingleton<GameProgress>
         }
         
         this.completedLevels = new Dictionary<string, int>();
+        this.LoadSaiGamerProgress();
         this.Load();
         this.autoNoteUnlocked = this.IsAutoNoteUnlocked();
         this.clearNotesUnlocked = this.IsClearNotesUnlocked();
         this.hintPanelUnlocked = this.IsHintPanelUnlocked();
         this.patternDisplayUnlocked = this.IsPatternDisplayUnlocked();
-        Debug.Log("[GameProgress] Initialized and loaded progress from PlayerPrefs");
+        Debug.Log($"[GameProgress] Initialized and loaded progress from {this.saveStorageType}");
+    }
+    
+    /// <summary>
+    /// Load SaiGamerProgress component from SaiService singleton
+    /// </summary>
+    private void LoadSaiGamerProgress()
+    {
+        if (this.saiGamerProgress != null) return;
+        
+        if (SaiService.Instance != null)
+        {
+            this.saiGamerProgress = SaiService.Instance.GetComponent<SaiGamerProgress>();
+            
+            if (this.saiGamerProgress != null)
+            {
+                Debug.Log("[GameProgress] Loaded SaiGamerProgress from SaiService.Instance");
+            }
+        }
     }
     
     /// <summary>
@@ -298,9 +333,29 @@ public class GameProgress : SaiSingleton<GameProgress>
     }
     
     /// <summary>
-    /// Save progress to PlayerPrefs
+    /// Save progress based on selected storage type
     /// </summary>
     public void Save()
+    {
+        switch (this.saveStorageType)
+        {
+            case SaveStorageType.PlayerPrefs:
+                this.SaveToPlayerPrefs();
+                if (this.autoSyncToSaiService)
+                {
+                    this.SaveToSaiService();
+                }
+                break;
+            case SaveStorageType.SaiService:
+                this.SaveToSaiService();
+                break;
+        }
+    }
+    
+    /// <summary>
+    /// Save progress to PlayerPrefs
+    /// </summary>
+    private void SaveToPlayerPrefs()
     {
         try
         {
@@ -332,14 +387,91 @@ public class GameProgress : SaiSingleton<GameProgress>
         }
         catch (Exception e)
         {
-            Debug.LogError($"[GameProgress] Failed to save game progress: {e.Message}");
+            Debug.LogError($"[GameProgress] Failed to save game progress to PlayerPrefs: {e.Message}");
+        }
+    }
+    
+    /// <summary>
+    /// Save progress to SaiService (cloud save)
+    /// </summary>
+    private void SaveToSaiService()
+    {
+        if (this.saiGamerProgress == null)
+        {
+            Debug.LogWarning("[GameProgress] Cannot save to SaiService: SaiGamerProgress not found");
+            return;
+        }
+        
+        if (!this.saiGamerProgress.HasProgress)
+        {
+            Debug.LogWarning("[GameProgress] Cannot save to SaiService: No progress data exists. Create progress first.");
+            return;
+        }
+        
+        try
+        {
+            SaveData saveData = new SaveData
+            {
+                totalStars = this.totalStars,
+                completedLevels = new List<LevelData>()
+            };
+            
+            foreach (var kvp in this.completedLevels)
+            {
+                string[] parts = kvp.Key.Split('_');
+                if (parts.Length == 2 && int.TryParse(parts[1], out int levelNumber))
+                {
+                    saveData.completedLevels.Add(new LevelData
+                    {
+                        level = levelNumber,
+                        stars = kvp.Value
+                    });
+                }
+            }
+            
+            string gameDataJson = JsonUtility.ToJson(saveData);
+            
+            // Update progress with game_data
+            this.saiGamerProgress.UpdateProgress(
+                0, // experienceDelta
+                0, // goldDelta
+                gameDataJson,
+                progress =>
+                {
+                    Debug.Log($"[GameProgress] Saved to SaiService: {this.completedLevelCount} levels, {this.totalStars} total stars");
+                },
+                error =>
+                {
+                    Debug.LogError($"[GameProgress] Failed to save to SaiService: {error}");
+                }
+            );
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"[GameProgress] Failed to save game progress to SaiService: {e.Message}");
+        }
+    }
+    
+    /// <summary>
+    /// Load progress based on selected storage type
+    /// </summary>
+    public void Load()
+    {
+        switch (this.saveStorageType)
+        {
+            case SaveStorageType.PlayerPrefs:
+                this.LoadFromPlayerPrefs();
+                break;
+            case SaveStorageType.SaiService:
+                this.LoadFromSaiService();
+                break;
         }
     }
     
     /// <summary>
     /// Load progress from PlayerPrefs
     /// </summary>
-    public void Load()
+    private void LoadFromPlayerPrefs()
     {
         try
         {
@@ -391,16 +523,76 @@ public class GameProgress : SaiSingleton<GameProgress>
             {
                 this.totalStars = 0;
                 this.UpdateInspectorData();
-                Debug.Log("[GameProgress] No saved data found, starting fresh");
+                Debug.Log("[GameProgress] No saved data found in PlayerPrefs, starting fresh");
             }
         }
         catch (Exception e)
         {
-            Debug.LogError($"[GameProgress] Failed to load game progress: {e.Message}");
+            Debug.LogError($"[GameProgress] Failed to load game progress from PlayerPrefs: {e.Message}");
             this.completedLevels.Clear();
             this.totalStars = 0;
             this.UpdateInspectorData();
         }
+    }
+    
+    /// <summary>
+    /// Load progress from SaiService (cloud save)
+    /// </summary>
+    private void LoadFromSaiService()
+    {
+        if (this.saiGamerProgress == null)
+        {
+            Debug.LogWarning("[GameProgress] Cannot load from SaiService: SaiGamerProgress not found. Using PlayerPrefs as fallback.");
+            this.LoadFromPlayerPrefs();
+            return;
+        }
+        
+        this.saiGamerProgress.GetProgress(
+            progress =>
+            {
+                try
+                {
+                    if (string.IsNullOrEmpty(progress.game_data) || progress.game_data == "{}")
+                    {
+                        Debug.Log("[GameProgress] No game data in SaiService, starting fresh");
+                        this.totalStars = 0;
+                        this.completedLevels.Clear();
+                        this.UpdateInspectorData();
+                        return;
+                    }
+                    
+                    SaveData saveData = JsonUtility.FromJson<SaveData>(progress.game_data);
+                    
+                    // Load total stars (cumulative)
+                    this.totalStars = saveData.totalStars;
+                    
+                    this.completedLevels.Clear();
+                    foreach (var levelData in saveData.completedLevels)
+                    {
+                        if (levelData.level > 0)
+                        {
+                            string key = this.GetLevelKey(levelData.level);
+                            this.completedLevels[key] = levelData.stars;
+                        }
+                    }
+                    
+                    this.UpdateInspectorData();
+                    Debug.Log($"[GameProgress] Loaded from SaiService: {this.completedLevelCount} levels, {this.totalStars} total stars");
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"[GameProgress] Failed to parse game data from SaiService: {e.Message}");
+                    this.totalStars = 0;
+                    this.completedLevels.Clear();
+                    this.UpdateInspectorData();
+                }
+            },
+            error =>
+            {
+                Debug.LogError($"[GameProgress] Failed to load from SaiService: {error}. Using PlayerPrefs as fallback.");
+                this.LoadFromPlayerPrefs();
+            }
+        );
     }
     
     /// <summary>
@@ -778,6 +970,71 @@ public class GameProgress : SaiSingleton<GameProgress>
         
         Debug.Log($"[GameProgress] Force saving progress... AutoNote unlocked: {this.autoNoteUnlocked}, ClearNotes unlocked: {this.clearNotesUnlocked}, HintPanel unlocked: {this.hintPanelUnlocked}, PatternDisplay unlocked: {this.patternDisplayUnlocked}");
         this.Save();
+    }
+    
+    /// <summary>
+    /// Sync local PlayerPrefs data to SaiService (upload to cloud)
+    /// </summary>
+    [ProButton]
+    public void SyncToSaiService()
+    {
+        Debug.Log("[GameProgress] Syncing PlayerPrefs data to SaiService...");
+        this.SaveToSaiService();
+    }
+    
+    /// <summary>
+    /// Pull data from SaiService to local (download from cloud)
+    /// </summary>
+    [ProButton]
+    public void PullFromSaiService()
+    {
+        Debug.Log("[GameProgress] Pulling data from SaiService...");
+        this.LoadFromSaiService();
+    }
+    
+    /// <summary>
+    /// Create new progress in SaiService (if not exists)
+    /// </summary>
+    [ProButton]
+    public void CreateSaiServiceProgress()
+    {
+        if (this.saiGamerProgress == null)
+        {
+            Debug.LogError("[GameProgress] Cannot create progress: SaiGamerProgress not found");
+            return;
+        }
+        
+        if (this.saiGamerProgress.HasProgress)
+        {
+            Debug.LogWarning("[GameProgress] Progress already exists in SaiService. Use SyncToSaiService to update it.");
+            return;
+        }
+        
+        this.saiGamerProgress.CreateProgress(
+            progress =>
+            {
+                Debug.Log($"[GameProgress] Created new progress in SaiService: ID={progress.id}");
+                // After creating, sync current data to it
+                this.SaveToSaiService();
+            },
+            error =>
+            {
+                Debug.LogError($"[GameProgress] Failed to create progress in SaiService: {error}");
+            }
+        );
+    }
+    
+    /// <summary>
+    /// Toggle storage type between PlayerPrefs and SaiService
+    /// </summary>
+    [ProButton]
+    public void ToggleStorageType()
+    {
+        this.saveStorageType = this.saveStorageType == SaveStorageType.PlayerPrefs 
+            ? SaveStorageType.SaiService 
+            : SaveStorageType.PlayerPrefs;
+        
+        Debug.Log($"[GameProgress] Storage type changed to: {this.saveStorageType}");
     }
     #endregion
     
