@@ -1,4 +1,5 @@
 using com.cyborgAssets.inspectorButtonPro;
+using SaiGame.Services;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -6,6 +7,9 @@ public class MenuController : SaiBehaviour
 {
     [Header("UI References")]
     [SerializeField] private UIDocument uiDocument;
+
+    [Header("Services")]
+    [SerializeField] private SaiGamerProgress saiGamerProgress;
 
     [Header("Scale Setting")]
     [SerializeField] private float addLandscapeScale = 1f;
@@ -20,6 +24,26 @@ public class MenuController : SaiBehaviour
         base.LoadComponents();
         this.LoadUIDocument();
         this.LoadUIElements();
+        this.LoadSaiGamerProgress();
+    }
+
+    private void LoadSaiGamerProgress()
+    {
+        if (this.saiGamerProgress != null) return;
+        
+        // Get SaiGamerProgress from SaiService singleton instance
+        if (SaiService.Instance != null)
+        {
+            this.saiGamerProgress = SaiService.Instance.GetComponent<SaiGamerProgress>();
+            if (this.saiGamerProgress != null)
+            {
+                Debug.Log("[MenuController] Loaded SaiGamerProgress from SaiService.Instance");
+                return;
+            }
+        }
+        
+        // Fallback: find in scene
+        this.saiGamerProgress = FindFirstObjectByType<SaiGamerProgress>();
     }
 
     private void LoadUIDocument()
@@ -43,6 +67,13 @@ public class MenuController : SaiBehaviour
     {
         base.Start();
         this.InitializeUI();
+        this.RegisterLoginListener();
+        this.CheckInitialAuthState();
+    }
+
+    private void OnDestroy()
+    {
+        this.UnregisterLoginListener();
     }
 
     private void InitializeUI()
@@ -199,4 +230,98 @@ public class MenuController : SaiBehaviour
     {
         GameManager.Instance.QuitGame();
     }
+
+    #region Gamer Progress Management
+
+    private void RegisterLoginListener()
+    {
+        if (SaiService.Instance == null)
+        {
+            Debug.LogWarning("[MenuController] SaiService.Instance not found");
+            return;
+        }
+
+        SaiAuth saiAuth = SaiService.Instance.GetComponent<SaiAuth>();
+        if (saiAuth != null)
+        {
+            saiAuth.OnLoginSuccess += this.HandleLoginSuccess;
+            Debug.Log("[MenuController] Registered login success listener");
+        }
+    }
+
+    private void UnregisterLoginListener()
+    {
+        if (SaiService.Instance == null) return;
+
+        SaiAuth saiAuth = SaiService.Instance.GetComponent<SaiAuth>();
+        if (saiAuth != null)
+        {
+            saiAuth.OnLoginSuccess -= this.HandleLoginSuccess;
+        }
+    }
+
+    private void CheckInitialAuthState()
+    {
+        if (SaiService.Instance == null) return;
+
+        SaiAuth saiAuth = SaiService.Instance.GetComponent<SaiAuth>();
+        if (saiAuth != null && saiAuth.IsAuthenticated)
+        {
+            Debug.Log("[MenuController] Already authenticated, checking gamer progress...");
+            this.GetOrCreateGamerProgress();
+        }
+    }
+
+    private void HandleLoginSuccess(LoginResponse response)
+    {
+        Debug.Log("[MenuController] Login successful, checking gamer progress...");
+        this.GetOrCreateGamerProgress();
+    }
+
+    private void GetOrCreateGamerProgress()
+    {
+        if (this.saiGamerProgress == null)
+        {
+            Debug.LogWarning("[MenuController] SaiGamerProgress not found!");
+            return;
+        }
+
+        // Ensure SaiGamerProgress has proper SaiService reference
+        if (SaiService.Instance != null)
+        {
+            // Force reload SaiService on SaiGamerProgress to ensure it's the correct singleton instance
+            SaiGamerProgress progressOnSaiService = SaiService.Instance.GetComponent<SaiGamerProgress>();
+            if (progressOnSaiService != null)
+            {
+                this.saiGamerProgress = progressOnSaiService;
+                Debug.Log("[MenuController] Using SaiGamerProgress from SaiService.Instance");
+            }
+        }
+
+        Debug.Log("[MenuController] Attempting to get gamer progress...");
+
+        this.saiGamerProgress.GetProgress(
+            progress =>
+            {
+                Debug.Log($"[MenuController] Gamer progress loaded successfully - Level: {progress.level}, XP: {progress.experience}, Gold: {progress.gold}");
+            },
+            error =>
+            {
+                Debug.Log($"[MenuController] Failed to get progress: {error}. Attempting to create new profile...");
+
+                this.saiGamerProgress.CreateProgress(
+                    newProgress =>
+                    {
+                        Debug.Log($"[MenuController] Gamer progress created successfully - Level: {newProgress.level}, XP: {newProgress.experience}, Gold: {newProgress.gold}");
+                    },
+                    createError =>
+                    {
+                        Debug.LogError($"[MenuController] Failed to create gamer progress: {createError}");
+                    }
+                );
+            }
+        );
+    }
+
+    #endregion
 }
