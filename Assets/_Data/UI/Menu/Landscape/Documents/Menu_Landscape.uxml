@@ -1,7 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
     <Style src="project://database/Assets/_Data/UI/Menu/Landscape/Styles/Menu_Landscape.uss?fileID=7433441132597879392&amp;guid=372af6732a44b214ebe309c03a3bf178&amp;type=3#Menu_Landscape"/>
     <Style src="project://database/Assets/_Data/UI/Styles/ThemeToggle.uss?fileID=7433441132597879392&amp;guid=bfa19512b5ae6d54bae198db679fb34b&amp;type=3#ThemeToggle"/>
-    <Style src="project://database/Assets/_Data/UI/Styles/VersionLabel.uss"/>
+    <Style src="project://database/Assets/_Data/UI/Styles/VersionLabel.uss?fileID=7433441132597879392&amp;guid=656b7a98457ea5045b9ce786d56712c5&amp;type=3#VersionLabel"/>
     <ui:VisualElement class="menu-root">
         <ui:VisualElement class="menu-container">
             <ui:VisualElement class="menu-header">
@@ -18,7 +18,10 @@
                     <ui:Label text="Comming soon" class="menu-button-desc"/>
                 </ui:Button>
             </ui:VisualElement>
-            <ui:VisualElement style="flex-grow: 1;">
+            <ui:VisualElement style="flex-direction: row; justify-content: center; margin-top: 20px;">
+                <ui:Button name="logout-button" class="menu-button logout-button">
+                    <ui:Label text="Logout" class="menu-button-label"/>
+                </ui:Button>
                 <ui:Button name="quit-button" class="menu-button quit-button">
                     <ui:Label text="Quit" class="menu-button-label"/>
                 </ui:Button>

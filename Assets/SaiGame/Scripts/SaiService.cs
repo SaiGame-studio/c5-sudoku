@@ -14,10 +14,11 @@ namespace SaiGame.Services
 
     public class SaiService : SaiSingleton<SaiService>
     {
-        public const string PACKAGE_VERSION = "0.0.5b2";
+        public const string PACKAGE_VERSION = "0.0.5b3";
         public const string PACKAGE_NAME = "SaiGame Services";
-        
+
         [SerializeField] protected SaiAuth saiAuth;
+        [SerializeField] protected GamerProgress gamerProgress;
 
         [Header("Server Configuration")]
         [SerializeField] protected DomainOption domainOption = DomainOption.Local;
@@ -73,6 +74,8 @@ namespace SaiGame.Services
         public int ExpiresIn => saiAuth?.ExpiresIn ?? 0;
 
         public UserData CurrentUser => saiAuth?.CurrentUser;
+
+        public GamerProgress GamerProgress => gamerProgress;
 
         public string GameId => gameId;
 
@@ -209,6 +212,7 @@ namespace SaiGame.Services
         {
             base.LoadComponents();
             this.LoadSaiAuth();
+            this.LoadSaiGamerProgress();
             this.LoadGameIdFromPlayerPrefs();
         }
 
@@ -217,6 +221,13 @@ namespace SaiGame.Services
             if (this.saiAuth != null) return;
             this.saiAuth = GetComponent<SaiAuth>();
             Debug.Log(transform.name + ": LoadSaiAuth", gameObject);
+        }
+
+        protected virtual void LoadSaiGamerProgress()
+        {
+            if (this.gamerProgress != null) return;
+            this.gamerProgress = GetComponent<GamerProgress>();
+            Debug.Log(transform.name + ": LoadSaiGamerProgress", gameObject);
         }
 
         protected virtual void LoadGameIdFromPlayerPrefs()

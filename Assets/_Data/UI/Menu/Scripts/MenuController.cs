@@ -8,9 +8,6 @@ public class MenuController : SaiBehaviour
     [Header("UI References")]
     [SerializeField] private UIDocument uiDocument;
 
-    [Header("Services")]
-    [SerializeField] private SaiGamerProgress saiGamerProgress;
-
     [Header("Scale Setting")]
     [SerializeField] private float addLandscapeScale = 1f;
     [SerializeField] private float addPortraitScale = 2f;
@@ -24,26 +21,6 @@ public class MenuController : SaiBehaviour
         base.LoadComponents();
         this.LoadUIDocument();
         this.LoadUIElements();
-        this.LoadSaiGamerProgress();
-    }
-
-    private void LoadSaiGamerProgress()
-    {
-        if (this.saiGamerProgress != null) return;
-        
-        // Get SaiGamerProgress from SaiService singleton instance
-        if (SaiService.Instance != null)
-        {
-            this.saiGamerProgress = SaiService.Instance.GetComponent<SaiGamerProgress>();
-            if (this.saiGamerProgress != null)
-            {
-                Debug.Log("[MenuController] Loaded SaiGamerProgress from SaiService.Instance");
-                return;
-            }
-        }
-        
-        // Fallback: find in scene
-        this.saiGamerProgress = FindFirstObjectByType<SaiGamerProgress>();
     }
 
     private void LoadUIDocument()
@@ -209,6 +186,12 @@ public class MenuController : SaiBehaviour
             storyButton.clicked += this.OnStoryButtonClicked;
         }
 
+        Button logoutButton = this.root.Q<Button>("logout-button");
+        if (logoutButton != null)
+        {
+            logoutButton.clicked += this.OnLogoutButtonClicked;
+        }
+
         Button quitButton = this.root.Q<Button>("quit-button");
         if (quitButton != null)
         {
@@ -224,6 +207,40 @@ public class MenuController : SaiBehaviour
     private void OnStoryButtonClicked()
     {
         GameManager.Instance.LoadStoryScene();
+    }
+
+    private void OnLogoutButtonClicked()
+    {
+        if (SaiService.Instance == null)
+        {
+            Debug.LogWarning("[MenuController] SaiService.Instance not found");
+            return;
+        }
+
+        SaiAuth saiAuth = SaiService.Instance.GetComponent<SaiAuth>();
+        if (saiAuth != null)
+        {
+            Debug.Log("[MenuController] Logout button clicked");
+            
+            // Clear only password, keep email saved
+            saiAuth.SetSavePassword(false);
+            PlayerPrefs.DeleteKey("SaiGame_SavedPassword");
+            PlayerPrefs.SetInt("SaiGame_SavePasswordFlag", 0);
+            PlayerPrefs.Save();
+            
+            // Perform logout
+            saiAuth.Logout();
+            
+            // Return to auth scene after logout
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.LoadAuthScene();
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[MenuController] SaiAuth not found");
+        }
     }
 
     private void OnQuitButtonClicked()
@@ -280,27 +297,17 @@ public class MenuController : SaiBehaviour
 
     private void GetOrCreateGamerProgress()
     {
-        if (this.saiGamerProgress == null)
+        GamerProgress gamerProgress = SaiService.Instance?.GamerProgress;
+        
+        if (gamerProgress == null)
         {
-            Debug.LogWarning("[MenuController] SaiGamerProgress not found!");
+            Debug.LogWarning("[MenuController] GamerProgress not found!");
             return;
-        }
-
-        // Ensure SaiGamerProgress has proper SaiService reference
-        if (SaiService.Instance != null)
-        {
-            // Force reload SaiService on SaiGamerProgress to ensure it's the correct singleton instance
-            SaiGamerProgress progressOnSaiService = SaiService.Instance.GetComponent<SaiGamerProgress>();
-            if (progressOnSaiService != null)
-            {
-                this.saiGamerProgress = progressOnSaiService;
-                Debug.Log("[MenuController] Using SaiGamerProgress from SaiService.Instance");
-            }
         }
 
         Debug.Log("[MenuController] Attempting to get gamer progress...");
 
-        this.saiGamerProgress.GetProgress(
+        gamerProgress.GetProgress(
             progress =>
             {
                 Debug.Log($"[MenuController] Gamer progress loaded successfully - Level: {progress.level}, XP: {progress.experience}, Gold: {progress.gold}");
@@ -309,7 +316,7 @@ public class MenuController : SaiBehaviour
             {
                 Debug.Log($"[MenuController] Failed to get progress: {error}. Attempting to create new profile...");
 
-                this.saiGamerProgress.CreateProgress(
+                gamerProgress.CreateProgress(
                     newProgress =>
                     {
                         Debug.Log($"[MenuController] Gamer progress created successfully - Level: {newProgress.level}, XP: {newProgress.experience}, Gold: {newProgress.gold}");

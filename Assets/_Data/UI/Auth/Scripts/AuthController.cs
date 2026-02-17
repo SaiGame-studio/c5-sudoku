@@ -8,9 +8,6 @@ public class AuthController : SaiBehaviour
     [Header("UI References")]
     [SerializeField] private UIDocument uiDocument;
 
-    [Header("Sai Service")]
-    [SerializeField] private SaiAuth saiAuth;
-
     [Header("Scale Setting")]
     [SerializeField] private float addLandscapeScale = 0.5f;
     [SerializeField] private float addPortraitScale = 0f;
@@ -42,11 +39,12 @@ public class AuthController : SaiBehaviour
 
     private bool isProcessing;
 
+    private SaiAuth saiAuth => SaiService.Instance?.GetComponent<SaiAuth>();
+
     protected override void LoadComponents()
     {
         base.LoadComponents();
         this.LoadUIDocument();
-        this.LoadSaiAuth();
         this.LoadUIElements();
     }
 
@@ -54,12 +52,6 @@ public class AuthController : SaiBehaviour
     {
         if (this.uiDocument != null) return;
         this.uiDocument = GetComponent<UIDocument>();
-    }
-
-    private void LoadSaiAuth()
-    {
-        if (this.saiAuth != null) return;
-        this.saiAuth = FindFirstObjectByType<SaiAuth>();
     }
 
     [ProButton]

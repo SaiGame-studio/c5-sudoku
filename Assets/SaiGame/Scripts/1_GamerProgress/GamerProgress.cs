@@ -8,7 +8,7 @@ namespace SaiGame.Services
     /// Example: {"achievements":["first_login","level_10"],"current_quest":"defeat_boss"}
     /// </summary>
     [Serializable]
-    public class GamerProgress
+    public class GamerProgressData
     {
         public string id;
         public string user_id;

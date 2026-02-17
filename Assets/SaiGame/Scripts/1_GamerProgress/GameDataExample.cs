@@ -36,7 +36,7 @@ namespace SaiGame.Services
     /// </summary>
     public class GameDataExample : MonoBehaviour
     {
-        [SerializeField] private SaiGamerProgress gamerProgress;
+        private GamerProgress gamerProgress => SaiService.Instance?.GamerProgress;
 
         private void Example_ReadGameData()
         {

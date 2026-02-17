@@ -4,14 +4,14 @@ using UnityEngine;
 
 namespace SaiGame.Services
 {
-    public class SaiGamerProgress : SaiBehaviour
+    public class GamerProgress : SaiBehaviour
     {
         [SerializeField] protected SaiService saiService;
 
         // Events for other classes to listen to
-        public event Action<GamerProgress> OnCreateProgressSuccess;
+        public event Action<GamerProgressData> OnCreateProgressSuccess;
         public event Action<string> OnCreateProgressFailure;
-        public event Action<GamerProgress> OnGetProgressSuccess;
+        public event Action<GamerProgressData> OnGetProgressSuccess;
         public event Action<string> OnGetProgressFailure;
         public event Action OnDeleteProgressSuccess;
         public event Action<string> OnDeleteProgressFailure;
@@ -20,14 +20,14 @@ namespace SaiGame.Services
         [SerializeField] protected bool autoLoadOnLogin = true;
 
         [Header("Current Progress Data")]
-        [SerializeField] protected GamerProgress currentProgress;
+        [SerializeField] protected GamerProgressData currentProgress;
         
         [Header("Update Delta Values")]
         [SerializeField] protected int experienceDelta = 100;
         [SerializeField] protected int goldDelta = 50;
         [SerializeField] [TextArea(3, 10)] protected string gameData = "{}";
 
-        public GamerProgress CurrentProgress => currentProgress;
+        public GamerProgressData CurrentProgress => currentProgress;
         public bool HasProgress => currentProgress != null && !string.IsNullOrEmpty(currentProgress.id);
 
         protected override void LoadComponents()
@@ -211,7 +211,7 @@ namespace SaiGame.Services
             }
         }
 
-        public void CreateProgress(System.Action<GamerProgress> onSuccess = null, System.Action<string> onError = null)
+        public void CreateProgress(System.Action<GamerProgressData> onSuccess = null, System.Action<string> onError = null)
         {
             if (saiService == null)
             {
@@ -228,7 +228,7 @@ namespace SaiGame.Services
             StartCoroutine(CreateProgressCoroutine(onSuccess, onError));
         }
 
-        private IEnumerator CreateProgressCoroutine(System.Action<GamerProgress> onSuccess, System.Action<string> onError)
+        private IEnumerator CreateProgressCoroutine(System.Action<GamerProgressData> onSuccess, System.Action<string> onError)
         {
             string gameId = saiService.GameId;
             string endpoint = $"/api/v1/games/{gameId}/gamer-progress";
@@ -278,7 +278,7 @@ namespace SaiGame.Services
             );
         }
 
-        public void GetProgress(System.Action<GamerProgress> onSuccess = null, System.Action<string> onError = null)
+        public void GetProgress(System.Action<GamerProgressData> onSuccess = null, System.Action<string> onError = null)
         {
             if (saiService == null)
             {
@@ -295,7 +295,7 @@ namespace SaiGame.Services
             StartCoroutine(GetProgressCoroutine(onSuccess, onError));
         }
 
-        private IEnumerator GetProgressCoroutine(System.Action<GamerProgress> onSuccess, System.Action<string> onError)
+        private IEnumerator GetProgressCoroutine(System.Action<GamerProgressData> onSuccess, System.Action<string> onError)
         {
             string gameId = saiService.GameId;
             string endpoint = $"/api/v1/games/{gameId}/my-gamer-progress";
@@ -307,7 +307,7 @@ namespace SaiGame.Services
                     {
                         string gameDataJson = ExtractGameDataFromJson(response);
                         
-                        GamerProgress progress = JsonUtility.FromJson<GamerProgress>(response);
+                        GamerProgressData progress = JsonUtility.FromJson<GamerProgressData>(response);
                         this.currentProgress = progress;
                         
                         if (this.currentProgress != null)
@@ -341,7 +341,7 @@ namespace SaiGame.Services
             );
         }
 
-        public void UpdateProgress(int experienceDelta, int goldDelta, string newGameData = null, System.Action<GamerProgress> onSuccess = null, System.Action<string> onError = null)
+        public void UpdateProgress(int experienceDelta, int goldDelta, string newGameData = null, System.Action<GamerProgressData> onSuccess = null, System.Action<string> onError = null)
         {
             if (this.currentProgress == null)
             {
@@ -352,7 +352,7 @@ namespace SaiGame.Services
             StartCoroutine(UpdateProgressCoroutine(experienceDelta, goldDelta, newGameData, onSuccess, onError));
         }
 
-        private IEnumerator UpdateProgressCoroutine(int experienceDelta, int goldDelta, string newGameData, System.Action<GamerProgress> onSuccess, System.Action<string> onError)
+        private IEnumerator UpdateProgressCoroutine(int experienceDelta, int goldDelta, string newGameData, System.Action<GamerProgressData> onSuccess, System.Action<string> onError)
         {
             string endpoint = $"/api/v1/gamer-progress/{currentProgress.id}";
 
@@ -382,7 +382,7 @@ namespace SaiGame.Services
                     {
                         string gameDataJson = ExtractGameDataFromJson(response);
                         
-                        GamerProgress updatedProgress = JsonUtility.FromJson<GamerProgress>(response);
+                        GamerProgressData updatedProgress = JsonUtility.FromJson<GamerProgressData>(response);
                         this.currentProgress = updatedProgress;
                         
                         if (this.currentProgress != null)

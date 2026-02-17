@@ -28,7 +28,6 @@ public class GameProgress : SaiSingleton<GameProgress>
     [Header("Storage Settings")]
     [SerializeField] private SaveStorageType saveStorageType = SaveStorageType.PlayerPrefs;
     [SerializeField] private bool autoSyncToSaiService = true;
-    [SerializeField] private SaiGamerProgress saiGamerProgress;
     
     // Stars earned for each difficulty level (0-8)
     // Maps directly to star display: difficulty 0 = 1 star, difficulty 1 = 2 stars, etc.
@@ -70,31 +69,12 @@ public class GameProgress : SaiSingleton<GameProgress>
         }
         
         this.completedLevels = new Dictionary<string, int>();
-        this.LoadSaiGamerProgress();
         this.Load();
         this.autoNoteUnlocked = this.IsAutoNoteUnlocked();
         this.clearNotesUnlocked = this.IsClearNotesUnlocked();
         this.hintPanelUnlocked = this.IsHintPanelUnlocked();
         this.patternDisplayUnlocked = this.IsPatternDisplayUnlocked();
         Debug.Log($"[GameProgress] Initialized and loaded progress from {this.saveStorageType}");
-    }
-    
-    /// <summary>
-    /// Load SaiGamerProgress component from SaiService singleton
-    /// </summary>
-    private void LoadSaiGamerProgress()
-    {
-        if (this.saiGamerProgress != null) return;
-        
-        if (SaiService.Instance != null)
-        {
-            this.saiGamerProgress = SaiService.Instance.GetComponent<SaiGamerProgress>();
-            
-            if (this.saiGamerProgress != null)
-            {
-                Debug.Log("[GameProgress] Loaded SaiGamerProgress from SaiService.Instance");
-            }
-        }
     }
     
     /// <summary>
@@ -396,13 +376,15 @@ public class GameProgress : SaiSingleton<GameProgress>
     /// </summary>
     private void SaveToSaiService()
     {
-        if (this.saiGamerProgress == null)
+        GamerProgress gamerProgress = SaiService.Instance?.GamerProgress;
+        
+        if (gamerProgress == null)
         {
-            Debug.LogWarning("[GameProgress] Cannot save to SaiService: SaiGamerProgress not found");
+            Debug.LogWarning("[GameProgress] Cannot save to SaiService: GamerProgress not found");
             return;
         }
         
-        if (!this.saiGamerProgress.HasProgress)
+        if (!gamerProgress.HasProgress)
         {
             Debug.LogWarning("[GameProgress] Cannot save to SaiService: No progress data exists. Create progress first.");
             return;
@@ -432,7 +414,7 @@ public class GameProgress : SaiSingleton<GameProgress>
             string gameDataJson = JsonUtility.ToJson(saveData);
             
             // Update progress with game_data
-            this.saiGamerProgress.UpdateProgress(
+            gamerProgress.UpdateProgress(
                 0, // experienceDelta
                 0, // goldDelta
                 gameDataJson,
@@ -540,14 +522,16 @@ public class GameProgress : SaiSingleton<GameProgress>
     /// </summary>
     private void LoadFromSaiService()
     {
-        if (this.saiGamerProgress == null)
+        GamerProgress gamerProgress = SaiService.Instance?.GamerProgress;
+        
+        if (gamerProgress == null)
         {
-            Debug.LogWarning("[GameProgress] Cannot load from SaiService: SaiGamerProgress not found. Using PlayerPrefs as fallback.");
+            Debug.LogWarning("[GameProgress] Cannot load from SaiService: GamerProgress not found. Using PlayerPrefs as fallback.");
             this.LoadFromPlayerPrefs();
             return;
         }
         
-        this.saiGamerProgress.GetProgress(
+        gamerProgress.GetProgress(
             progress =>
             {
                 try
@@ -998,19 +982,21 @@ public class GameProgress : SaiSingleton<GameProgress>
     [ProButton]
     public void CreateSaiServiceProgress()
     {
-        if (this.saiGamerProgress == null)
+        GamerProgress gamerProgress = SaiService.Instance?.GamerProgress;
+        
+        if (gamerProgress == null)
         {
-            Debug.LogError("[GameProgress] Cannot create progress: SaiGamerProgress not found");
+            Debug.LogError("[GameProgress] Cannot create progress: GamerProgress not found");
             return;
         }
         
-        if (this.saiGamerProgress.HasProgress)
+        if (gamerProgress.HasProgress)
         {
             Debug.LogWarning("[GameProgress] Progress already exists in SaiService. Use SyncToSaiService to update it.");
             return;
         }
         
-        this.saiGamerProgress.CreateProgress(
+        gamerProgress.CreateProgress(
             progress =>
             {
                 Debug.Log($"[GameProgress] Created new progress in SaiService: ID={progress.id}");
