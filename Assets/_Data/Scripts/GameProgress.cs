@@ -55,7 +55,6 @@ public class GameProgress : SaiSingleton<GameProgress>
         }
         
         this.completedLevels = new Dictionary<string, int>();
-        this.Load();
         this.autoNoteUnlocked = this.IsAutoNoteUnlocked();
         this.clearNotesUnlocked = this.IsClearNotesUnlocked();
         this.hintPanelUnlocked = this.IsHintPanelUnlocked();
