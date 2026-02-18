@@ -45,7 +45,7 @@ public class OrientationCanvasManager : SaiBehaviour
         bool currentIsLandscape = this.GetIsLandscape();
 
         this.isLandscape = currentIsLandscape;
-        Debug.Log("Screen: " + this.GetScreenWidth() + "x" + this.GetScreenHeight() + " => isLandscape: " + this.isLandscape);
+        // Debug.Log("Screen: " + this.GetScreenWidth() + "x" + this.GetScreenHeight() + " => isLandscape: " + this.isLandscape);
         this.ApplyOrientation();
     }
 

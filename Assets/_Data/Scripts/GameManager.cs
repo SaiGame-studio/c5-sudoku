@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : SaiSingleton<GameManager>
 {
     [Header("Scene Names")]
+    [SerializeField] private string authSceneName = "main_auth";
     [SerializeField] private string mainMenuSceneName = "main_menu";
     [SerializeField] private string classicHomeSceneName = "classic_home";
     [SerializeField] private string classicGameSceneName = "classic_game";
@@ -66,7 +67,19 @@ public class GameManager : SaiSingleton<GameManager>
     /// </summary>
     public void LoadMainMenu()
     {
+        Debug.Log($"[GameManager] LoadMainMenu called - Loading scene: {this.mainMenuSceneName}");
         SceneManager.LoadScene(this.mainMenuSceneName);
+        Debug.Log("[GameManager] Scene load initiated successfully");
+    }
+
+    [ProButton]
+    /// <summary>
+    /// Return to Auth Scene
+    /// </summary>
+    public void LoadAuthScene()
+    {
+        Debug.Log($"[GameManager] LoadAuthScene called - Loading scene: {this.authSceneName}");
+        SceneManager.LoadScene(this.authSceneName);
     }
     #endregion
 

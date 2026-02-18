@@ -21,3 +21,6 @@
 
 ## 5. Unity Specific Rules
 - **No ContextMenu:** Do not use the `[ContextMenu]` attribute in Unity scripts. Use other methods for editor tools if necessary.
+
+## 6. Protected Folders
+- **SaiGame Folder:** Do not modify, edit, or suggest changes to any files within the `Assets/SaiGame/` folder. This folder is protected and must remain untouched.

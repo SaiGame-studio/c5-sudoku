@@ -1,4 +1,5 @@
 using com.cyborgAssets.inspectorButtonPro;
+using SaiGame.Services;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -43,6 +44,13 @@ public class MenuController : SaiBehaviour
     {
         base.Start();
         this.InitializeUI();
+        this.RegisterLoginListener();
+        this.CheckInitialAuthState();
+    }
+
+    private void OnDestroy()
+    {
+        this.UnregisterLoginListener();
     }
 
     private void InitializeUI()
@@ -80,35 +88,28 @@ public class MenuController : SaiBehaviour
 
         float canvasWidth = 0f;
         float canvasHeight = 0f;
-        string resolutionSource = "Unknown";
 
         var panelSettings = this.uiDocument.panelSettings;
 
         if (panelSettings != null)
         {
-            // Always use Reference Resolution if it exists
             Vector2 refRes = panelSettings.referenceResolution;
             if (refRes.x > 0 && refRes.y > 0)
             {
                 canvasWidth = refRes.x;
                 canvasHeight = refRes.y;
-                resolutionSource = "Reference Resolution";
             }
-            // Fallback to RenderTexture
             else if (panelSettings.targetTexture != null)
             {
                 canvasWidth = panelSettings.targetTexture.width;
                 canvasHeight = panelSettings.targetTexture.height;
-                resolutionSource = "RenderTexture";
             }
         }
 
-        // Fallback: Use Screen size (unreliable in Edit Mode)
         if (canvasWidth <= 0 || float.IsNaN(canvasWidth))
         {
             canvasWidth = Screen.width;
             canvasHeight = Screen.height;
-            resolutionSource = "Screen Size (UNRELIABLE)";
         }
 
         bool isLandscape = canvasWidth > canvasHeight;
@@ -185,6 +186,12 @@ public class MenuController : SaiBehaviour
             storyButton.clicked += this.OnStoryButtonClicked;
         }
 
+        Button logoutButton = this.root.Q<Button>("logout-button");
+        if (logoutButton != null)
+        {
+            logoutButton.clicked += this.OnLogoutButtonClicked;
+        }
+
         Button quitButton = this.root.Q<Button>("quit-button");
         if (quitButton != null)
         {
@@ -202,8 +209,126 @@ public class MenuController : SaiBehaviour
         GameManager.Instance.LoadStoryScene();
     }
 
+    private void OnLogoutButtonClicked()
+    {
+        if (SaiService.Instance == null)
+        {
+            Debug.LogWarning("[MenuController] SaiService.Instance not found");
+            return;
+        }
+
+        SaiAuth saiAuth = SaiService.Instance.GetComponent<SaiAuth>();
+        if (saiAuth != null)
+        {
+            Debug.Log("[MenuController] Logout button clicked");
+            
+            // Clear only password, keep email saved
+            saiAuth.SetSavePassword(false);
+            PlayerPrefs.DeleteKey("SaiGame_SavedPassword");
+            PlayerPrefs.SetInt("SaiGame_SavePasswordFlag", 0);
+            PlayerPrefs.Save();
+            
+            // Perform logout
+            saiAuth.Logout();
+            
+            // Return to auth scene after logout
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.LoadAuthScene();
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[MenuController] SaiAuth not found");
+        }
+    }
+
     private void OnQuitButtonClicked()
     {
         GameManager.Instance.QuitGame();
     }
+
+    #region Gamer Progress Management
+
+    private void RegisterLoginListener()
+    {
+        if (SaiService.Instance == null)
+        {
+            Debug.LogWarning("[MenuController] SaiService.Instance not found");
+            return;
+        }
+
+        SaiAuth saiAuth = SaiService.Instance.GetComponent<SaiAuth>();
+        if (saiAuth != null)
+        {
+            saiAuth.OnLoginSuccess += this.HandleLoginSuccess;
+            Debug.Log("[MenuController] Registered login success listener");
+        }
+    }
+
+    private void UnregisterLoginListener()
+    {
+        if (SaiService.Instance == null) return;
+
+        SaiAuth saiAuth = SaiService.Instance.GetComponent<SaiAuth>();
+        if (saiAuth != null)
+        {
+            saiAuth.OnLoginSuccess -= this.HandleLoginSuccess;
+        }
+    }
+
+    private void CheckInitialAuthState()
+    {
+        if (SaiService.Instance == null) return;
+
+        SaiAuth saiAuth = SaiService.Instance.GetComponent<SaiAuth>();
+        if (saiAuth != null && saiAuth.IsAuthenticated)
+        {
+            Debug.Log("[MenuController] Already authenticated, checking gamer progress...");
+            this.GetOrCreateGamerProgress();
+        }
+    }
+
+    private void HandleLoginSuccess(LoginResponse response)
+    {
+        Debug.Log("[MenuController] Login successful, checking gamer progress...");
+        this.GetOrCreateGamerProgress();
+    }
+
+    private void GetOrCreateGamerProgress()
+    {
+        GamerProgress gamerProgress = SaiService.Instance?.GamerProgress;
+        
+        if (gamerProgress == null)
+        {
+            Debug.LogWarning("[MenuController] GamerProgress not found!");
+            return;
+        }
+
+        Debug.Log("[MenuController] Attempting to get gamer progress...");
+
+        gamerProgress.GetProgress(
+            progress =>
+            {
+                Debug.Log($"[MenuController] Gamer progress loaded successfully - Level: {progress.level}, XP: {progress.experience}, Gold: {progress.gold}");
+            },
+            error =>
+            {
+                Debug.Log($"[MenuController] Failed to get progress: {error}. Attempting to create new profile...");
+
+                gamerProgress.CreateProgress(
+                    newProgress =>
+                    {
+                        Debug.Log($"[MenuController] Gamer progress created successfully - Level: {newProgress.level}, XP: {newProgress.experience}, Gold: {newProgress.gold}");
+                    },
+                    createError =>
+                    {
+                        Debug.LogError($"[MenuController] Failed to create gamer progress: {createError}");
+                    }
+                );
+            }
+        );
+    }
+
+    #endregion
 }

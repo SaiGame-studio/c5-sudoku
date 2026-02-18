@@ -111,6 +111,24 @@
     color: rgb(130, 200, 240);
 }
 
+.logout-button {
+    width: 160px;
+    min-height: 60px;
+    margin-top: 20px;
+    border-color: rgb(220, 140, 60);
+    background-color: rgba(200, 120, 40, 0.1);
+}
+
+.logout-button:hover {
+    border-color: rgb(255, 170, 80);
+    background-color: rgba(220, 140, 50, 0.2);
+}
+
+.logout-button .menu-button-label {
+    color: rgb(255, 180, 100);
+    font-size: 20px;
+}
+
 .quit-button {
     width: 160px;
     min-height: 60px;

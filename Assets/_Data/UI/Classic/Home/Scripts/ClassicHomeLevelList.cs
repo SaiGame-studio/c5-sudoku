@@ -69,8 +69,58 @@ public class ClassicHomeLevelList : SaiBehaviour
         });
 
         this.RegisterCardCallbacks();
+        this.RefreshProgressForClassicHome();
+    }
+
+    private void RefreshProgressForClassicHome()
+    {
+        if (GameProgress.Instance == null)
+        {
+            this.RefreshLevelVisualStates();
+            return;
+        }
+
+        GameProgress.Instance.RefreshFromSaiService(
+            () =>
+            {
+                this.RefreshLevelVisualStates();
+            },
+            error =>
+            {
+                Debug.LogWarning($"[ClassicHomeLevelList] Failed to refresh progress from SaiService: {error}");
+                this.RefreshLevelVisualStates();
+            }
+        );
+    }
+
+    private void RefreshLevelVisualStates()
+    {
+        this.ClearLevelStateClasses();
         this.UpdateLockedLevels();
         this.UpdateCompletedLevels();
+    }
+
+    private void ClearLevelStateClasses()
+    {
+        if (this.root == null) return;
+
+        for (int levelNumber = 1; levelNumber <= 23; levelNumber++)
+        {
+            string levelName = $"level-{levelNumber}";
+            VisualElement card = this.root.Q<VisualElement>(levelName);
+
+            if (card == null) continue;
+
+            if (card.ClassListContains("level-locked"))
+            {
+                card.RemoveFromClassList("level-locked");
+            }
+
+            if (card.ClassListContains("level-completed"))
+            {
+                card.RemoveFromClassList("level-completed");
+            }
+        }
     }
 
     [ProButton]

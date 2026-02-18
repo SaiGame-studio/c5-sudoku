@@ -17,6 +17,9 @@
                     <ui:Label text="Story Mode" class="menu-button-label"/>
                     <ui:Label text="Comming soon" class="menu-button-desc"/>
                 </ui:Button>
+                <ui:Button name="logout-button" class="menu-button logout-button">
+                    <ui:Label text="Logout" class="menu-button-label"/>
+                </ui:Button>
                 <ui:Button name="quit-button" class="menu-button quit-button">
                     <ui:Label text="Quit" class="menu-button-label"/>
                 </ui:Button>
