@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace SaiGame.Services
 {
+    [DefaultExecutionOrder(-99)]
     public class SaiAuth : SaiBehaviour
     {
         // Events for other classes to listen to
@@ -52,6 +53,11 @@ namespace SaiGame.Services
         public int ExpiresIn => expiresIn;
         public UserData CurrentUser => userData;
 
+        private string NormalizeInput(string value)
+        {
+            return string.IsNullOrEmpty(value) ? string.Empty : value.Trim();
+        }
+
         private Coroutine tokenExpirationChecker;
 
         protected override void LoadComponents()
@@ -79,7 +85,7 @@ namespace SaiGame.Services
 
             if (this.saveEmail && PlayerPrefs.HasKey(PREF_EMAIL))
             {
-                this.username = PlayerPrefs.GetString(PREF_EMAIL);
+                this.username = this.NormalizeInput(PlayerPrefs.GetString(PREF_EMAIL));
                 if (SaiService.Instance != null && SaiService.Instance.ShowDebug)
                     Debug.Log($"[SaiAuth] Loaded email from PlayerPrefs: {this.username}");
             }
@@ -87,7 +93,7 @@ namespace SaiGame.Services
             if (this.savePassword && PlayerPrefs.HasKey(PREF_PASSWORD))
             {
                 string encryptedPassword = PlayerPrefs.GetString(PREF_PASSWORD);
-                this.password = SaiEncryption.Decrypt(encryptedPassword);
+                this.password = this.NormalizeInput(SaiEncryption.Decrypt(encryptedPassword));
                 if (SaiService.Instance != null && SaiService.Instance.ShowDebug)
                     Debug.Log("[SaiAuth] Loaded password from PlayerPrefs");
             }
@@ -95,6 +101,9 @@ namespace SaiGame.Services
 
         protected virtual void SaveCredentialsToPlayerPrefs()
         {
+            this.username = this.NormalizeInput(this.username);
+            this.password = this.NormalizeInput(this.password);
+
             PlayerPrefs.SetInt(PREF_SAVE_EMAIL_FLAG, this.saveEmail ? 1 : 0);
             PlayerPrefs.SetInt(PREF_SAVE_PASSWORD_FLAG, this.savePassword ? 1 : 0);
 
@@ -187,7 +196,10 @@ namespace SaiGame.Services
                 return;
             }
 
-            StartCoroutine(RegisterCoroutine(email, username, password, onSuccess, onError));
+            string normalizedEmail = this.NormalizeInput(email);
+            string normalizedPassword = this.NormalizeInput(password);
+
+            StartCoroutine(RegisterCoroutine(normalizedEmail, username, normalizedPassword, onSuccess, onError));
         }
 
         private IEnumerator RegisterCoroutine(string email, string username, string password, System.Action<RegisterResponse> onSuccess, System.Action<string> onError)
@@ -239,7 +251,10 @@ namespace SaiGame.Services
                 return;
             }
 
-            StartCoroutine(LoginCoroutine(username, password, onSuccess, onError));
+            string normalizedUsername = this.NormalizeInput(username);
+            string normalizedPassword = this.NormalizeInput(password);
+
+            StartCoroutine(LoginCoroutine(normalizedUsername, normalizedPassword, onSuccess, onError));
         }
 
         private IEnumerator LoginCoroutine(string username, string password, System.Action<LoginResponse> onSuccess, System.Action<string> onError)
@@ -524,6 +539,14 @@ namespace SaiGame.Services
 
             if (SaiService.Instance != null && SaiService.Instance.ShowDebug)
                 Debug.Log("Cleared all credentials from PlayerPrefs");
+        }
+
+        protected virtual void OnValidate()
+        {
+            this.username = this.NormalizeInput(this.username);
+            this.password = this.NormalizeInput(this.password);
+            this.registerEmail = this.NormalizeInput(this.registerEmail);
+            this.registerPassword = this.NormalizeInput(this.registerPassword);
         }
     }
 }

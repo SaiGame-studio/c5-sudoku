@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace SaiGame.Services
 {
+    [DefaultExecutionOrder(-99)]
     public class GamerProgress : SaiBehaviour
     {
         // Events for other classes to listen to
